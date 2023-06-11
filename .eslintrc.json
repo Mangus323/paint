@@ -1,0 +1,117 @@
+{
+  "globals": {
+    "React": true,
+    "google": true,
+    "mount": true,
+    "mountWithRouter": true,
+    "shallow": true,
+    "shallowWithRouter": true,
+    "context": true,
+    "expect": true,
+    "jsdom": true,
+    "JSX": true
+  },
+  "overrides": [
+    {
+      "files": [
+        "types/**"
+      ],
+      "rules": {
+        "unused-imports/no-unused-imports": "off",
+        "unused-imports/no-unused-vars": "off",
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:json/recommended",
+    "prettier",
+    "plugin:prettier/recommended",
+    "next"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 8,
+    "ecmaFeatures": {
+      "legacyDecorators": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react",
+    "unused-imports",
+    "prettier",
+    "json",
+    "@typescript-eslint"
+  ],
+  "ignorePatterns": [
+    "**/*.svg",
+    "**/*.scss"
+  ],
+  "rules": {
+    "unused-imports/no-unused-imports": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "off",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "no-unused-vars": [
+      "off",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "prettier/prettier": "error",
+    "arrow-body-style": "off",
+    "prefer-arrow-callback": "off",
+    "quotes": [
+      "warn",
+      "double"
+    ],
+    "max-len": [
+      2,
+      {
+        "code": 120,
+        "ignorePattern": "^\\s*(import | href=).*"
+      }
+    ],
+    "template-curly-spacing": "off",
+    "indent": "off",
+    "semi": [
+      "error",
+      "always"
+    ],
+    "no-trailing-spaces": [
+      "error",
+      {
+        "skipBlankLines": true
+      }
+    ],
+    "react/prop-types": [
+      "off",
+      {
+        "ignore": [
+          "dispatch"
+        ],
+        "skipUndeclared": true
+      }
+    ],
+    "react-hooks/exhaustive-deps": "off"
+  }
+}

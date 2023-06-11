@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "target": "es6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "~public/*": ["public/*"],
+      "~types/*": ["types/*"],
+      "~src/*": ["src/*"],
+      "~styles/*": ["src/styles/*"]
+    },
+    "incremental": true
+  },
+  "include": ["**/*",
+    "src/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"],
+  "files": [
+    "declarations.d.ts"
+  ]
+}
