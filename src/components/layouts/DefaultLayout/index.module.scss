@@ -1,7 +1,7 @@
 @import "src/styles/mixins";
 
 .container {
-  @include Layout;
+  //@include Layout;
 
   color: var(--black);
 }
