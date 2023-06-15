@@ -1,0 +1,23 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-prettier-scss",
+    "stylelint-config-idiomatic-order",
+    "stylelint-config-prettier"
+  ],
+  "plugins": [
+    "stylelint-scss",
+    "stylelint-order"
+  ],
+  "rules": {
+    "color-named": "never",
+    "selector-class-pattern": null,
+    "function-name-case": null,
+    "color-hex-length": "long",
+    "color-hex-case": "lower",
+    "scss/at-mixin-pattern": null,
+    "scss/at-function-pattern": null,
+    "color-function-notation": "legacy",
+    "no-descending-specificity": null
+  }
+}
