@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import browserReducer from "./slices/browser/reducer";
-import counterReducer from "./slices/paint/reducer";
+import canvasReducer from "./slices/canvas/reducer";
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    canvas: canvasReducer,
     browser: browserReducer
   }
 });

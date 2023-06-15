@@ -1,7 +1,14 @@
 @import "src/styles/mixins";
 
 .container {
-  //@include Layout;
-
   color: var(--black);
+  display: grid;
+  grid-template-columns: 50px 1fr;
+  grid-template-rows: 50px 1fr;
+  height: 100vh;
+
+  & > *:nth-child(1) {
+    grid-column: 1 / 3;
+    height: 50px;
+  }
 }
