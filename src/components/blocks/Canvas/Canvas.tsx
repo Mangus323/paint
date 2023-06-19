@@ -1,55 +1,68 @@
 import React, { JSX } from "react";
 import { place } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
+import Konva from "konva";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Circle, Layer, Line, Rect, Stage, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
+
+import Vector2d = Konva.Vector2d;
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useSelector(
     (state: RootState) => state.browser
   );
-  const { elements } = useSelector((state: RootState) => state.canvas);
+  const {
+    selectedTool: tool,
+    elements,
+    selectedColor: color
+  } = useSelector((state: RootState) => state.canvas);
   const dispatch: AppDispatch = useDispatch();
-
-  const [tool, setTool] = React.useState("pen");
-  const [lines, setLines] = React.useState([]);
+  const [lines, setLines] = React.useState<any[]>([]);
   const isDrawing = React.useRef(false);
 
-  const handleMouseDown = e => {
-    isDrawing.current = true;
-    const pos = e.target.getStage().getPointerPosition();
-    setLines([...lines, { tool, points: [pos.x, pos.y] }]);
+  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    if (tool === "pen" || tool === "eraser") {
+      isDrawing.current = true;
+      const { x, y } = getPoints(e);
+      setLines([...lines, { points: [x, y] }]);
+    }
   };
 
-  const handleMouseMove = e => {
-    // no drawing - skipping
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     if (!isDrawing.current) {
       return;
     }
-    const stage = e.target.getStage();
-    const point = stage.getPointerPosition();
+    let { x, y } = getPoints(e);
     let lastLine = lines[lines.length - 1];
-    lastLine.points = lastLine.points.concat([point.x, point.y]);
+    lastLine.points = lastLine.points.concat([x, y]);
 
     // replace last
     lines.splice(lines.length - 1, 1, lastLine);
     setLines(lines.concat());
   };
 
-  const handleMouseUp = () => {
-    isDrawing.current = false;
-  };
+  console.log(lines);
 
-  // console.log(elements);
+  const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
+    isDrawing.current = false;
+    if (tool === "pen" || tool === "eraser") {
+      for (let i = 0; i < lines.length; i++) {
+        dispatch(
+          place({
+            points: lines[i].points,
+            tool: tool
+          })
+        );
+      }
+      setLines([]);
+    }
+  };
 
   const onClick = (e: KonvaEventObject<MouseEvent>) => {
-    const x = e.evt.offsetX;
-    const y = e.evt.offsetY;
-    dispatch(place({ width: 100, height: 100, x, y }));
+    let { x, y } = getPoints(e);
+    // dispatch(place({ width: 100, height: 100, x, y }));
   };
-
-  // console.log(lines);
 
   return (
     <>
@@ -74,6 +87,11 @@ export const Canvas = (): JSX.Element => {
                     {...element}
                     key={index}
                     globalCompositeOperation={"source-over"}
+                    stroke={element.color}
+                    strokeWidth={5}
+                    tension={0.5}
+                    lineCap="round"
+                    lineJoin="round"
                   />
                 );
               case "eraser":
@@ -88,8 +106,33 @@ export const Canvas = (): JSX.Element => {
                 return <Text {...element} key={index} />;
             }
           })}
+          {lines.map((line, i) => (
+            <Line
+              key={i}
+              points={line.points}
+              stroke={color}
+              strokeWidth={5}
+              tension={0.5}
+              lineCap="round"
+              lineJoin="round"
+              globalCompositeOperation={
+                tool === "eraser" ? "destination-out" : "source-over"
+              }
+            />
+          ))}
         </Layer>
       </Stage>
     </>
   );
 };
+
+function getPoints(e: KonvaEventObject<MouseEvent | TouchEvent>): Vector2d {
+  const stage = e.target.getStage();
+  if (stage) {
+    let point = stage.getPointerPosition();
+    const x = point?.x || -1;
+    const y = point?.y || -1;
+    return { x, y };
+  }
+  return { x: -1, y: -1 };
+}

@@ -1,6 +1,7 @@
 import React, { JSX } from "react";
 import { Canvas } from "@/components/blocks/Canvas/Canvas";
 import { Toolbar } from "@/components/blocks/Toolbar/Toolbar";
+import { TopBar } from "@/components/blocks/TopBar/TopBar";
 import { DefaultLayout } from "@/components/layouts/DefaultLayout/DefaultLayout";
 import { RootState } from "@/redux/store";
 import Head from "next/head";
@@ -17,7 +18,7 @@ export const Homepage = (): JSX.Element => {
         <title>Paint</title>
       </Head>
       <DefaultLayout>
-        <div />
+        <TopBar />
         <Toolbar />
         {canvasHeight !== 0 && canvasWidth !== 0 && <Canvas />}
       </DefaultLayout>

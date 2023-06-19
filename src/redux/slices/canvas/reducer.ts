@@ -1,10 +1,10 @@
-import { IElement, Tool } from "@/types/canvas";
+import { IElement, ToolType } from "@/types/canvas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface CanvasState {
   history: Array<any>;
-  selectedTool: Tool;
+  selectedTool: ToolType;
   selectedColor: string;
   elements: Array<IElement>;
 }
@@ -20,19 +20,29 @@ export const counterSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
-    place: (state, action: PayloadAction<Omit<IElement, "tool" | "color">>) => {
+    place: (state, action: PayloadAction<IElement>) => {
+      if ("points" in action.payload) {
+        if (action.payload.points.length < 2) return;
+      }
+
       state.elements.push({
-        ...action.payload,
-        tool: state.selectedTool,
-        color: state.selectedColor
+        color: state.selectedColor,
+        ...action.payload
       });
     },
+    changeTool: (state, action: PayloadAction<ToolType>) => {
+      state.selectedTool = action.payload;
+    },
     drag: () => {},
-    undo: () => {},
-    redo: () => {}
+    undo: state => {
+      if (state.elements.length) state.history.push(state.elements.pop());
+    },
+    redo: state => {
+      if (state.history.length) state.elements.push(state.history.pop());
+    }
   }
 });
 
-export const { place, drag, undo, redo } = counterSlice.actions;
+export const { place, drag, undo, redo, changeTool } = counterSlice.actions;
 
 export default counterSlice.reducer;
