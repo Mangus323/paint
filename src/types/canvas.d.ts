@@ -8,7 +8,7 @@ interface IBaseElement {
 }
 
 export interface IFigure extends IBaseElement, Vector2d {
-  tool: "rect" | "circle";
+  tool: "rect" | "ellipse";
   width: number;
   height: number;
 }

@@ -29,6 +29,7 @@ export const counterSlice = createSlice({
         color: state.selectedColor,
         ...action.payload
       });
+      state.history = [];
     },
     changeTool: (state, action: PayloadAction<ToolType>) => {
       state.selectedTool = action.payload;

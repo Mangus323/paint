@@ -1,67 +1,52 @@
 import React, { JSX } from "react";
-import { place } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { ActiveElement } from "@/components/blocks/Canvas/ActiveElement/ActiveElement";
+import { useFigure } from "@/hooks/useFigure";
+import { usePen } from "@/hooks/usePen";
+import { RootState } from "@/redux/store";
+import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
-import { KonvaEventObject } from "konva/lib/Node";
-import { Circle, Layer, Line, Rect, Stage, Text } from "react-konva";
-import { useDispatch, useSelector } from "react-redux";
+import { Ellipse, Layer, Line, Rect, Stage, Text } from "react-konva";
+import { useSelector } from "react-redux";
 
-import Vector2d = Konva.Vector2d;
+import KonvaEventObject = Konva.KonvaEventObject;
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useSelector(
     (state: RootState) => state.browser
   );
+  const { elements, selectedColor: color } = useSelector(
+    (state: RootState) => state.canvas
+  );
   const {
-    selectedTool: tool,
-    elements,
-    selectedColor: color
-  } = useSelector((state: RootState) => state.canvas);
-  const dispatch: AppDispatch = useDispatch();
-  const [lines, setLines] = React.useState<any[]>([]);
-  const isDrawing = React.useRef(false);
+    handleMouseUp: penUp,
+    handleMouseDown: penDown,
+    handleMouseMove: penMove,
+    lines
+  } = usePen();
+  const {
+    handleMouseDown: figureDown,
+    handleMouseMove: figureMove,
+    handleMouseUp: figureUp,
+    cords: figure
+  } = useFigure();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (tool === "pen" || tool === "eraser") {
-      isDrawing.current = true;
-      const { x, y } = getPoints(e);
-      setLines([...lines, { points: [x, y] }]);
-    }
+    penDown(e);
+    figureDown(e);
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    if (!isDrawing.current) {
-      return;
-    }
-    let { x, y } = getPoints(e);
-    let lastLine = lines[lines.length - 1];
-    lastLine.points = lastLine.points.concat([x, y]);
-
-    // replace last
-    lines.splice(lines.length - 1, 1, lastLine);
-    setLines(lines.concat());
+    penMove(e);
+    figureMove(e);
   };
 
-  console.log(lines);
-
   const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
-    isDrawing.current = false;
-    if (tool === "pen" || tool === "eraser") {
-      for (let i = 0; i < lines.length; i++) {
-        dispatch(
-          place({
-            points: lines[i].points,
-            tool: tool
-          })
-        );
-      }
-      setLines([]);
-    }
+    penUp();
+    figureUp();
   };
 
   const onClick = (e: KonvaEventObject<MouseEvent>) => {
     let { x, y } = getPoints(e);
-    // dispatch(place({ width: 100, height: 100, x, y }));
   };
 
   return (
@@ -78,9 +63,9 @@ export const Canvas = (): JSX.Element => {
           {elements.map((element, index) => {
             switch (element.tool) {
               case "rect":
-                return <Rect {...element} key={index} />;
-              case "circle":
-                return <Circle {...element} key={index} />;
+                return <Rect {...element} fill={color} key={index} />;
+              case "ellipse":
+                return <Ellipse {...element} key={index} />;
               case "pen":
                 return (
                   <Line
@@ -99,6 +84,7 @@ export const Canvas = (): JSX.Element => {
                   <Line
                     {...element}
                     key={index}
+                    stroke={"#ffffff"}
                     globalCompositeOperation={"destination-out"}
                   />
                 );
@@ -106,33 +92,9 @@ export const Canvas = (): JSX.Element => {
                 return <Text {...element} key={index} />;
             }
           })}
-          {lines.map((line, i) => (
-            <Line
-              key={i}
-              points={line.points}
-              stroke={color}
-              strokeWidth={5}
-              tension={0.5}
-              lineCap="round"
-              lineJoin="round"
-              globalCompositeOperation={
-                tool === "eraser" ? "destination-out" : "source-over"
-              }
-            />
-          ))}
+          <ActiveElement lines={lines} figure={figure} />
         </Layer>
       </Stage>
     </>
   );
 };
-
-function getPoints(e: KonvaEventObject<MouseEvent | TouchEvent>): Vector2d {
-  const stage = e.target.getStage();
-  if (stage) {
-    let point = stage.getPointerPosition();
-    const x = point?.x || -1;
-    const y = point?.y || -1;
-    return { x, y };
-  }
-  return { x: -1, y: -1 };
-}
