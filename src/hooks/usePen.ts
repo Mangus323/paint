@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 import { place } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
@@ -12,8 +12,8 @@ export const usePen = () => {
     (state: RootState) => state.canvas
   );
   const dispatch: AppDispatch = useDispatch();
-  const [lines, setLines] = React.useState<number[]>([]);
-  const isDrawing = React.useRef(false);
+  const [lines, setLines] = useState<number[]>([]);
+  const isDrawing = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "pen" || tool === "eraser") {

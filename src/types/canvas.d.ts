@@ -20,6 +20,7 @@ export interface IPen extends IBaseElement {
 
 export interface IText extends IBaseElement, Vector2d {
   tool: "text";
+  text: string;
 }
 
 export interface IArrow extends IBaseElement {

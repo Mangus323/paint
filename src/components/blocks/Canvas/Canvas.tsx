@@ -1,14 +1,10 @@
 import React, { JSX } from "react";
 import { ActiveElement } from "@/components/blocks/Canvas/ActiveElement/ActiveElement";
-import { useFigure } from "@/hooks/useFigure";
-import { usePen } from "@/hooks/usePen";
+import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
+import { useMouseHandlers } from "@/hooks/useMouseHandlers";
 import { RootState } from "@/redux/store";
-import { getPoints } from "@/utils/getCanvasPoints";
-import Konva from "konva";
-import { Ellipse, Layer, Line, Rect, Stage, Text } from "react-konva";
+import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import { useSelector } from "react-redux";
-
-import KonvaEventObject = Konva.KonvaEventObject;
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useSelector(
@@ -18,54 +14,31 @@ export const Canvas = (): JSX.Element => {
     (state: RootState) => state.canvas
   );
   const {
-    handleMouseUp: penUp,
-    handleMouseDown: penDown,
-    handleMouseMove: penMove,
-    lines
-  } = usePen();
-  const {
-    handleMouseDown: figureDown,
-    handleMouseMove: figureMove,
-    handleMouseUp: figureUp,
-    cords: figure
-  } = useFigure();
-
-  const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    penDown(e);
-    figureDown(e);
-  };
-
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    penMove(e);
-    figureMove(e);
-  };
-
-  const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
-    penUp();
-    figureUp();
-  };
-
-  const onClick = (e: KonvaEventObject<MouseEvent>) => {
-    let { x, y } = getPoints(e);
-  };
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleClick,
+    lines,
+    figure,
+    textShape
+  } = useMouseHandlers();
 
   return (
     <>
       <Stage
         width={canvasWidth}
         height={canvasHeight}
-        onClick={onClick}
+        onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}>
         <Layer>
-          <Text text="Try click on rect" x={500} y={100} />
           {elements.map((element, index) => {
             switch (element.tool) {
               case "rect":
                 return <Rect {...element} fill={color} key={index} />;
               case "ellipse":
-                return <Ellipse {...element} key={index} />;
+                return <CustomEllipse {...element} key={index} />;
               case "pen":
                 return (
                   <Line
@@ -92,7 +65,7 @@ export const Canvas = (): JSX.Element => {
                 return <Text {...element} key={index} />;
             }
           })}
-          <ActiveElement lines={lines} figure={figure} />
+          <ActiveElement lines={lines} figure={figure} textShape={textShape} />
         </Layer>
       </Stage>
     </>

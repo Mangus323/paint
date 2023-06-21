@@ -1,4 +1,4 @@
-import React from "react";
+import { useRef, useState } from "react";
 import { place } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { IFigure } from "@/types/canvas";
@@ -13,15 +13,16 @@ export const useFigure = () => {
     (state: RootState) => state.canvas
   );
   const dispatch: AppDispatch = useDispatch();
-  const [startPoints, setStartPoints] = React.useState<number[]>([]);
-  const [endPoints, setEndPoints] = React.useState<number[]>([]);
-  const isDrawing = React.useRef(false);
+  const [startPoints, setStartPoints] = useState<number[]>([0, 0]);
+  const [endPoints, setEndPoints] = useState<number[]>([0, 0]);
+  const isDrawing = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "ellipse" || tool === "rect") {
       isDrawing.current = true;
       const { x, y } = getPoints(e);
       setStartPoints([x, y]);
+      setEndPoints([x, y]);
     }
   };
 
@@ -47,16 +48,16 @@ export const useFigure = () => {
         })
       );
 
-      setEndPoints([]);
-      setStartPoints([]);
+      setEndPoints([0, 0]);
+      setStartPoints([0, 0]);
     }
   };
 
   const cords: Omit<IFigure, "tool"> = {
     x: startPoints[0],
     y: startPoints[1],
-    width: endPoints[0] - startPoints[0] || 0,
-    height: endPoints[1] - startPoints[1] || 0
+    width: endPoints[0] - startPoints[0],
+    height: endPoints[1] - startPoints[1]
   };
 
   return {
