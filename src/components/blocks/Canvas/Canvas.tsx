@@ -36,7 +36,7 @@ export const Canvas = (): JSX.Element => {
           {elements.map((element, index) => {
             switch (element.tool) {
               case "rect":
-                return <Rect {...element} fill={color} key={index} />;
+                return <Rect {...element} fill={element.color} key={index} />;
               case "ellipse":
                 return <CustomEllipse {...element} key={index} />;
               case "pen":

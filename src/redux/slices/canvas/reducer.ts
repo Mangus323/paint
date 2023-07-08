@@ -34,6 +34,9 @@ export const counterSlice = createSlice({
     changeTool: (state, action: PayloadAction<ToolType>) => {
       state.selectedTool = action.payload;
     },
+    changeColor: (state, action: PayloadAction<string>) => {
+      state.selectedColor = action.payload;
+    },
     drag: () => {},
     undo: state => {
       if (state.elements.length) state.history.push(state.elements.pop());
@@ -44,6 +47,7 @@ export const counterSlice = createSlice({
   }
 });
 
-export const { place, drag, undo, redo, changeTool } = counterSlice.actions;
+export const { place, drag, changeColor, undo, redo, changeTool } =
+  counterSlice.actions;
 
 export default counterSlice.reducer;

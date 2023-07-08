@@ -6,7 +6,6 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
 import { useDispatch, useSelector } from "react-redux";
-import s from "./index.module.scss";
 
 export const ToolPicker = (): JSX.Element => {
   const { selectedTool } = useSelector((state: RootState) => state.canvas);
@@ -24,25 +23,30 @@ export const ToolPicker = (): JSX.Element => {
   };
 
   return (
-    <div className={s.container}>
-      <div className={s.list}>
-        <Button onClick={onClickUndo}>u</Button>
-        <Button onClick={onClickRedo}>r</Button>
-      </div>
+    <>
+      <ul>
+        <li>
+          <Button onClick={onClickUndo}>u</Button>
+        </li>
+        <li>
+          <Button onClick={onClickRedo}>r</Button>
+        </li>
+      </ul>
       <Separator orientation={"horizontal"} />
-      <div className={s.list}>
+      <h3>Tools</h3>
+      <ul>
         {ToolList.map(tool => {
           return (
-            <Button
-              key={tool}
-              selected={selectedTool === tool}
-              onClick={() => onClick(tool)}>
-              {tool[0]}
-            </Button>
+            <li key={tool}>
+              <Button
+                selected={selectedTool === tool}
+                onClick={() => onClick(tool)}>
+                {tool[0]}
+              </Button>
+            </li>
           );
         })}
-      </div>
-      <Separator orientation={"horizontal"} />
-    </div>
+      </ul>
+    </>
   );
 };
