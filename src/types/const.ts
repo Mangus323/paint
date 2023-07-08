@@ -1,8 +1,1 @@
-export const ToolList = [
-  "arrow",
-  "rect",
-  "pen",
-  "text",
-  "eraser",
-  "ellipse"
-] as const;
+export const ToolList = ["rect", "pen", "text", "eraser", "ellipse"] as const;

@@ -6,6 +6,13 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
 import { useDispatch, useSelector } from "react-redux";
+import ArrowLeftIcon from "~public/icons/ArrowLeft.svg";
+import ArrowRightIcon from "~public/icons/ArrowRight.svg";
+import CircleIcon from "~public/icons/Circle.svg";
+import EraserIcon from "~public/icons/Eraser.svg";
+import PencilIcon from "~public/icons/Pencil.svg";
+import SquareIcon from "~public/icons/Square.svg";
+import TextIcon from "~public/icons/Text.svg";
 
 export const ToolPicker = (): JSX.Element => {
   const { selectedTool } = useSelector((state: RootState) => state.canvas);
@@ -21,27 +28,39 @@ export const ToolPicker = (): JSX.Element => {
   const onClickRedo = () => {
     dispatch(redo());
   };
+  const toolListIcons = [
+    SquareIcon,
+    PencilIcon,
+    TextIcon,
+    EraserIcon,
+    CircleIcon
+  ];
 
   return (
     <>
       <ul>
         <li>
-          <Button onClick={onClickUndo}>u</Button>
+          <Button onClick={onClickUndo}>
+            <ArrowLeftIcon />
+          </Button>
         </li>
         <li>
-          <Button onClick={onClickRedo}>r</Button>
+          <Button onClick={onClickRedo}>
+            <ArrowRightIcon />
+          </Button>
         </li>
       </ul>
       <Separator orientation={"horizontal"} />
       <h3>Tools</h3>
       <ul>
-        {ToolList.map(tool => {
+        {ToolList.map((tool, index) => {
+          const Icon = toolListIcons[index];
           return (
             <li key={tool}>
               <Button
                 selected={selectedTool === tool}
                 onClick={() => onClick(tool)}>
-                {tool[0]}
+                <Icon />
               </Button>
             </li>
           );
