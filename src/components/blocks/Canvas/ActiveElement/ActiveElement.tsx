@@ -16,8 +16,6 @@ export const ActiveElement = (props: IActiveElementProps): JSX.Element => {
     (state: RootState) => state.canvas
   );
 
-  console.log(textShape);
-
   if (tool === "text") {
     return <Text {...textShape} color={color} />;
   }
