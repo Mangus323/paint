@@ -1,4 +1,11 @@
-import React, { ChangeEvent, JSX, ReactNode, useEffect, useRef } from "react";
+import React, {
+  ChangeEvent,
+  JSX,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef
+} from "react";
 import { edit, redo, undo } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { IText } from "@/types/canvas";
@@ -18,7 +25,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     activeElement
   } = useSelector((state: RootState) => state.canvas);
 
-  const listener = (e: KeyboardEvent) => {
+  const listener = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey) {
       switch (e.code) {
         case "KeyZ":
@@ -30,7 +37,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       }
     }
     if (isActiveElement && tool === "text") pseudoInputRef?.current?.focus();
-  };
+  }, []);
 
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(edit({ text: e.target.value }));
@@ -44,19 +51,23 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    if (isActiveElement && tool === "text") pseudoInputRef?.current?.focus();
+    if (isActiveElement && tool === "text") {
+      pseudoInputRef?.current?.focus();
+    }
   }, [isActiveElement, tool]);
 
   return (
     <>
-      <textarea
-        ref={pseudoInputRef}
-        className={s.input}
-        tabIndex={-1}
-        onChange={onPseudoInputChange}
-        value={(activeElement as IText)?.text || ""}
-        id={"pseudo"}
-      />
+      {isActiveElement && tool === "text" && (
+        <textarea
+          ref={pseudoInputRef}
+          className={s.input}
+          tabIndex={-1}
+          onChange={onPseudoInputChange}
+          value={(activeElement as IText)?.text || ""}
+          id={"pseudo"}
+        />
+      )}
       {props.children}
     </>
   );
