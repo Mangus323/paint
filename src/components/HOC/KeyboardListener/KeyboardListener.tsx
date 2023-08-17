@@ -19,11 +19,10 @@ interface KeyboardListenerProps {
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
-  const {
-    selectedTool: tool,
-    isActiveElement,
-    activeElement
-  } = useSelector((state: RootState) => state.canvas);
+  const { selectedTool: tool, activeElement } = useSelector(
+    (state: RootState) => state.canvas
+  );
+  const isActiveText = activeElement && tool === "text";
 
   const listener = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey) {
@@ -36,7 +35,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           return;
       }
     }
-    if (isActiveElement && tool === "text") pseudoInputRef?.current?.focus();
+    if (isActiveText) pseudoInputRef?.current?.focus();
   }, []);
 
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -51,14 +50,14 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    if (isActiveElement && tool === "text") {
+    if (isActiveText) {
       pseudoInputRef?.current?.focus();
     }
-  }, [isActiveElement, tool]);
+  }, [activeElement, tool]);
 
   return (
     <>
-      {isActiveElement && tool === "text" && (
+      {isActiveText && (
         <textarea
           ref={pseudoInputRef}
           className={s.input}

@@ -7,7 +7,6 @@ export interface CanvasState {
   selectedTool: ToolType;
   selectedColor: string;
   elements: Array<IElement>;
-  isActiveElement: boolean;
   activeElement: IElement | null;
 }
 
@@ -16,8 +15,7 @@ const initialState: CanvasState = {
   selectedTool: "pen",
   elements: [],
   activeElement: null,
-  selectedColor: "#000000",
-  isActiveElement: false
+  selectedColor: "#000000"
 };
 
 export const counterSlice = createSlice({
@@ -29,16 +27,13 @@ export const counterSlice = createSlice({
         color: state.selectedColor,
         ...action.payload
       };
-      state.isActiveElement = true;
     },
     edit: (state, action: PayloadAction<Partial<IElement>>) => {
-      if (state.isActiveElement) {
-        // @ts-ignore
-        state.activeElement = {
-          ...state.activeElement,
-          ...action.payload
-        };
-      }
+      // @ts-ignore
+      state.activeElement = {
+        ...state.activeElement,
+        ...action.payload
+      };
     },
     place: (state, action: PayloadAction<IElement>) => {
       if ("points" in action.payload) {
@@ -49,37 +44,30 @@ export const counterSlice = createSlice({
         ...action.payload
       });
       state.history = [];
-      state.isActiveElement = false;
       state.activeElement = null;
     },
     changeTool: (state, action: PayloadAction<ToolType>) => {
-      if (state.isActiveElement) {
-        if (state.activeElement) state.elements.push(state.activeElement);
+      if (state.activeElement) {
+        state.elements.push(state.activeElement);
         state.activeElement = null;
-        state.isActiveElement = false;
       }
       state.selectedTool = action.payload;
     },
     changeColor: (state, action: PayloadAction<string>) => {
-      if (state.isActiveElement) {
-        if (state.activeElement) state.elements.push(state.activeElement);
-        state.activeElement = null;
-        state.isActiveElement = false;
+      if (state.activeElement) {
+        state.activeElement.color = action.payload;
       }
-      state.isActiveElement = false;
       state.selectedColor = action.payload;
     },
     drag: () => {},
     undo: state => {
-      if (state.isActiveElement) {
+      if (state.activeElement) {
         state.activeElement = null;
-        state.isActiveElement = false;
         return;
       }
       if (state.elements.length) state.history.push(state.elements.pop());
     },
     redo: state => {
-      state.isActiveElement = false;
       if (state.history.length) state.elements.push(state.history.pop());
     }
   }

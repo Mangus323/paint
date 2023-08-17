@@ -29,4 +29,11 @@ export interface IArrow extends IBaseElement {
 
 export type IElement = IPen | IFigure | IText | IArrow;
 
+export interface IElementMeta {
+  width: number;
+  height: number;
+  x: number;
+  y: number;
+}
+
 export type ToolType = (typeof ToolList)[number];

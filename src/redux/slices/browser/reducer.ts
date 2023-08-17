@@ -1,3 +1,4 @@
+import { sidebarDimension } from "@/globals/sidebar";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
@@ -16,8 +17,9 @@ export const browserSlice = createSlice({
   initialState,
   reducers: {
     set: (state, action: PayloadAction<BrowserState>) => {
-      state.canvasHeight = action.payload.canvasHeight - 50;
-      state.canvasWidth = action.payload.canvasWidth - 50;
+      state.canvasHeight =
+        action.payload.canvasHeight - sidebarDimension.height;
+      state.canvasWidth = action.payload.canvasWidth - sidebarDimension.width;
     }
   }
 });

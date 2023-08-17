@@ -1,0 +1,17 @@
+.container {
+  position: absolute;
+  height: 2px;
+  background-color: var(--black);
+}
+
+.buttons {
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  display: flex;
+  gap: 1px;
+}
+
+.buttons__drag {
+  cursor: move !important;
+}

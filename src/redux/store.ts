@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import browserReducer from "./slices/browser/reducer";
 import canvasReducer from "./slices/canvas/reducer";
+import editActiveElementReducer from "./slices/editActiveElement/reducer";
 
 export const store = configureStore({
   reducer: {
     canvas: canvasReducer,
-    browser: browserReducer
+    browser: browserReducer,
+    editActiveElement: editActiveElementReducer
   }
 });
 export type RootState = ReturnType<typeof store.getState>;

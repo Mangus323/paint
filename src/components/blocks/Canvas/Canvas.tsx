@@ -1,10 +1,12 @@
 import React, { JSX } from "react";
 import { ActiveElement } from "@/components/blocks/Canvas/ActiveElement/ActiveElement";
+import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
 import { RootState } from "@/redux/store";
 import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import { useSelector } from "react-redux";
+import s from "./index.module.scss";
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useSelector(
@@ -20,7 +22,7 @@ export const Canvas = (): JSX.Element => {
   } = useMouseHandlers();
 
   return (
-    <>
+    <section className={s.container}>
       <Stage
         width={canvasWidth}
         height={canvasHeight}
@@ -58,12 +60,13 @@ export const Canvas = (): JSX.Element => {
                   />
                 );
               case "text":
-                return <Text {...element} key={index} />;
+                return <Text {...element} fill={element.color} key={index} />;
             }
           })}
           <ActiveElement {...activeElement} />
         </Layer>
       </Stage>
-    </>
+      <ActiveElementEdit />
+    </section>
   );
 };

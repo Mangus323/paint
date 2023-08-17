@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { place, placeAndEdit } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { IText } from "@/types/canvas";
@@ -9,23 +8,18 @@ import { useDispatch, useSelector } from "react-redux";
 import KonvaEventObject = Konva.KonvaEventObject;
 
 export const useText = () => {
-  const {
-    selectedTool: tool,
-    activeElement,
-    isActiveElement
-  } = useSelector((state: RootState) => state.canvas);
+  const { selectedTool: tool, activeElement } = useSelector(
+    (state: RootState) => state.canvas
+  );
   const dispatch: AppDispatch = useDispatch();
-  const [startPoints, setStartPoints] = useState<number[]>([0, 0]);
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "text") {
-      if (isActiveElement && activeElement) {
+      if (activeElement && activeElement) {
         dispatch(place(activeElement));
         return;
       }
-
       const { x, y } = getPoints(e);
-      setStartPoints([x, y]);
       dispatch(
         placeAndEdit({
           text: "",
@@ -36,27 +30,12 @@ export const useText = () => {
       );
     }
   };
+
   const textShape: Omit<IText, "tool"> = {
-    x: startPoints[0],
-    y: startPoints[1],
+    x: (activeElement as IText)?.x || 0,
+    y: (activeElement as IText)?.y || 0,
     text: (activeElement as IText)?.text || ""
   };
-
-  // const handleMouseUp = () => {
-  //   isFocus.current = false;
-  //   if (tool === "text") {
-  //     dispatch(
-  //       place({
-  //         x: startPoints[0],
-  //         y: startPoints[1],
-  //         text,
-  //         tool: tool
-  //       })
-  //     );
-  //
-  //     setStartPoints([]);
-  //   }
-  // };
 
   return {
     handleClick,
