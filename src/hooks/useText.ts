@@ -25,7 +25,8 @@ export const useText = () => {
           text: "",
           x,
           y,
-          tool: tool
+          tool: tool,
+          rotation: 0
         })
       );
     }
@@ -34,7 +35,8 @@ export const useText = () => {
   const textShape: Omit<IText, "tool"> = {
     x: (activeElement as IText)?.x || 0,
     y: (activeElement as IText)?.y || 0,
-    text: (activeElement as IText)?.text || ""
+    text: (activeElement as IText)?.text || "",
+    rotation: (activeElement as IText)?.rotation || 0
   };
 
   return {

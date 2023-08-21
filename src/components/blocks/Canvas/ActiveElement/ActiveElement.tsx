@@ -21,7 +21,6 @@ export const ActiveElement = (props: IActiveElementProps): JSX.Element => {
 
   useEffect(() => {
     if (ref.current) {
-      // console.log(ref.current);
       let width, height, x, y;
 
       switch (tool) {
@@ -41,8 +40,6 @@ export const ActiveElement = (props: IActiveElementProps): JSX.Element => {
       );
     }
   }, [lines, figure, textShape]);
-  //
-  // console.log(textShape);
 
   return (
     <>

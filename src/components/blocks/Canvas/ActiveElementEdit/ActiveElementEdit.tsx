@@ -19,30 +19,24 @@ export const ActiveElementEdit = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
   const previousLastPosition = usePrevious<typeof lastPosition>(lastPosition);
-  const [firstTime, setFirstTime] = useState(0);
+  const [renderTime, setRenderTime] = useState(0);
+  const [action, setAction] = useState<string | null>(null);
 
   const onMouseDownDrag = (e: ReactMouseEvent<HTMLButtonElement>) => {
     setLastPosition({ x: e.clientX, y: e.clientY });
-    document.addEventListener("mousemove", onMouseMoveDrag);
+    setAction("drag");
+    document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUpDrag);
   };
 
-  useEffect(() => {
-    if (firstTime < 2) {
-      setFirstTime(firstTime + 1);
-      return;
-    }
-    if (activeElement && previousLastPosition && "x" in activeElement) {
-      dispatch(
-        edit({
-          x: activeElement.x - previousLastPosition.x + lastPosition.x,
-          y: activeElement.y - previousLastPosition.y + lastPosition.y
-        })
-      );
-    }
-  }, [lastPosition]);
+  const onMouseDownRotation = (e: ReactMouseEvent<HTMLButtonElement>) => {
+    setLastPosition({ x: e.clientX, y: e.clientY });
+    setAction("rotation");
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUpRotation);
+  };
 
-  const onMouseMoveDrag = (e: MouseEvent) => {
+  const onMouseMove = (e: MouseEvent) => {
     setLastPosition({
       x: e.clientX,
       y: e.clientY
@@ -50,10 +44,42 @@ export const ActiveElementEdit = (): JSX.Element => {
   };
 
   const onMouseUpDrag = () => {
-    document.removeEventListener("mousemove", onMouseMoveDrag);
+    document.removeEventListener("mousemove", onMouseMove);
     document.removeEventListener("mouseup", onMouseUpDrag);
-    setFirstTime(1);
+    setAction(null);
+    setRenderTime(1);
   };
+
+  const onMouseUpRotation = () => {
+    document.removeEventListener("mousemove", onMouseMove);
+    document.removeEventListener("mouseup", onMouseUpRotation);
+    setAction(null);
+    setRenderTime(1);
+  };
+
+  useEffect(() => {
+    if (renderTime < 2) {
+      setRenderTime(renderTime + 1);
+      return;
+    }
+    if (activeElement && previousLastPosition) {
+      if (action === "drag" && "x" in activeElement)
+        dispatch(
+          edit({
+            x: activeElement.x - previousLastPosition.x + lastPosition.x,
+            y: activeElement.y - previousLastPosition.y + lastPosition.y
+          })
+        );
+      if (action === "rotation" && "x" in activeElement) {
+        let rotate = (activeElement.x - lastPosition.x) / 2;
+        dispatch(
+          edit({
+            rotation: rotate
+          })
+        );
+      }
+    }
+  }, [lastPosition]);
 
   if (activeElement && activeElementMeta)
     return (
@@ -67,6 +93,11 @@ export const ActiveElementEdit = (): JSX.Element => {
         <div className={s.buttons}>
           <Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>
             d
+          </Button>
+          <Button
+            className={s.buttons__rotation}
+            onMouseDown={onMouseDownRotation}>
+            r
           </Button>
         </div>
       </div>
