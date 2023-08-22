@@ -63,13 +63,14 @@ export const ActiveElementEdit = (): JSX.Element => {
       return;
     }
     if (activeElement && previousLastPosition) {
-      if (action === "drag" && "x" in activeElement)
+      if (action === "drag" && "x" in activeElement) {
         dispatch(
           edit({
             x: activeElement.x - previousLastPosition.x + lastPosition.x,
             y: activeElement.y - previousLastPosition.y + lastPosition.y
           })
         );
+      }
       if (action === "rotation" && "x" in activeElement) {
         let rotate = (activeElement.x - lastPosition.x) / 2;
         dispatch(
@@ -81,7 +82,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     }
   }, [lastPosition]);
 
-  if (activeElement && activeElementMeta)
+  if (activeElement && activeElementMeta && activeElementMeta.width !== 0)
     return (
       <div
         className={s.container}

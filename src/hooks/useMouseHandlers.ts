@@ -1,26 +1,37 @@
 import { useFigure } from "@/hooks/useFigure";
 import { usePen } from "@/hooks/usePen";
 import { useText } from "@/hooks/useText";
+import { place } from "@/redux/slices/canvas/reducer";
+import { AppDispatch, RootState } from "@/redux/store";
 import Konva from "konva";
+import { useDispatch, useSelector } from "react-redux";
 
 import KonvaEventObject = Konva.KonvaEventObject;
 
 export const useMouseHandlers = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const { activeElement } = useSelector((state: RootState) => state.canvas);
   const {
     handleMouseUp: penUp,
     handleMouseDown: penDown,
-    handleMouseMove: penMove,
-    lines
+    handleMouseMove: penMove
   } = usePen();
   const {
     handleMouseDown: figureDown,
     handleMouseMove: figureMove,
-    handleMouseUp: figureUp,
-    cords: figure
+    handleMouseUp: figureUp
   } = useFigure();
-  const { handleClick: handleTextClick, textShape } = useText();
+  const { handleClick: handleTextClick } = useText();
+
+  const placePrevious = () => {
+    if (activeElement) {
+      dispatch(place());
+      return;
+    }
+  };
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    placePrevious();
     penDown(e);
     figureDown(e);
   };
@@ -43,9 +54,6 @@ export const useMouseHandlers = () => {
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
-    handleClick,
-    lines,
-    figure,
-    textShape
+    handleClick
   };
 };

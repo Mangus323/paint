@@ -7,7 +7,7 @@ interface EllipseProps extends Omit<IFigure, "tool"> {
 }
 
 export const CustomEllipse = (props: EllipseProps): JSX.Element => {
-  const { x, y, width, height, color } = props;
+  const { x, y, width, height, color, ...otherProps } = props;
   return (
     <Ellipse
       x={(x + width + x) / 2}
@@ -15,6 +15,7 @@ export const CustomEllipse = (props: EllipseProps): JSX.Element => {
       radiusX={Math.abs(width / 2)}
       radiusY={Math.abs(height / 2)}
       fill={color}
+      {...otherProps}
     />
   );
 };

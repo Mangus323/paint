@@ -13,13 +13,8 @@ export const Canvas = (): JSX.Element => {
     (state: RootState) => state.browser
   );
   const { elements } = useSelector((state: RootState) => state.canvas);
-  const {
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    handleClick,
-    ...activeElement
-  } = useMouseHandlers();
+  const { handleMouseDown, handleMouseMove, handleMouseUp, handleClick } =
+    useMouseHandlers();
 
   return (
     <section className={s.container}>
@@ -63,7 +58,7 @@ export const Canvas = (): JSX.Element => {
                 return <Text {...element} fill={element.color} key={index} />;
             }
           })}
-          <ActiveElement {...activeElement} />
+          <ActiveElement />
         </Layer>
       </Stage>
       <ActiveElementEdit />

@@ -8,6 +8,7 @@ export interface CanvasState {
   selectedColor: string;
   elements: Array<IElement>;
   activeElement: IElement | null;
+  isDrawing: boolean;
 }
 
 const initialState: CanvasState = {
@@ -15,7 +16,8 @@ const initialState: CanvasState = {
   selectedTool: "pen",
   elements: [],
   activeElement: null,
-  selectedColor: "#000000"
+  selectedColor: "#000000",
+  isDrawing: false
 };
 
 export const counterSlice = createSlice({
@@ -23,6 +25,10 @@ export const counterSlice = createSlice({
   initialState,
   reducers: {
     placeAndEdit: (state, action: PayloadAction<IElement>) => {
+      if ("points" in action.payload) {
+        if (action.payload.points.length < 2) return;
+      }
+      state.isDrawing = action.payload.tool !== "pen";
       state.activeElement = {
         color: state.selectedColor,
         ...action.payload
@@ -35,14 +41,12 @@ export const counterSlice = createSlice({
         ...action.payload
       };
     },
-    place: (state, action: PayloadAction<IElement>) => {
-      if ("points" in action.payload) {
-        if (action.payload.points.length < 2) return;
-      }
-      state.elements.push({
-        color: state.selectedColor,
-        ...action.payload
-      });
+    place: state => {
+      if (state.activeElement)
+        state.elements.push({
+          color: state.selectedColor,
+          ...state.activeElement
+        });
       state.history = [];
       state.activeElement = null;
     },
@@ -69,6 +73,9 @@ export const counterSlice = createSlice({
     },
     redo: state => {
       if (state.history.length) state.elements.push(state.history.pop());
+    },
+    stopDraw: state => {
+      state.isDrawing = false;
     }
   }
 });
@@ -81,7 +88,8 @@ export const {
   changeColor,
   undo,
   redo,
-  changeTool
+  changeTool,
+  stopDraw
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
