@@ -1,20 +1,46 @@
-import React, { JSX } from "react";
+import React, { JSX, useEffect } from "react";
 import { ActiveElement } from "@/components/blocks/Canvas/ActiveElement/ActiveElement";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
+import { Image } from "@/components/elements/Canvas/Image/Image";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
-import { RootState } from "@/redux/store";
+import { setIsDownloading } from "@/redux/slices/canvas/reducer";
+import { AppDispatch, RootState } from "@/redux/store";
 import { Layer, Line, Rect, Stage, Text } from "react-konva";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import s from "./index.module.scss";
 
+function downloadURI(uri, name) {
+  const link = document.createElement("a");
+  link.download = name;
+  link.href = uri;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
 export const Canvas = (): JSX.Element => {
+  const dispatch: AppDispatch = useDispatch();
   const { canvasHeight, canvasWidth } = useSelector(
     (state: RootState) => state.browser
   );
-  const { elements } = useSelector((state: RootState) => state.canvas);
+  const { elements, isDownloading } = useSelector(
+    (state: RootState) => state.canvas
+  );
   const { handleMouseDown, handleMouseMove, handleMouseUp, handleClick } =
     useMouseHandlers();
+  const stageRef = React.useRef<any>(null);
+
+  // save image
+  useEffect(() => {
+    if (isDownloading) {
+      if (stageRef.current) {
+        const uri = stageRef.current.toDataURL({ pixelRatio: 1 });
+        downloadURI(uri, "image");
+      }
+      dispatch(setIsDownloading(false));
+    }
+  }, [isDownloading]);
 
   return (
     <section className={s.container}>
@@ -24,7 +50,8 @@ export const Canvas = (): JSX.Element => {
         onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
-        onMouseup={handleMouseUp}>
+        onMouseup={handleMouseUp}
+        ref={stageRef}>
         <Layer>
           {elements.map((element, index) => {
             switch (element.tool) {
@@ -56,6 +83,8 @@ export const Canvas = (): JSX.Element => {
                 );
               case "text":
                 return <Text {...element} fill={element.color} key={index} />;
+              case "image":
+                return <Image {...element} key={index} />;
             }
           })}
           <ActiveElement />

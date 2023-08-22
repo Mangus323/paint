@@ -1,6 +1,20 @@
 @import "src/styles/mixins";
 
 .container {
+  position: relative;
+  display: inline-block;
+}
+
+.input {
+  position: absolute;
+  z-index: -1;
+  display: block;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.button {
   @include FontParagraph;
 
   position: relative;
@@ -8,7 +22,7 @@
   height: 1.25rem;
   align-items: center;
   justify-content: center;
-  padding: 1px;
+  padding: 2px 4px;
   border: 1px solid var(--teal-200);
   border-radius: 2px;
   background-color: var(--light-gray);
@@ -27,22 +41,4 @@
     border: 1px solid var(--black);
     background-color: var(--teal-300);
   }
-
-  &:disabled {
-    border: 1px solid var(--light-gray);
-    background: transparent;
-    color: var(--light-gray);
-  }
-}
-
-.selected {
-  background-color: var(--yellow);
-}
-
-.icon {
-  width: 1.25rem;
-}
-
-.default {
-  padding: 2px 4px;
 }

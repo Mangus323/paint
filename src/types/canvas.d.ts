@@ -28,7 +28,14 @@ export interface IArrow extends IBaseElement {
   tool: "arrow";
 }
 
-export type IElement = IPen | IFigure | IText | IArrow;
+export interface IImage extends IBaseElement {
+  tool: "image";
+  src: string | ArrayBuffer;
+  x: number;
+  y: number;
+}
+
+export type IElement = IPen | IFigure | IText | IArrow | IImage;
 
 export interface IElementMeta {
   width: number;

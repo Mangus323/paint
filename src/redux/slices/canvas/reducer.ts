@@ -9,6 +9,7 @@ export interface CanvasState {
   elements: Array<IElement>;
   activeElement: IElement | null;
   isDrawing: boolean;
+  isDownloading: boolean;
 }
 
 const initialState: CanvasState = {
@@ -17,7 +18,8 @@ const initialState: CanvasState = {
   elements: [],
   activeElement: null,
   selectedColor: "#000000",
-  isDrawing: false
+  isDrawing: false,
+  isDownloading: false
 };
 
 export const counterSlice = createSlice({
@@ -76,6 +78,21 @@ export const counterSlice = createSlice({
     },
     stopDraw: state => {
       state.isDrawing = false;
+    },
+    setIsDownloading: (state, action: PayloadAction<boolean>) => {
+      state.isDownloading = action.payload;
+    },
+    openFromFile: (state, action: PayloadAction<string | ArrayBuffer>) => {
+      state.history = [];
+      state.activeElement = null;
+      state.elements = [
+        {
+          src: action.payload,
+          tool: "image",
+          x: 0,
+          y: 0
+        }
+      ];
     }
   }
 });
@@ -89,7 +106,9 @@ export const {
   undo,
   redo,
   changeTool,
-  stopDraw
+  stopDraw,
+  setIsDownloading,
+  openFromFile
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
