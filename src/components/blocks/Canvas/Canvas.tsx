@@ -10,6 +10,9 @@ import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import s from "./index.module.scss";
 
+const MemoImage = React.memo(Image);
+const MemoLine = React.memo(Line);
+
 function downloadURI(uri, name) {
   const link = document.createElement("a");
   link.download = name;
@@ -61,7 +64,7 @@ export const Canvas = (): JSX.Element => {
                 return <CustomEllipse {...element} key={index} />;
               case "pen":
                 return (
-                  <Line
+                  <MemoLine
                     {...element}
                     key={index}
                     globalCompositeOperation={"source-over"}
@@ -84,7 +87,7 @@ export const Canvas = (): JSX.Element => {
               case "text":
                 return <Text {...element} fill={element.color} key={index} />;
               case "image":
-                return <Image {...element} key={index} />;
+                return <MemoImage {...element} key={index} />;
             }
           })}
           <ActiveElement />

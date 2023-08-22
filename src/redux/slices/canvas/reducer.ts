@@ -30,7 +30,7 @@ export const counterSlice = createSlice({
       if ("points" in action.payload) {
         if (action.payload.points.length < 2) return;
       }
-      state.isDrawing = action.payload.tool !== "pen";
+      state.isDrawing = true;
       state.activeElement = {
         color: state.selectedColor,
         ...action.payload
