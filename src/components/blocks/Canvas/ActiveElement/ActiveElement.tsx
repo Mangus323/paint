@@ -1,21 +1,24 @@
 import React, { JSX, useEffect, useRef } from "react";
+import { CanvasImage } from "@/components/elements/Canvas/CanvasImage/CanvasImage";
 import { changeMeta } from "@/redux/slices/editActiveElement/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Ellipse, Line, Rect, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 
+const MemoImage = React.memo(CanvasImage);
+
 export const ActiveElement = (): JSX.Element => {
   const {
-    selectedTool: tool,
     selectedColor: color,
     activeElement,
     isDrawing
   } = useSelector((state: RootState) => state.canvas);
+  const tool = activeElement?.tool;
   const dispatch: AppDispatch = useDispatch();
   let ref = useRef<any>(null);
 
   useEffect(() => {
-    if (ref.current && isDrawing === false) {
+    if (ref.current && isDrawing === false && activeElement) {
       let width, height, x, y;
       const attrs = ref.current.attrs;
       switch (tool) {
@@ -47,6 +50,7 @@ export const ActiveElement = (): JSX.Element => {
       );
     }
   }, [isDrawing, activeElement]);
+  console.log(activeElement);
 
   if (!activeElement) return <></>;
 
@@ -65,9 +69,9 @@ export const ActiveElement = (): JSX.Element => {
         />
       )}
       {tool === "rect" && <Rect {...activeElement} fill={color} ref={ref} />}
-      {"points" in activeElement &&
-        activeElement.points.length !== 0 &&
-        (tool === "eraser" || tool === "pen") && (
+      {(tool === "eraser" || tool === "pen") &&
+        "points" in activeElement &&
+        activeElement.points.length !== 0 && (
           <Line
             {...activeElement}
             stroke={color}
@@ -81,6 +85,7 @@ export const ActiveElement = (): JSX.Element => {
             ref={ref}
           />
         )}
+      {tool === "image" && <MemoImage {...activeElement} />}
     </>
   );
 };

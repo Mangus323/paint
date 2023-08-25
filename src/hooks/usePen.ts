@@ -27,11 +27,10 @@ export const usePen = () => {
     }
   };
 
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+  const handleMouseMove = (x: number, y: number) => {
     if (!isDrawing.current) {
       return;
     }
-    let { x, y } = getPoints(e);
     if (activeElement && "points" in activeElement) {
       dispatch(
         edit({

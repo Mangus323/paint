@@ -55,6 +55,7 @@ export const ToolPicker = (): JSX.Element => {
       <ul>
         {ToolList.map((tool, index) => {
           const Icon = toolListIcons[index];
+          if (!Icon) return null;
           return (
             <li key={tool}>
               <Button

@@ -3,6 +3,7 @@ import { usePen } from "@/hooks/usePen";
 import { useText } from "@/hooks/useText";
 import { place } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
+import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -37,8 +38,9 @@ export const useMouseHandlers = () => {
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    penMove(e);
-    figureMove(e);
+    let { x, y } = getPoints(e);
+    penMove(x, y);
+    figureMove(x, y);
   };
 
   const handleMouseUp = () => {

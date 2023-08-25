@@ -1,4 +1,4 @@
-import React, { JSX } from "react";
+import React, { ChangeEvent, JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
 import { FileUploader } from "@/components/elements/FileUplaoder/FileUploader";
 import { openFromFile, setIsDownloading } from "@/redux/slices/canvas/reducer";
@@ -13,10 +13,10 @@ export const TopPanel = (): JSX.Element => {
     dispatch(setIsDownloading(true));
   };
 
-  const onOpenClick = ({ target }) => {
+  const onOpenClick = (e: ChangeEvent<HTMLInputElement>) => {
     const reader = new FileReader();
-    if (target.files && target.files[0]) {
-      const file = target.files[0];
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
 
       reader.onloadend = () => {
         if (reader.result) dispatch(openFromFile(reader.result));

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Image as KonvaImage } from "react-konva";
 
-export const Image = props => {
-  const [image, setImage] = useState<any>(null);
+export const CanvasImage = props => {
+  const [image, setImage] = useState<any>(undefined);
+
   useEffect(() => {
     loadImage();
   }, [props.src]);

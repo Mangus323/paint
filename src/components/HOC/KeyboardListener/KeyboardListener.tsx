@@ -3,10 +3,12 @@ import React, {
   JSX,
   ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useRef
 } from "react";
-import { edit, redo, undo } from "@/redux/slices/canvas/reducer";
+import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { edit, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
 import { IText } from "@/types/canvas";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +24,8 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const { selectedTool: tool, activeElement } = useSelector(
     (state: RootState) => state.canvas
   );
+  const position = useContext(MousePositionContext);
+  const positionRef = useRef(position);
   const isActiveText = activeElement && tool === "text";
 
   const listener = useCallback((e: KeyboardEvent) => {
@@ -38,16 +42,46 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     if (isActiveText) pseudoInputRef?.current?.focus();
   }, []);
 
+  const clipboardPaste = useCallback((e: Event) => {
+    let clipboardData = (e as ClipboardEvent).clipboardData;
+    if (!clipboardData) return;
+    const reader = new FileReader();
+    if (clipboardData.files && clipboardData.files[0]) {
+      if (clipboardData.files[0].type.match(/^image\//)) {
+        const file = clipboardData.files[0];
+        let { x, y } = positionRef.current;
+        reader.onloadend = () => {
+          if (reader.result)
+            dispatch(
+              placeAndEdit({
+                tool: "image",
+                src: reader.result,
+                x,
+                y
+              })
+            );
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }, []);
+
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(edit({ text: e.target.value }));
   };
 
   useEffect(() => {
     document.addEventListener("keypress", listener);
+    window.addEventListener("paste", clipboardPaste);
     return () => {
       document.removeEventListener("keypress", listener);
+      window.removeEventListener("paste", clipboardPaste);
     };
   }, []);
+
+  useEffect(() => {
+    positionRef.current = position;
+  }, [position]);
 
   useEffect(() => {
     if (isActiveText) {

@@ -1,8 +1,8 @@
 import React, { JSX, useEffect } from "react";
 import { ActiveElement } from "@/components/blocks/Canvas/ActiveElement/ActiveElement";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
+import { CanvasImage } from "@/components/elements/Canvas/CanvasImage/CanvasImage";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
-import { Image } from "@/components/elements/Canvas/Image/Image";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
 import { setIsDownloading } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, RootState } from "@/redux/store";
@@ -10,7 +10,7 @@ import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import { useDispatch, useSelector } from "react-redux";
 import s from "./index.module.scss";
 
-const MemoImage = React.memo(Image);
+const MemoImage = React.memo(CanvasImage);
 const MemoLine = React.memo(Line);
 
 function downloadURI(uri, name) {
