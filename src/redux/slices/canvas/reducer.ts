@@ -7,7 +7,7 @@ export interface CanvasState {
   selectedTool: ToolType;
   selectedColor: string;
   elements: Array<IElement>;
-  activeElement: IElement | null;
+  isActiveElement: boolean;
   isDrawing: boolean;
   isDownloading: boolean;
 }
@@ -15,9 +15,9 @@ export interface CanvasState {
 const initialState: CanvasState = {
   history: [],
   selectedTool: "pen",
-  elements: [],
-  activeElement: null,
   selectedColor: "#000000",
+  elements: [],
+  isActiveElement: false,
   isDrawing: false,
   isDownloading: false
 };
@@ -31,46 +31,33 @@ export const counterSlice = createSlice({
         if (action.payload.points.length < 2) return;
       }
       state.isDrawing = true;
-      state.activeElement = {
+      state.isActiveElement = true;
+      state.elements.push({
         color: state.selectedColor,
         ...action.payload
-      };
+      });
     },
     edit: (state, action: PayloadAction<Partial<IElement>>) => {
       // @ts-ignore
-      state.activeElement = {
-        ...state.activeElement,
+      state.elements[state.elements.length - 1] = {
+        ...state.elements[state.elements.length - 1],
         ...action.payload
       };
     },
     place: state => {
-      if (state.activeElement)
-        state.elements.push({
-          color: state.selectedColor,
-          ...state.activeElement
-        });
+      state.isActiveElement = false;
       state.history = [];
-      state.activeElement = null;
     },
     changeTool: (state, action: PayloadAction<ToolType>) => {
-      if (state.activeElement) {
-        state.elements.push(state.activeElement);
-        state.activeElement = null;
-      }
+      state.isActiveElement = false;
       state.selectedTool = action.payload;
     },
     changeColor: (state, action: PayloadAction<string>) => {
-      if (state.activeElement) {
-        state.activeElement.color = action.payload;
-      }
+      if (state.isActiveElement)
+        state.elements[state.elements.length - 1].color = action.payload;
       state.selectedColor = action.payload;
     },
-    drag: () => {},
     undo: state => {
-      if (state.activeElement) {
-        state.activeElement = null;
-        return;
-      }
       if (state.elements.length) state.history.push(state.elements.pop());
     },
     redo: state => {
@@ -84,7 +71,7 @@ export const counterSlice = createSlice({
     },
     openFromFile: (state, action: PayloadAction<string | ArrayBuffer>) => {
       state.history = [];
-      state.activeElement = null;
+      state.isActiveElement = false;
       state.elements = [
         {
           src: action.payload,
@@ -101,7 +88,6 @@ export const {
   placeAndEdit,
   place,
   edit,
-  drag,
   changeColor,
   undo,
   redo,

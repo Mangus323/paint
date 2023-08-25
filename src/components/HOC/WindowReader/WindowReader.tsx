@@ -1,14 +1,13 @@
 import React, { JSX, ReactNode, useEffect } from "react";
 import { set } from "@/redux/slices/browser/reducer";
-import { AppDispatch } from "@/redux/store";
-import { useDispatch } from "react-redux";
+import { useAppDispatch } from "@/redux/store";
 
 interface WindowReaderProps {
   children: ReactNode;
 }
 
 export const WindowReader = (props: WindowReaderProps): JSX.Element => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     const listener = () => {

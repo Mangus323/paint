@@ -1,18 +1,17 @@
 import { useRef } from "react";
 import { edit, placeAndEdit, stopDraw } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
-import { useDispatch, useSelector } from "react-redux";
 
 import KonvaEventObject = Konva.KonvaEventObject;
 
 export const usePen = () => {
-  const { selectedTool: tool, activeElement } = useSelector(
-    (state: RootState) => state.canvas
-  );
-  const dispatch: AppDispatch = useDispatch();
+  const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const dispatch = useAppDispatch();
   const isDrawing = useRef(false);
+  const { activeElement, isActiveElement } = useActiveElement();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "pen" || tool === "eraser") {
@@ -31,7 +30,7 @@ export const usePen = () => {
     if (!isDrawing.current) {
       return;
     }
-    if (activeElement && "points" in activeElement) {
+    if (isActiveElement && "points" in activeElement) {
       dispatch(
         edit({
           points: activeElement.points.concat([x, y])

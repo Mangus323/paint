@@ -5,14 +5,11 @@ import { Canvas } from "@/components/blocks/Canvas/Canvas";
 import { LeftPanel } from "@/components/blocks/LeftPanel/LeftPanel";
 import { TopPanel } from "@/components/blocks/TopPanel/TopPanel";
 import { DefaultLayout } from "@/components/layouts/DefaultLayout/DefaultLayout";
-import { RootState } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
 import Head from "next/head";
-import { useSelector } from "react-redux";
 
 export const Homepage = (): JSX.Element => {
-  const { canvasHeight, canvasWidth } = useSelector(
-    (state: RootState) => state.browser
-  );
+  const { canvasHeight, canvasWidth } = useAppSelector(state => state.browser);
 
   return (
     <MouseListener>

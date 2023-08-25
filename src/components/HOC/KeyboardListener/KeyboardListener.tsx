@@ -9,9 +9,9 @@ import React, {
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { edit, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
-import { useDispatch, useSelector } from "react-redux";
 import s from "./index.module.scss";
 
 interface KeyboardListenerProps {
@@ -19,14 +19,13 @@ interface KeyboardListenerProps {
 }
 
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
-  const dispatch: AppDispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
-  const { selectedTool: tool, activeElement } = useSelector(
-    (state: RootState) => state.canvas
-  );
+  const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const position = useContext(MousePositionContext);
+  const { isActiveElement, activeElement } = useActiveElement();
   const positionRef = useRef(position);
-  const isActiveText = activeElement && tool === "text";
+  const isActiveText = isActiveElement && tool === "text";
 
   const listener = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey) {

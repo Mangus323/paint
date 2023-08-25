@@ -7,16 +7,16 @@ import React, {
 import { Button } from "@/components/elements/Button/Button";
 import usePrevious from "@/hooks/usePrevious";
 import { edit } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import s from "./index.module.scss";
 
 export const ActiveElementEdit = (): JSX.Element => {
-  const { activeElement } = useSelector((state: RootState) => state.canvas);
-  const { activeElementMeta } = useSelector(
-    (state: RootState) => state.editActiveElement
+  const { activeElementMeta } = useAppSelector(
+    state => state.editActiveElement
   );
-  const dispatch: AppDispatch = useDispatch();
+  const { isActiveElement, activeElement } = useActiveElement();
+  const dispatch = useAppDispatch();
   const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
   const previousLastPosition = usePrevious<typeof lastPosition>(lastPosition);
   const [renderTime, setRenderTime] = useState(0);
@@ -62,7 +62,7 @@ export const ActiveElementEdit = (): JSX.Element => {
       setRenderTime(renderTime + 1);
       return;
     }
-    if (activeElement && previousLastPosition) {
+    if (isActiveElement && previousLastPosition) {
       if (action === "drag" && "x" in activeElement) {
         dispatch(
           edit({
@@ -82,7 +82,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     }
   }, [lastPosition]);
 
-  if (activeElement && activeElementMeta && activeElementMeta.width !== 0)
+  if (isActiveElement && activeElementMeta && activeElementMeta.width !== 0)
     return (
       <div
         className={s.container}

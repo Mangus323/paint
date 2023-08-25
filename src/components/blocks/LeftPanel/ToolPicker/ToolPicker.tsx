@@ -2,10 +2,9 @@ import React, { JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
 import { Separator } from "@/components/elements/Separator/Separator";
 import { changeTool, redo, undo } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
-import { useDispatch, useSelector } from "react-redux";
 import ArrowLeftIcon from "~public/icons/ArrowLeft.svg";
 import ArrowRightIcon from "~public/icons/ArrowRight.svg";
 import CircleIcon from "~public/icons/Circle.svg";
@@ -15,8 +14,8 @@ import SquareIcon from "~public/icons/Square.svg";
 import TextIcon from "~public/icons/Text.svg";
 
 export const ToolPicker = (): JSX.Element => {
-  const { selectedTool } = useSelector((state: RootState) => state.canvas);
-  const dispatch: AppDispatch = useDispatch();
+  const { selectedTool } = useAppSelector(state => state.canvas);
+  const dispatch = useAppDispatch();
 
   const onClick = (tool: ToolType) => {
     dispatch(changeTool(tool));

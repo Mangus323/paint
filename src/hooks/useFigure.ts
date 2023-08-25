@@ -1,17 +1,16 @@
 import { useRef } from "react";
 import { edit, placeAndEdit, stopDraw } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
+import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
-import { useDispatch, useSelector } from "react-redux";
 
 import KonvaEventObject = Konva.KonvaEventObject;
 
 export const useFigure = () => {
-  const { selectedTool: tool, activeElement } = useSelector(
-    (state: RootState) => state.canvas
-  );
-  const dispatch: AppDispatch = useDispatch();
+  const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const { activeElement, isActiveElement } = useActiveElement();
+  const dispatch = useAppDispatch();
   const isDrawing = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
@@ -34,7 +33,7 @@ export const useFigure = () => {
     if (!isDrawing.current) {
       return;
     }
-    if (activeElement && "x" in activeElement) {
+    if (isActiveElement && "x" in activeElement) {
       dispatch(
         edit({
           width: x - activeElement.x,

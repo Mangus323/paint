@@ -1,13 +1,12 @@
 import React, { JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
 import { changeColor } from "@/redux/slices/canvas/reducer";
-import { AppDispatch, RootState } from "@/redux/store";
-import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, useAppDispatch, useAppSelector } from "@/redux/store";
 import s from "./index.module.scss";
 
 export const ColorPanel = (): JSX.Element => {
-  const { selectedColor } = useSelector((state: RootState) => state.canvas);
-  const dispatch: AppDispatch = useDispatch();
+  const { selectedColor } = useAppSelector(state => state.canvas);
+  const dispatch: AppDispatch = useAppDispatch();
 
   const setColor = (color: string) => {
     dispatch(changeColor(color));
