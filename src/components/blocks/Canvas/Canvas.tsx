@@ -11,7 +11,6 @@ import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import s from "./index.module.scss";
 
 const MemoImage = React.memo(CanvasImage);
-const MemoLine = React.memo(Line);
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useAppSelector(state => state.browser);
@@ -88,7 +87,7 @@ export const Canvas = (): JSX.Element => {
                 return <CustomEllipse {...props} />;
               case "pen":
                 return (
-                  <MemoLine
+                  <Line
                     {...props}
                     globalCompositeOperation={"source-over"}
                     stroke={element.color}
@@ -112,7 +111,6 @@ export const Canvas = (): JSX.Element => {
                 return <MemoImage {...props} />;
             }
           })}
-          {/*<ActiveElement />*/}
         </Layer>
       </Stage>
       <ActiveElementEdit />
