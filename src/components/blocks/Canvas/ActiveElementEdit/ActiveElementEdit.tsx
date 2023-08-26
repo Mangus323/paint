@@ -1,10 +1,7 @@
-import React, {
-  JSX,
-  MouseEvent as ReactMouseEvent,
-  useEffect,
-  useState
-} from "react";
+import React, { JSX, useContext, useEffect, useState } from "react";
+import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { Button } from "@/components/elements/Button/Button";
+import { sidebarDimension as sd } from "@/globals/sidebar";
 import usePrevious from "@/hooks/usePrevious";
 import { edit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
@@ -17,70 +14,49 @@ export const ActiveElementEdit = (): JSX.Element => {
   );
   const { isActiveElement, activeElement } = useActiveElement();
   const dispatch = useAppDispatch();
-  const [lastPosition, setLastPosition] = useState({ x: 0, y: 0 });
-  const previousLastPosition = usePrevious<typeof lastPosition>(lastPosition);
-  const [renderTime, setRenderTime] = useState(0);
+  const position = useContext(MousePositionContext);
+  const previousLastPosition = usePrevious<typeof position>(position);
   const [action, setAction] = useState<string | null>(null);
+  const [originalAngle, setOriginalAngle] = useState(0);
 
-  const onMouseDownDrag = (e: ReactMouseEvent<HTMLButtonElement>) => {
-    setLastPosition({ x: e.clientX, y: e.clientY });
+  const onMouseDownDrag = () => {
     setAction("drag");
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUpDrag);
+    document.addEventListener("mouseup", onMouseUp);
   };
 
-  const onMouseDownRotation = (e: ReactMouseEvent<HTMLButtonElement>) => {
-    setLastPosition({ x: e.clientX, y: e.clientY });
+  const onMouseDownRotation = () => {
     setAction("rotation");
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseup", onMouseUpRotation);
+    document.addEventListener("mouseup", onMouseUp);
+    setOriginalAngle(activeElement.rotation || 0);
   };
 
-  const onMouseMove = (e: MouseEvent) => {
-    setLastPosition({
-      x: e.clientX,
-      y: e.clientY
-    });
-  };
-
-  const onMouseUpDrag = () => {
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUpDrag);
+  const onMouseUp = () => {
+    document.removeEventListener("mouseup", onMouseUp);
     setAction(null);
-    setRenderTime(1);
-  };
-
-  const onMouseUpRotation = () => {
-    document.removeEventListener("mousemove", onMouseMove);
-    document.removeEventListener("mouseup", onMouseUpRotation);
-    setAction(null);
-    setRenderTime(1);
   };
 
   useEffect(() => {
-    if (renderTime < 2) {
-      setRenderTime(renderTime + 1);
-      return;
-    }
+    if (!action) return;
     if (isActiveElement && previousLastPosition) {
       if (action === "drag" && "x" in activeElement) {
         dispatch(
           edit({
-            x: activeElement.x - previousLastPosition.x + lastPosition.x,
-            y: activeElement.y - previousLastPosition.y + lastPosition.y
+            x: activeElement.x - previousLastPosition.x + position.x,
+            y: activeElement.y - previousLastPosition.y + position.y
           })
         );
       }
       if (action === "rotation" && "x" in activeElement) {
-        let rotate = (activeElement.x - lastPosition.x) / 2;
+        const angle =
+          (activeElement.x - position.x + sd.width + 22) / 2 + originalAngle;
         dispatch(
           edit({
-            rotation: rotate
+            rotation: angle
           })
         );
       }
     }
-  }, [lastPosition]);
+  }, [position]);
 
   if (isActiveElement && activeElementMeta && activeElementMeta.width !== 0)
     return (
@@ -88,8 +64,9 @@ export const ActiveElementEdit = (): JSX.Element => {
         className={s.container}
         style={{
           width: activeElementMeta?.width || 0,
-          left: activeElementMeta.x || 0,
-          top: activeElementMeta.y - 5 || 0
+          transform: `translate(${activeElementMeta.x || 0}px, ${
+            activeElementMeta.y - 5 || 0
+          }px)`
         }}>
         <div className={s.buttons}>
           <Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>

@@ -7,6 +7,7 @@ import { Image as KonvaImage } from "react-konva";
 import ImageConfig = Konva.ImageConfig;
 
 export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
+  const { x, y } = props;
   const dispatch = useAppDispatch();
   const [image, setImage] = useState<HTMLImageElement | undefined>(undefined);
 
@@ -18,14 +19,14 @@ export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
     if (image) {
       dispatch(
         changeMeta({
-          x: props.x,
-          y: props.y,
+          x: x,
+          y: y,
           width: image.width,
           height: image.height
         })
       );
     }
-  }, [image]);
+  }, [image, x, y]);
 
   function loadImage() {
     const image = new window.Image();
