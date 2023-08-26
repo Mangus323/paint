@@ -28,6 +28,28 @@ export const calculateMeta = (current: any, tool: ToolType) => {
         y: attrs.y - attrs.radiusY
       };
       break;
+    case "pen":
+    case "eraser":
+    case "line": {
+      result = {};
+      const p = attrs.points;
+      let min = Infinity,
+        max = 0;
+      for (let i = 0; i < p.length; i += 2) {
+        min = Math.min(min, p[i]);
+        max = Math.max(max, p[i]);
+      }
+      result.width = max - min;
+      result.x = min + attrs.x;
+      min = Infinity;
+      max = 0;
+      for (let i = 1; i < p.length; i += 2) {
+        min = Math.min(min, p[i]);
+        max = Math.max(max, p[i]);
+      }
+      result.height = max - min;
+      result.y = min + attrs.y;
+    }
   }
   return result;
 };

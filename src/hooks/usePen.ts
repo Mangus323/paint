@@ -14,13 +14,15 @@ export const usePen = () => {
   const { activeElement, isActiveElement } = useActiveElement();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (tool === "pen" || tool === "eraser") {
+    if (tool === "pen" || tool === "eraser" || tool === "line") {
       isDrawing.current = true;
       const { x, y } = getPoints(e);
       dispatch(
         placeAndEdit({
           points: [x, y],
-          tool: tool
+          tool: tool,
+          x: 0,
+          y: 0
         })
       );
     }
@@ -31,6 +33,17 @@ export const usePen = () => {
       return;
     }
     if (isActiveElement && "points" in activeElement) {
+      if (tool === "line") {
+        let p1 = activeElement.points[0];
+        let p2 = activeElement.points[1];
+        dispatch(
+          edit({
+            points: [p1, p2, x, y]
+          })
+        );
+        return;
+      }
+
       dispatch(
         edit({
           points: activeElement.points.concat([x, y])

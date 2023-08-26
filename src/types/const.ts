@@ -4,5 +4,6 @@ export const ToolList = [
   "text",
   "eraser",
   "ellipse",
+  "line",
   "image"
 ] as const;

@@ -14,8 +14,8 @@ export interface IFigure extends IBaseElement, Vector2d {
   height: number;
 }
 
-export interface IPen extends IBaseElement {
-  tool: "pen" | "eraser";
+export interface IPen extends IBaseElement, Vector2d {
+  tool: "pen" | "eraser" | "line";
   points: number[];
 }
 
@@ -29,11 +29,9 @@ export interface IArrow extends IBaseElement {
   tool: "arrow";
 }
 
-export interface IImage extends IBaseElement {
+export interface IImage extends IBaseElement, Vector2d {
   tool: "image";
   src: string | ArrayBuffer;
-  x: number;
-  y: number;
 }
 
 export type IElement = IPen | IFigure | IText | IArrow | IImage;

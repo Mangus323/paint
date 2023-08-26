@@ -69,6 +69,11 @@ export const counterSlice = createSlice({
       if (state.history.length) state.elements.push(state.history.pop());
     },
     stopDraw: state => {
+      let last = state.elements[state.elements.length - 1];
+      if (last && "width" in last && last.width === 0) {
+        state.isActiveElement = false;
+        state.elements.pop();
+      }
       state.isDrawing = false;
     },
     setIsDownloading: (state, action: PayloadAction<boolean>) => {

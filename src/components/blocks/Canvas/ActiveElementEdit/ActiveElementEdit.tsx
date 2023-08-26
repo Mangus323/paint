@@ -58,7 +58,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     }
   }, [position]);
 
-  if (isActiveElement && activeElementMeta && activeElementMeta.width !== 0)
+  if (isActiveElement && activeElementMeta && activeElementMeta)
     return (
       <div
         className={s.container}

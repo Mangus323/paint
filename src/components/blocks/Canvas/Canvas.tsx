@@ -61,6 +61,7 @@ export const Canvas = (): JSX.Element => {
                 // @ts-ignore
                 return <CustomEllipse {...props} />;
               case "pen":
+              case "line":
                 return (
                   <Line
                     {...props}

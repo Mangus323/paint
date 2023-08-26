@@ -9,6 +9,7 @@ import ArrowLeftIcon from "~public/icons/ArrowLeft.svg";
 import ArrowRightIcon from "~public/icons/ArrowRight.svg";
 import CircleIcon from "~public/icons/Circle.svg";
 import EraserIcon from "~public/icons/Eraser.svg";
+import LineIcon from "~public/icons/Line.svg";
 import PencilIcon from "~public/icons/Pencil.svg";
 import SquareIcon from "~public/icons/Square.svg";
 import TextIcon from "~public/icons/Text.svg";
@@ -32,7 +33,8 @@ export const ToolPicker = (): JSX.Element => {
     PencilIcon,
     TextIcon,
     EraserIcon,
-    CircleIcon
+    CircleIcon,
+    LineIcon
   ];
 
   return (
