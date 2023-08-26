@@ -36,6 +36,11 @@ export const counterSlice = createSlice({
         color: state.selectedColor,
         ...action.payload
       });
+
+      if ("src" in action.payload) {
+        state.isDrawing = false;
+        state.selectedTool = "image";
+      }
     },
     edit: (state, action: PayloadAction<Partial<IElement>>) => {
       // @ts-ignore

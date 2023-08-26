@@ -7,6 +7,8 @@ import { useMouseHandlers } from "@/hooks/useMouseHandlers";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/editActiveElement/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { calculateMeta } from "@/utils/calculateMeta";
+import Konva from "konva";
 import { Layer, Line, Rect, Stage, Text } from "react-konva";
 import s from "./index.module.scss";
 
@@ -22,43 +24,15 @@ export const Canvas = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const { handleMouseDown, handleMouseMove, handleMouseUp, handleClick } =
     useMouseHandlers();
-  const stageRef = useRef<any>(null);
+  const stageRef = useRef<Konva.Stage>(null);
   useDownloadingImage(stageRef);
   const lastElementRef = useRef<any>(null);
   const { activeElement, isActiveElement } = useActiveElement();
 
   useEffect(() => {
-    if (lastElementRef.current && isDrawing === false && isActiveElement) {
-      let width, height, x, y;
-      const attrs = lastElementRef.current.attrs;
-      switch (tool) {
-        case "text":
-          width = lastElementRef.current?.textWidth || 0;
-          height = lastElementRef.current?.textHeight || 0;
-          x = attrs.x;
-          y = attrs.y;
-          break;
-        case "rect":
-          width = Math.abs(attrs.width);
-          height = Math.abs(attrs.height);
-          x = attrs.width < 0 ? attrs.x + attrs.width : attrs.x;
-          y = attrs.height < 0 ? attrs.y + attrs.height : attrs.y;
-          break;
-        case "ellipse":
-          width = attrs.radiusX * 2;
-          height = attrs.radiusY * 2;
-          x = attrs.x - attrs.radiusX;
-          y = attrs.y - attrs.radiusY;
-      }
-      dispatch(
-        changeMeta({
-          width,
-          height,
-          x,
-          y
-        })
-      );
-    }
+    if (!(lastElementRef.current && !isDrawing && isActiveElement)) return;
+    const meta = calculateMeta(lastElementRef.current, tool);
+    if (meta) dispatch(changeMeta(meta));
   }, [isDrawing, activeElement, isActiveElement]);
 
   return (
@@ -73,10 +47,11 @@ export const Canvas = (): JSX.Element => {
         ref={stageRef}>
         <Layer>
           {elements.map((element, index, array) => {
+            const { tool, ...elementProps } = element;
             const props = {
               ref: index === array.length - 1 ? lastElementRef : undefined,
               key: index,
-              ...element
+              ...elementProps
             };
 
             switch (element.tool) {

@@ -8,6 +8,7 @@ import React, {
   useRef
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { sidebarDimension } from "@/globals/sidebar";
 import { edit, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -44,24 +45,23 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const clipboardPaste = useCallback((e: Event) => {
     let clipboardData = (e as ClipboardEvent).clipboardData;
     if (!clipboardData) return;
+    if (!clipboardData.files || !clipboardData.files[0]) return;
     const reader = new FileReader();
-    if (clipboardData.files && clipboardData.files[0]) {
-      if (clipboardData.files[0].type.match(/^image\//)) {
-        const file = clipboardData.files[0];
-        let { x, y } = positionRef.current;
-        reader.onloadend = () => {
-          if (reader.result)
-            dispatch(
-              placeAndEdit({
-                tool: "image",
-                src: reader.result,
-                x,
-                y
-              })
-            );
-        };
-        reader.readAsDataURL(file);
-      }
+    if (clipboardData.files[0].type.match(/^image\//)) {
+      const file = clipboardData.files[0];
+      let { x, y } = positionRef.current;
+      reader.onloadend = () => {
+        if (!reader.result) return;
+        dispatch(
+          placeAndEdit({
+            tool: "image",
+            src: reader.result,
+            x: x - sidebarDimension.width,
+            y: y - sidebarDimension.height
+          })
+        );
+      };
+      reader.readAsDataURL(file);
     }
   }, []);
 

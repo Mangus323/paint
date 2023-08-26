@@ -1,12 +1,31 @@
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
+import { changeMeta } from "@/redux/slices/editActiveElement/reducer";
+import { useAppDispatch } from "@/redux/store";
+import Konva from "konva";
 import { Image as KonvaImage } from "react-konva";
 
-export const CanvasImage = props => {
-  const [image, setImage] = useState<any>(undefined);
+import ImageConfig = Konva.ImageConfig;
+
+export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
+  const dispatch = useAppDispatch();
+  const [image, setImage] = useState<HTMLImageElement | undefined>(undefined);
 
   useEffect(() => {
     loadImage();
   }, [props.src]);
+
+  useEffect(() => {
+    if (image) {
+      dispatch(
+        changeMeta({
+          x: props.x,
+          y: props.y,
+          width: image.width,
+          height: image.height
+        })
+      );
+    }
+  }, [image]);
 
   function loadImage() {
     const image = new window.Image();
@@ -16,5 +35,7 @@ export const CanvasImage = props => {
     };
   }
 
-  return <KonvaImage image={image} x={props.x} y={props.y}></KonvaImage>;
-};
+  return <KonvaImage {...props} image={image} ref={ref}></KonvaImage>;
+});
+
+CanvasImage.displayName = "CanvasImage";
