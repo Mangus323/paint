@@ -1,4 +1,5 @@
-import { ToolType } from "@/types/canvas";
+import { sidebarDimension } from "@/globals/sidebar";
+import { IElementMeta, ToolType } from "@/types/canvas";
 
 export const calculateMeta = (current: any, tool: ToolType) => {
   let result;
@@ -52,4 +53,17 @@ export const calculateMeta = (current: any, tool: ToolType) => {
     }
   }
   return result;
+};
+
+export const calculateMetaSelection = (rawMeta: IElementMeta) => {
+  return calculateMeta(
+    {
+      attrs: {
+        ...rawMeta,
+        x: rawMeta.x - sidebarDimension.width,
+        y: rawMeta.y - sidebarDimension.height
+      }
+    },
+    "rect"
+  );
 };

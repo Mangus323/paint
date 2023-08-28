@@ -8,7 +8,7 @@
 
 .buttons {
   position: absolute;
-  bottom: 2px;
+  bottom: calc(2px + 100%);
   left: 0;
   display: flex;
   gap: 1px;
@@ -20,4 +20,11 @@
 
 .buttons__rotation {
   cursor: e-resize !important;
+}
+
+.selection {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px dashed var(--black);
 }

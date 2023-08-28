@@ -10,6 +10,7 @@ export interface CanvasState {
   isActiveElement: boolean;
   isDrawing: boolean;
   isDownloading: boolean;
+  isCopying: boolean;
 }
 
 const initialState: CanvasState = {
@@ -19,7 +20,8 @@ const initialState: CanvasState = {
   elements: [],
   isActiveElement: false,
   isDrawing: false,
-  isDownloading: false
+  isDownloading: false,
+  isCopying: false
 };
 
 export const counterSlice = createSlice({
@@ -58,7 +60,7 @@ export const counterSlice = createSlice({
       state.selectedTool = action.payload;
     },
     changeColor: (state, action: PayloadAction<string>) => {
-      if (state.isActiveElement)
+      if (state.isActiveElement && state.elements.length)
         state.elements[state.elements.length - 1].color = action.payload;
       state.selectedColor = action.payload;
     },
@@ -79,6 +81,9 @@ export const counterSlice = createSlice({
     setIsDownloading: (state, action: PayloadAction<boolean>) => {
       state.isDownloading = action.payload;
     },
+    setIsCopying: (state, action: PayloadAction<boolean>) => {
+      state.isCopying = action.payload;
+    },
     openFromFile: (state, action: PayloadAction<string | ArrayBuffer>) => {
       state.history = [];
       state.isActiveElement = false;
@@ -90,6 +95,9 @@ export const counterSlice = createSlice({
           y: 0
         }
       ];
+    },
+    setIsActiveElement: (state, action: PayloadAction<boolean>) => {
+      state.isActiveElement = action.payload;
     }
   }
 });
@@ -104,7 +112,9 @@ export const {
   changeTool,
   stopDraw,
   setIsDownloading,
-  openFromFile
+  openFromFile,
+  setIsActiveElement,
+  setIsCopying
 } = counterSlice.actions;
 
 export default counterSlice.reducer;

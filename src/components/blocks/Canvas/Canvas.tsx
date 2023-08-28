@@ -2,10 +2,12 @@ import React, { JSX, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { CanvasImage } from "@/components/elements/Canvas/CanvasImage/CanvasImage";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
-import { useDownloadingImage } from "@/hooks/useDownloadingImage";
+import { useCopySelection } from "@/hooks/ref/useCopySelection";
+import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
+import { useSelection } from "@/hooks/useSelection";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
-import { changeMeta } from "@/redux/slices/editActiveElement/reducer";
+import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { calculateMeta } from "@/utils/calculateMeta";
 import Konva from "konva";
@@ -26,6 +28,8 @@ export const Canvas = (): JSX.Element => {
     useMouseHandlers();
   const stageRef = useRef<Konva.Stage>(null);
   useDownloadingImage(stageRef);
+  useCopySelection(stageRef);
+  useSelection();
   const lastElementRef = useRef<any>(null);
   const { activeElement, isActiveElement } = useActiveElement();
 
@@ -53,7 +57,6 @@ export const Canvas = (): JSX.Element => {
               key: index,
               ...elementProps
             };
-
             switch (element.tool) {
               case "rect":
                 return <Rect fill={element.color} {...props} />;

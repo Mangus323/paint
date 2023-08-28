@@ -1,5 +1,5 @@
 import { forwardRef, useEffect, useState } from "react";
-import { changeMeta } from "@/redux/slices/editActiveElement/reducer";
+import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch } from "@/redux/store";
 import Konva from "konva";
 import { Image as KonvaImage } from "react-konva";

@@ -6,11 +6,12 @@ import usePrevious from "@/hooks/usePrevious";
 import { edit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { calculateMetaSelection } from "@/utils/calculateMeta";
 import s from "./index.module.scss";
 
 export const ActiveElementEdit = (): JSX.Element => {
-  const { activeElementMeta } = useAppSelector(
-    state => state.editActiveElement
+  const { activeElementMeta, selection } = useAppSelector(
+    state => state.canvasMeta
   );
   const { isActiveElement, activeElement } = useActiveElement();
   const dispatch = useAppDispatch();
@@ -27,7 +28,8 @@ export const ActiveElementEdit = (): JSX.Element => {
   const onMouseDownRotation = () => {
     setAction("rotation");
     document.addEventListener("mouseup", onMouseUp);
-    setOriginalAngle(activeElement.rotation || 0);
+    if ("rotation" in activeElement)
+      setOriginalAngle(activeElement.rotation || 0);
   };
 
   const onMouseUp = () => {
@@ -58,12 +60,31 @@ export const ActiveElementEdit = (): JSX.Element => {
     }
   }, [position]);
 
-  if (isActiveElement && activeElementMeta && activeElementMeta)
+  if (selection) {
+    const dimension = calculateMetaSelection(selection);
+    return (
+      <div
+        className={s.selection}
+        style={{
+          width: dimension.width || 0,
+          height: dimension.height || 0,
+          transform: `translate(${dimension.x || 0}px, ${dimension.y || 0}px)`
+        }}>
+        <div className={s.buttons}>
+          {/*<Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>*/}
+          {/*  d*/}
+          {/*</Button>*/}
+        </div>
+      </div>
+    );
+  }
+
+  if (isActiveElement && activeElementMeta)
     return (
       <div
         className={s.container}
         style={{
-          width: activeElementMeta?.width || 0,
+          width: activeElementMeta.width || 0,
           transform: `translate(${activeElementMeta.x || 0}px, ${
             activeElementMeta.y - 5 || 0
           }px)`

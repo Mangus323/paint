@@ -9,7 +9,13 @@ import React, {
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { sidebarDimension } from "@/globals/sidebar";
-import { edit, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
+import {
+  edit,
+  placeAndEdit,
+  redo,
+  setIsCopying,
+  undo
+} from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
@@ -21,9 +27,9 @@ interface KeyboardListenerProps {
 
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
-  const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const position = useContext(MousePositionContext);
+  const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
   const { isActiveElement, activeElement } = useActiveElement();
   const positionRef = useRef(position);
   const isActiveText = isActiveElement && tool === "text";
@@ -65,6 +71,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     }
   }, []);
 
+  const clipboardCopy = useCallback(() => {
+    dispatch(setIsCopying(true));
+  }, []);
+
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     dispatch(edit({ text: e.target.value }));
   };
@@ -72,9 +82,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   useEffect(() => {
     document.addEventListener("keypress", listener);
     window.addEventListener("paste", clipboardPaste);
+    window.addEventListener("copy", clipboardCopy);
     return () => {
       document.removeEventListener("keypress", listener);
       window.removeEventListener("paste", clipboardPaste);
+      window.removeEventListener("copy", clipboardCopy);
     };
   }, []);
 

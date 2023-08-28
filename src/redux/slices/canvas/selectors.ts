@@ -1,12 +1,13 @@
-import { RootState, useAppSelector } from "@/redux/store";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 const getActiveElementSelector = createSelector(
   (state: RootState) => state.canvas,
   canvas => ({
-    activeElement: canvas.elements[canvas.elements.length - 1],
-    isActiveElement: canvas.isActiveElement
+    activeElement: canvas.elements[canvas.elements.length - 1] || null,
+    isActiveElement: canvas.isActiveElement || false
   })
 );
 
-export const useActiveElement = () => useAppSelector(getActiveElementSelector);
+export const useActiveElement = () => useSelector(getActiveElementSelector);

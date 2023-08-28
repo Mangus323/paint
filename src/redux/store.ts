@@ -2,13 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import browserReducer from "./slices/browser/reducer";
 import canvasReducer from "./slices/canvas/reducer";
-import editActiveElementReducer from "./slices/editActiveElement/reducer";
+import canvasMeta from "./slices/canvasMeta/reducer";
 
 export const store = configureStore({
   reducer: {
     canvas: canvasReducer,
     browser: browserReducer,
-    editActiveElement: editActiveElementReducer
+    canvasMeta: canvasMeta
   }
 });
 export type RootState = ReturnType<typeof store.getState>;

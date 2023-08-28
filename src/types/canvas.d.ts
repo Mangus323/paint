@@ -34,13 +34,15 @@ export interface IImage extends IBaseElement, Vector2d {
   src: string | ArrayBuffer;
 }
 
-export type IElement = IPen | IFigure | IText | IArrow | IImage;
+export interface ISelection extends IBaseElement {
+  tool: "selection";
+}
 
-export interface IElementMeta {
+export type IElement = IPen | IFigure | IText | IArrow | IImage | ISelection;
+
+export interface IElementMeta extends Vector2d {
   width: number;
   height: number;
-  x: number;
-  y: number;
 }
 
 export type ToolType = (typeof ToolList)[number];
