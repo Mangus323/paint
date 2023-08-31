@@ -6,6 +6,8 @@ import Vector2d = Konva.Vector2d;
 interface IBaseElement {
   color?: string;
   rotation?: number;
+  scaleX?: number;
+  scaleY?: number;
 }
 
 export interface IFigure extends IBaseElement, Vector2d {

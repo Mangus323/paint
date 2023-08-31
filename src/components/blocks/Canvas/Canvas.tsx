@@ -6,23 +6,19 @@ import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
 import { useSelection } from "@/hooks/useSelection";
+import { edit, startDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { calculateMeta } from "@/utils/calculateMeta";
 import Konva from "konva";
-import { Layer, Line, Rect, Stage, Text } from "react-konva";
+import { Layer, Line, Rect, Stage, Text, Transformer } from "react-konva";
 import s from "./index.module.scss";
 
 const MemoImage = React.memo(CanvasImage);
 
 export const Canvas = (): JSX.Element => {
   const { canvasHeight, canvasWidth } = useAppSelector(state => state.browser);
-  const {
-    elements,
-    isDrawing,
-    selectedTool: tool
-  } = useAppSelector(state => state.canvas);
+  const { elements, isDrawing } = useAppSelector(state => state.canvas);
   const dispatch = useAppDispatch();
   const { handleMouseDown, handleMouseMove, handleMouseUp, handleClick } =
     useMouseHandlers();
@@ -32,12 +28,35 @@ export const Canvas = (): JSX.Element => {
   useSelection();
   const lastElementRef = useRef<any>(null);
   const { activeElement, isActiveElement } = useActiveElement();
+  const transformerRef = React.useRef<Konva.Transformer>(null);
+
+  const onTransformStart = () => {
+    dispatch(startDraw());
+  };
+
+  const onTransformEnd = () => {
+    const node = lastElementRef.current;
+    const { x, y } = node.scale();
+    dispatch(
+      edit({
+        scaleX: x,
+        scaleY: y
+      })
+    );
+  };
 
   useEffect(() => {
     if (!(lastElementRef.current && !isDrawing && isActiveElement)) return;
-    const meta = calculateMeta(lastElementRef.current, tool);
+    const meta = lastElementRef.current.getClientRect();
     if (meta) dispatch(changeMeta(meta));
   }, [isDrawing, activeElement, isActiveElement]);
+
+  useEffect(() => {
+    if (!isActiveElement || !transformerRef.current || !lastElementRef.current)
+      return;
+    transformerRef.current.nodes([lastElementRef.current]);
+    transformerRef.current.getLayer()?.batchDraw();
+  }, [activeElement]);
 
   return (
     <section className={s.container}>
@@ -52,8 +71,11 @@ export const Canvas = (): JSX.Element => {
         <Layer>
           {elements.map((element, index, array) => {
             const { tool, ...elementProps } = element;
+            const isLast = index === array.length - 1;
             const props = {
-              ref: index === array.length - 1 ? lastElementRef : undefined,
+              ref: isLast ? lastElementRef : undefined,
+              onTransformEnd: isLast ? onTransformEnd : undefined,
+              onTransformStart: isLast ? onTransformStart : undefined,
               key: index,
               ...elementProps
             };
@@ -90,6 +112,25 @@ export const Canvas = (): JSX.Element => {
                 return <MemoImage {...props} />;
             }
           })}
+          {isActiveElement && (
+            <Transformer
+              ref={transformerRef}
+              onMouseDown={e => {
+                e.cancelBubble = true;
+              }}
+              boundBoxFunc={(oldBox, newBox) => {
+                if (newBox.width < 2 || newBox.height < 2) return oldBox;
+                return newBox;
+              }}
+              rotateEnabled={false}
+              borderStroke={"#070d14"}
+              borderStrokeWidth={isDrawing ? 0 : 2}
+              anchorCornerRadius={1}
+              anchorSize={isDrawing ? 0 : 8}
+              anchorStrokeWidth={1}
+              anchorStroke={"#c4dfdf"}
+            />
+          )}
         </Layer>
       </Stage>
       <ActiveElementEdit />

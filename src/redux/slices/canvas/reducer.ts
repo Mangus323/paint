@@ -78,6 +78,9 @@ export const counterSlice = createSlice({
       }
       state.isDrawing = false;
     },
+    startDraw: state => {
+      state.isDrawing = true;
+    },
     setIsDownloading: (state, action: PayloadAction<boolean>) => {
       state.isDownloading = action.payload;
     },
@@ -111,6 +114,7 @@ export const {
   redo,
   changeTool,
   stopDraw,
+  startDraw,
   setIsDownloading,
   openFromFile,
   setIsActiveElement,

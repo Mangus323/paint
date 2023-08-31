@@ -13,6 +13,7 @@ export const ActiveElementEdit = (): JSX.Element => {
   const { activeElementMeta, selection } = useAppSelector(
     state => state.canvasMeta
   );
+  const { isDrawing } = useAppSelector(state => state.canvas);
   const { isActiveElement, activeElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const position = useContext(MousePositionContext);
@@ -79,14 +80,13 @@ export const ActiveElementEdit = (): JSX.Element => {
     );
   }
 
-  if (isActiveElement && activeElementMeta)
+  if (isActiveElement && activeElementMeta && !isDrawing)
     return (
       <div
         className={s.container}
         style={{
-          width: activeElementMeta.width || 0,
-          transform: `translate(${activeElementMeta.x || 0}px, ${
-            activeElementMeta.y - 5 || 0
+          transform: `translate(${activeElementMeta.x + 5 || 0}px, ${
+            activeElementMeta.y || 0
           }px)`
         }}>
         <div className={s.buttons}>
