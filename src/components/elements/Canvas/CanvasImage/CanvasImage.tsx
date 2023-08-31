@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useState } from "react";
+import { edit } from "@/redux/slices/canvas/reducer";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch } from "@/redux/store";
 import Konva from "konva";
@@ -33,10 +34,16 @@ export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
     image.src = props.src;
     image.onload = () => {
       setImage(image);
+      dispatch(edit({}));
     };
   }
 
-  return <KonvaImage {...props} image={image} ref={ref}></KonvaImage>;
+  return (
+    <KonvaImage
+      {...props}
+      image={image}
+      ref={image ? ref : undefined}></KonvaImage>
+  );
 });
 
 CanvasImage.displayName = "CanvasImage";

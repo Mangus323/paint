@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
-import { setIsActiveElement } from "@/redux/slices/canvas/reducer";
 import {
   editSelect,
   endSelecting,
@@ -38,7 +37,6 @@ export const useSelection = () => {
 
   const onMouseUp = () => {
     dispatch(endSelecting());
-    dispatch(setIsActiveElement(true));
   };
 
   useEffect(() => {
