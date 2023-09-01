@@ -13,10 +13,12 @@ import {
   edit,
   placeAndEdit,
   redo,
+  setIsActiveElement,
   setIsCopying,
   undo
 } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
 import s from "./index.module.scss";
@@ -28,11 +30,13 @@ interface KeyboardListenerProps {
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const canvasDimension = useAppSelector(state => state.browser);
   const position = useContext(MousePositionContext);
-  const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
   const { isActiveElement, activeElement } = useActiveElement();
-  const positionRef = useRef(position);
   const isActiveText = isActiveElement && tool === "text";
+  const positionRef = useRef(position);
+  const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
+  const canvasDimensionRef = useRef(canvasDimension);
 
   const listener = useCallback((e: KeyboardEvent) => {
     if (e.ctrlKey) {
@@ -42,6 +46,20 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           return;
         case "KeyY":
           dispatch(redo());
+          return;
+        case "KeyA":
+          e.preventDefault();
+          console.log({
+            width: canvasDimensionRef.current.canvasWidth,
+            height: canvasDimensionRef.current.canvasHeight
+          });
+          dispatch(
+            selectAll({
+              width: canvasDimensionRef.current.canvasWidth,
+              height: canvasDimensionRef.current.canvasHeight
+            })
+          );
+          dispatch(setIsActiveElement(false));
           return;
       }
     }
@@ -80,11 +98,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   };
 
   useEffect(() => {
-    document.addEventListener("keypress", listener);
+    document.addEventListener("keydown", listener);
     window.addEventListener("paste", clipboardPaste);
     window.addEventListener("copy", clipboardCopy);
     return () => {
-      document.removeEventListener("keypress", listener);
+      document.removeEventListener("keydown", listener);
       window.removeEventListener("paste", clipboardPaste);
       window.removeEventListener("copy", clipboardCopy);
     };
@@ -99,6 +117,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       pseudoInputRef?.current?.focus();
     }
   }, [activeElement, tool]);
+
+  useEffect(() => {
+    canvasDimensionRef.current = canvasDimension;
+  }, [canvasDimension]);
 
   return (
     <>

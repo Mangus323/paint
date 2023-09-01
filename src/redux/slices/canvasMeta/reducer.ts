@@ -1,3 +1,4 @@
+import { sidebarDimension } from "@/globals/sidebar";
 import { IElementMeta } from "@/types/canvas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -50,11 +51,29 @@ export const counterSlice = createSlice({
       state.isSelecting = false;
       if (!state.selection) return;
       state.activeElementMeta = null;
+    },
+    selectAll: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>
+    ) => {
+      state.selection = {
+        x: sidebarDimension.width,
+        y: sidebarDimension.height,
+        width: action.payload.width,
+        height: action.payload.height
+      };
+      state.isSelecting = false;
+      state.activeElementMeta = null;
     }
   }
 });
 
-export const { changeMeta, endSelecting, startSelecting, editSelect } =
-  counterSlice.actions;
+export const {
+  changeMeta,
+  endSelecting,
+  startSelecting,
+  editSelect,
+  selectAll
+} = counterSlice.actions;
 
 export default counterSlice.reducer;

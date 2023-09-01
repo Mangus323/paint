@@ -1,7 +1,7 @@
 import React, { JSX, useContext, useEffect, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { Button } from "@/components/elements/Button/Button";
-import { sidebarDimension as sd } from "@/globals/sidebar";
+import { sidebarDimension as sd, sidebarDimension } from "@/globals/sidebar";
 import usePrevious from "@/hooks/usePrevious";
 import { edit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
@@ -80,14 +80,17 @@ export const ActiveElementEdit = (): JSX.Element => {
     );
   }
 
-  if (isActiveElement && activeElementMeta && !isDrawing)
+  if (isActiveElement && activeElementMeta && !isDrawing) {
+    const x = activeElementMeta.x + 5 < 0 ? 0 : activeElementMeta.x + 5;
+    const y =
+      activeElementMeta.y + 8 < sidebarDimension.height
+        ? sidebarDimension.height - 10
+        : activeElementMeta.y - 2;
     return (
       <div
         className={s.container}
         style={{
-          transform: `translate(${activeElementMeta.x + 5 || 0}px, ${
-            activeElementMeta.y || 0
-          }px)`
+          transform: `translate(${x}px, ${y}px)`
         }}>
         <div className={s.buttons}>
           <Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>
@@ -101,6 +104,6 @@ export const ActiveElementEdit = (): JSX.Element => {
         </div>
       </div>
     );
-
+  }
   return <></>;
 };

@@ -124,6 +124,7 @@ export const {
   setIsDownloading,
   openFromFile,
   setIsActiveElement,
+
   setIsCopying
 } = counterSlice.actions;
 
