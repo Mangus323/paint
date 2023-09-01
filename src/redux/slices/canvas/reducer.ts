@@ -65,10 +65,16 @@ export const counterSlice = createSlice({
       state.selectedColor = action.payload;
     },
     undo: state => {
-      if (state.elements.length) state.history.push(state.elements.pop());
+      state.isActiveElement = state.elements.length > 1;
+      if (state.elements.length) {
+        state.history.push(state.elements.pop());
+      }
     },
     redo: state => {
-      if (state.history.length) state.elements.push(state.history.pop());
+      if (state.history.length) {
+        state.elements.push(state.history.pop());
+        state.isActiveElement = true;
+      }
     },
     stopDraw: state => {
       let last = state.elements[state.elements.length - 1];
