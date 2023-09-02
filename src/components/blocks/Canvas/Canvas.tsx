@@ -56,7 +56,7 @@ export const Canvas = (): JSX.Element => {
       return;
     transformerRef.current.nodes([lastElementRef.current]);
     transformerRef.current.getLayer()?.batchDraw();
-  }, [activeElement]);
+  }, [activeElement, isActiveElement]);
 
   return (
     <section className={s.container}>

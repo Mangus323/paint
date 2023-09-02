@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { edit, placeAndEdit, stopDraw } from "@/redux/slices/canvas/reducer";
+import { edit, placeAndEdit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
@@ -45,7 +45,6 @@ export const useFigure = () => {
 
   const handleMouseUp = () => {
     isDrawing.current = false;
-    dispatch(stopDraw());
   };
 
   return {

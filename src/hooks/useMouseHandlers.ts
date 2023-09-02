@@ -1,7 +1,7 @@
 import { useFigure } from "@/hooks/useFigure";
 import { usePen } from "@/hooks/usePen";
 import { useText } from "@/hooks/useText";
-import { place } from "@/redux/slices/canvas/reducer";
+import { place, stopDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
@@ -46,6 +46,7 @@ export const useMouseHandlers = () => {
   const handleMouseUp = () => {
     penUp();
     figureUp();
+    dispatch(stopDraw());
   };
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {

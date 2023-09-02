@@ -11,6 +11,7 @@ import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListen
 import { sidebarDimension } from "@/globals/sidebar";
 import {
   edit,
+  place,
   placeAndEdit,
   redo,
   setIsActiveElement,
@@ -39,6 +40,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const canvasDimensionRef = useRef(canvasDimension);
 
   const listener = useCallback((e: KeyboardEvent) => {
+    switch (e.code) {
+      case "Escape":
+        dispatch(place());
+        return;
+    }
     if (e.ctrlKey) {
       switch (e.code) {
         case "KeyZ":
@@ -69,6 +75,27 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const clipboardPaste = useCallback((e: Event) => {
     let clipboardData = (e as ClipboardEvent).clipboardData;
     if (!clipboardData) return;
+    if (clipboardPasteText(clipboardData)) return;
+    clipboardPasteImage(clipboardData);
+  }, []);
+
+  const clipboardPasteText = (clipboardData: DataTransfer) => {
+    let text = clipboardData.getData("text/plain");
+    if (!text) return false;
+    const { x, y } = positionRef.current;
+    dispatch(
+      placeAndEdit({
+        tool: "text",
+        text,
+        rotation: 0,
+        x: x - sidebarDimension.width,
+        y: y - sidebarDimension.height
+      })
+    );
+    return true;
+  };
+
+  const clipboardPasteImage = (clipboardData: DataTransfer) => {
     if (!clipboardData.files || !clipboardData.files[0]) return;
     const reader = new FileReader();
     if (clipboardData.files[0].type.match(/^image\//)) {
@@ -87,7 +114,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       };
       reader.readAsDataURL(file);
     }
-  }, []);
+  };
 
   const clipboardCopy = useCallback(() => {
     dispatch(setIsCopying(true));

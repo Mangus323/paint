@@ -38,10 +38,12 @@ export const counterSlice = createSlice({
         color: state.selectedColor,
         ...action.payload
       });
-
       if ("src" in action.payload) {
         state.isDrawing = false;
         state.selectedTool = "image";
+      }
+      if ("text" in action.payload) {
+        state.isDrawing = false;
       }
     },
     edit: (state, action: PayloadAction<Partial<IElement>>) => {
@@ -65,6 +67,10 @@ export const counterSlice = createSlice({
       state.selectedColor = action.payload;
     },
     undo: state => {
+      if (!state.isActiveElement && state.elements.length) {
+        state.isActiveElement = true;
+        return;
+      }
       state.isActiveElement = state.elements.length > 1;
       if (state.elements.length) {
         state.history.push(state.elements.pop());
