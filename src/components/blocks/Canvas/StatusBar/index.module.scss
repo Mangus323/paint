@@ -1,0 +1,21 @@
+@import "src/styles/mixins";
+
+.container {
+  @include FontParagraph;
+
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 4px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.item {
+  padding: 2px 4px;
+  border: 1px solid var(--black);
+  border-radius: 4px;
+  background-color: var(--teal-100);
+}

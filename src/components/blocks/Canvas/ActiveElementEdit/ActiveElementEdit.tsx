@@ -14,6 +14,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     state => state.canvasMeta
   );
   const { isDrawing } = useAppSelector(state => state.canvas);
+  const { zoom } = useAppSelector(state => state.browser);
   const { isActiveElement, activeElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const position = useContext(MousePositionContext);
@@ -44,8 +45,8 @@ export const ActiveElementEdit = (): JSX.Element => {
       if (action === "drag" && "x" in activeElement) {
         dispatch(
           edit({
-            x: activeElement.x - previousLastPosition.x + position.x,
-            y: activeElement.y - previousLastPosition.y + position.y
+            x: activeElement.x - (previousLastPosition.x - position.x) / zoom,
+            y: activeElement.y - (previousLastPosition.y - position.y) / zoom
           })
         );
       }
@@ -59,7 +60,7 @@ export const ActiveElementEdit = (): JSX.Element => {
         );
       }
     }
-  }, [position]);
+  }, [position, zoom]);
 
   if (selection) {
     const dimension = calculateMetaSelection(selection);
