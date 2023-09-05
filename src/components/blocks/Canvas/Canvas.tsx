@@ -1,12 +1,12 @@
 import React, { JSX, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
+import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
 import { CanvasImage } from "@/components/elements/Canvas/CanvasImage/CanvasImage";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
-import { useSelection } from "@/hooks/useSelection";
 import { edit, startDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
@@ -25,21 +25,33 @@ import s from "./index.module.scss";
 
 const MemoImage = React.memo(CanvasImage);
 const MemoStatusBar = React.memo(StatusBar);
+const MemoScrollbar = React.memo(Scrollbar);
 
 export const Canvas = (): JSX.Element => {
-  const { canvasHeight, canvasWidth, zoom, layerWidth, layerHeight } =
-    useAppSelector(state => state.browser);
+  const {
+    canvasHeight,
+    canvasWidth,
+    zoom,
+    layerWidth,
+    layerHeight,
+    layerX,
+    layerY
+  } = useAppSelector(state => state.browser);
   const { elements, isDrawing } = useAppSelector(state => state.canvas);
   const dispatch = useAppDispatch();
-  const { handleMouseDown, handleMouseMove, handleMouseUp, handleClick } =
-    useMouseHandlers();
+  const lastElementRef = useRef<any>(null);
+  const transformerRef = React.useRef<Konva.Transformer>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  const {
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+    handleClick,
+    handleWheel
+  } = useMouseHandlers();
   useDownloadingImage(stageRef);
   useCopySelection(stageRef);
-  useSelection();
-  const lastElementRef = useRef<any>(null);
   const { activeElement, isActiveElement } = useActiveElement();
-  const transformerRef = React.useRef<Konva.Transformer>(null);
 
   const onTransformStart = () => {
     dispatch(startDraw());
@@ -74,12 +86,21 @@ export const Canvas = (): JSX.Element => {
       <Stage
         width={canvasWidth}
         height={canvasHeight}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
+        onWheel={handleWheel}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}
         ref={stageRef}>
         <Layer>
+          {/* Background */}
+          <Rect
+            x={0}
+            y={0}
+            width={canvasWidth}
+            height={canvasHeight}
+            fill={"#eeeeee"}
+          />
+        </Layer>
+        <Layer x={layerX} y={layerY}>
           <Group
             width={layerWidth}
             height={layerHeight}
@@ -88,7 +109,16 @@ export const Canvas = (): JSX.Element => {
             clipWidth={layerWidth}
             clipHeight={layerHeight}
             scaleY={zoom}
-            scaleX={zoom}>
+            scaleX={zoom}
+            onClick={handleClick}
+            onMouseDown={handleMouseDown}>
+            <Rect
+              x={0}
+              y={0}
+              width={layerWidth}
+              height={layerHeight}
+              fill={"#ffffff"}
+            />
             {elements.map((element, index, array) => {
               const { tool, ...elementProps } = element;
               const isLast = index === array.length - 1;
@@ -153,6 +183,7 @@ export const Canvas = (): JSX.Element => {
             )}
           </Group>
         </Layer>
+        <MemoScrollbar />
       </Stage>
       <ActiveElementEdit />
       <MemoStatusBar />

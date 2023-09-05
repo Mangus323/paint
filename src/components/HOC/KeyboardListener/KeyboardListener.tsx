@@ -8,7 +8,7 @@ import React, {
   useRef
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
-import { sidebarDimension } from "@/globals/sidebar";
+import { sidebarDimension } from "@/globals/globals";
 import {
   edit,
   place,

@@ -1,4 +1,4 @@
-import { sidebarDimension } from "@/globals/sidebar";
+import { sidebarDimension } from "@/globals/globals";
 import { IElementMeta } from "@/types/canvas";
 
 export const calculateMetaSelection = (rawMeta: IElementMeta) => {
