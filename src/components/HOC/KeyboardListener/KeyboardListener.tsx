@@ -8,7 +8,7 @@ import React, {
   useRef
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
-import { sidebarDimension } from "@/globals/globals";
+import { sidebarDimension as sd } from "@/globals/globals";
 import {
   edit,
   place,
@@ -31,13 +31,18 @@ interface KeyboardListenerProps {
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
-  const canvasDimension = useAppSelector(state => state.browser);
+  const { zoom, layerX, layerY, canvasWidth, canvasHeight } = useAppSelector(
+    state => state.browser
+  );
   const position = useContext(MousePositionContext);
   const { isActiveElement, activeElement } = useActiveElement();
   const isActiveText = isActiveElement && tool === "text";
-  const positionRef = useRef(position);
+  const coordinateRef = useRef(position);
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
-  const canvasDimensionRef = useRef(canvasDimension);
+  const canvasDimensionRef = useRef({
+    width: canvasWidth,
+    height: canvasHeight
+  });
 
   const listener = useCallback((e: KeyboardEvent) => {
     switch (e.code) {
@@ -55,14 +60,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           return;
         case "KeyA":
           e.preventDefault();
-          console.log({
-            width: canvasDimensionRef.current.canvasWidth,
-            height: canvasDimensionRef.current.canvasHeight
-          });
           dispatch(
             selectAll({
-              width: canvasDimensionRef.current.canvasWidth,
-              height: canvasDimensionRef.current.canvasHeight
+              width: canvasDimensionRef.current.width,
+              height: canvasDimensionRef.current.height
             })
           );
           dispatch(setIsActiveElement(false));
@@ -82,14 +83,14 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const clipboardPasteText = (clipboardData: DataTransfer) => {
     let text = clipboardData.getData("text/plain");
     if (!text) return false;
-    const { x, y } = positionRef.current;
+    const { x, y } = coordinateRef.current;
     dispatch(
       placeAndEdit({
         tool: "text",
         text,
         rotation: 0,
-        x: x - sidebarDimension.width,
-        y: y - sidebarDimension.height
+        x,
+        y
       })
     );
     return true;
@@ -100,15 +101,15 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     const reader = new FileReader();
     if (clipboardData.files[0].type.match(/^image\//)) {
       const file = clipboardData.files[0];
-      let { x, y } = positionRef.current;
+      let { x, y } = coordinateRef.current;
       reader.onloadend = () => {
         if (!reader.result) return;
         dispatch(
           placeAndEdit({
             tool: "image",
             src: reader.result,
-            x: x - sidebarDimension.width,
-            y: y - sidebarDimension.height
+            x,
+            y
           })
         );
       };
@@ -136,8 +137,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, []);
 
   useEffect(() => {
-    positionRef.current = position;
-  }, [position]);
+    coordinateRef.current = {
+      x: (position.x - sd.width - layerX) / zoom,
+      y: (position.y - sd.height - layerY) / zoom
+    };
+  }, [position, zoom, layerX, layerY]);
 
   useEffect(() => {
     if (isActiveText) {
@@ -146,8 +150,8 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, [activeElement, tool]);
 
   useEffect(() => {
-    canvasDimensionRef.current = canvasDimension;
-  }, [canvasDimension]);
+    canvasDimensionRef.current = { width: canvasWidth, height: canvasHeight };
+  }, [canvasWidth, canvasHeight]);
 
   return (
     <>

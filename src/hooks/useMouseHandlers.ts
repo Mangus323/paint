@@ -26,18 +26,24 @@ export const useMouseHandlers = () => {
     layerY,
     layerX
   } = useAppSelector(state => state.browser);
+
+  const offset = {
+    x: layerX,
+    y: layerY
+  };
+
   useSelection();
   const {
     handleMouseUp: penUp,
     handleMouseDown: penDown,
     handleMouseMove: penMove
-  } = usePen();
+  } = usePen(offset);
   const {
     handleMouseDown: figureDown,
     handleMouseMove: figureMove,
     handleMouseUp: figureUp
-  } = useFigure();
-  const { handleClick: handleTextClick } = useText();
+  } = useFigure(offset);
+  const { handleClick: handleTextClick } = useText(offset);
 
   const placePrevious = () => {
     if (isActiveElement) {
@@ -55,7 +61,7 @@ export const useMouseHandlers = () => {
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    let { x, y } = getPoints(e);
+    let { x, y } = getPoints(e, zoom, offset);
     penMove(x, y);
     figureMove(x, y);
   };

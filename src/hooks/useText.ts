@@ -4,14 +4,16 @@ import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 
 import KonvaEventObject = Konva.KonvaEventObject;
+import Vector2d = Konva.Vector2d;
 
-export const useText = () => {
+export const useText = (offset: Vector2d) => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const { zoom } = useAppSelector(state => state.browser);
   const dispatch = useAppDispatch();
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "text") {
-      const { x, y } = getPoints(e);
+      const { x, y } = getPoints(e, zoom, offset);
       dispatch(
         placeAndEdit({
           text: "",

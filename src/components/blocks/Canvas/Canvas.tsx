@@ -58,8 +58,7 @@ export const Canvas = (): JSX.Element => {
   };
 
   const onTransformEnd = () => {
-    const node = lastElementRef.current;
-    const { x, y } = node.scale();
+    const { x, y } = lastElementRef.current.scale();
     dispatch(
       edit({
         scaleX: x,
@@ -72,7 +71,7 @@ export const Canvas = (): JSX.Element => {
     if (!(lastElementRef.current && !isDrawing && isActiveElement)) return;
     const meta = lastElementRef.current.getClientRect();
     if (meta) dispatch(changeMeta(meta));
-  }, [isDrawing, activeElement, isActiveElement, zoom]);
+  }, [isDrawing, activeElement, isActiveElement, zoom, layerY, layerX]);
 
   useEffect(() => {
     if (!isActiveElement || !transformerRef.current || !lastElementRef.current)

@@ -6,9 +6,11 @@ import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 
 import KonvaEventObject = Konva.KonvaEventObject;
+import Vector2d = Konva.Vector2d;
 
-export const useFigure = () => {
+export const useFigure = (offset: Vector2d) => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const { zoom } = useAppSelector(state => state.browser);
   const { activeElement, isActiveElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const isDrawing = useRef(false);
@@ -16,7 +18,7 @@ export const useFigure = () => {
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "ellipse" || tool === "rect") {
       isDrawing.current = true;
-      const { x, y } = getPoints(e);
+      const { x, y } = getPoints(e, zoom, offset);
       dispatch(
         placeAndEdit({
           width: 0,
