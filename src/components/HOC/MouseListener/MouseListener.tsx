@@ -6,6 +6,7 @@ import React, {
   useState
 } from "react";
 import { zoom } from "@/redux/slices/browser/reducer";
+import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch } from "@/redux/store";
 import Konva from "konva";
 
@@ -32,12 +33,18 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
     }
   };
 
+  const onMouseOver = () => {
+    dispatch(stopDraw());
+  };
+
   useEffect(() => {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("wheel", onWheel, { passive: false });
+    document.addEventListener("mouseover", onMouseOver);
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("wheel", onWheel);
+      document.removeEventListener("mouseover", onMouseOver);
     };
   }, []);
 

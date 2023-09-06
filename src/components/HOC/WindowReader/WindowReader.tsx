@@ -1,6 +1,7 @@
 import React, { JSX, ReactNode, useEffect } from "react";
 import { sidebarDimension as sd, sp } from "@/globals/globals";
 import { set } from "@/redux/slices/browser/reducer";
+import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch } from "@/redux/store";
 
 interface WindowReaderProps {
@@ -9,6 +10,19 @@ interface WindowReaderProps {
 
 export const WindowReader = (props: WindowReaderProps): JSX.Element => {
   const dispatch = useAppDispatch();
+
+  const onResize = () => {
+    dispatch(
+      set({
+        canvasWidth: window.innerWidth - sd.width,
+        canvasHeight: window.innerHeight - sd.height
+      })
+    );
+  };
+
+  const onBlur = () => {
+    dispatch(stopDraw());
+  };
 
   useEffect(() => {
     dispatch(
@@ -27,18 +41,12 @@ export const WindowReader = (props: WindowReaderProps): JSX.Element => {
         }
       })
     );
-    const listener = () => {
-      dispatch(
-        set({
-          canvasWidth: window.innerWidth - sd.width,
-          canvasHeight: window.innerHeight - sd.height
-        })
-      );
-    };
-    listener();
-    window.addEventListener("resize", listener);
+    onResize();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("blur", onBlur);
     return () => {
-      window.removeEventListener("resize", listener);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("blur", onBlur);
     };
   }, []);
 

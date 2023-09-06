@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { edit, placeAndEdit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -9,15 +9,17 @@ import KonvaEventObject = Konva.KonvaEventObject;
 import Vector2d = Konva.Vector2d;
 
 export const usePen = (offset: Vector2d) => {
-  const { selectedTool: tool } = useAppSelector(state => state.canvas);
+  const { selectedTool: tool, isDrawing } = useAppSelector(
+    state => state.canvas
+  );
   const { zoom } = useAppSelector(state => state.browser);
   const dispatch = useAppDispatch();
-  const isDrawing = useRef(false);
+  const isDrawingRef = useRef(false);
   const { activeElement, isActiveElement } = useActiveElement();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "pen" || tool === "eraser" || tool === "line") {
-      isDrawing.current = true;
+      isDrawingRef.current = true;
       const { x, y } = getPoints(e, zoom, offset);
       dispatch(
         placeAndEdit({
@@ -31,7 +33,7 @@ export const usePen = (offset: Vector2d) => {
   };
 
   const handleMouseMove = (x: number, y: number) => {
-    if (!isDrawing.current) {
+    if (!isDrawingRef.current) {
       return;
     }
     if (isActiveElement && "points" in activeElement) {
@@ -55,8 +57,12 @@ export const usePen = (offset: Vector2d) => {
   };
 
   const handleMouseUp = () => {
-    isDrawing.current = false;
+    isDrawingRef.current = false;
   };
+
+  useEffect(() => {
+    if (!isDrawing) isDrawingRef.current = false;
+  }, [isDrawing]);
 
   return { handleMouseDown, handleMouseMove, handleMouseUp };
 };
