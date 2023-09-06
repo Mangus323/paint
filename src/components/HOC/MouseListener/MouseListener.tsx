@@ -7,15 +7,18 @@ import React, {
 } from "react";
 import { zoom } from "@/redux/slices/browser/reducer";
 import { useAppDispatch } from "@/redux/store";
+import Konva from "konva";
 
-export const MousePositionContext = createContext({ x: 0, y: 0 });
+import Vector2d = Konva.Vector2d;
+
+export const MousePositionContext = createContext<Vector2d>({ x: 0, y: 0 });
 
 interface MouseListenerProps {
   children: ReactNode;
 }
 
 export const MouseListener = (props: MouseListenerProps): JSX.Element => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [position, setPosition] = useState<Vector2d>({ x: 0, y: 0 });
   const dispatch = useAppDispatch();
 
   const onMouseMove = (e: MouseEvent) => {
@@ -24,7 +27,7 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
 
   const onWheel = (e: WheelEvent) => {
     if (e.ctrlKey) {
-      dispatch(zoom(e.deltaY || e.deltaX));
+      dispatch(zoom(-e.deltaY || e.deltaX));
       e.preventDefault();
     }
   };

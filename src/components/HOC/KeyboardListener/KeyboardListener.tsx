@@ -10,6 +10,7 @@ import React, {
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { sidebarDimension as sd } from "@/globals/globals";
 import {
+  changeTool,
   edit,
   place,
   placeAndEdit,
@@ -83,7 +84,9 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const clipboardPasteText = (clipboardData: DataTransfer) => {
     let text = clipboardData.getData("text/plain");
     if (!text) return false;
+    if (text && tool === "text") return true;
     const { x, y } = coordinateRef.current;
+    dispatch(changeTool("text"));
     dispatch(
       placeAndEdit({
         tool: "text",
