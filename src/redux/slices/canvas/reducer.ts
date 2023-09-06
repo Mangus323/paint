@@ -113,6 +113,10 @@ export const counterSlice = createSlice({
     },
     setIsActiveElement: (state, action: PayloadAction<boolean>) => {
       state.isActiveElement = action.payload;
+    },
+    duplicate: state => {
+      if (!state.isActiveElement) return;
+      state.elements.push(state.elements[state.elements.length - 1]);
     }
   }
 });
@@ -130,7 +134,7 @@ export const {
   setIsDownloading,
   openFromFile,
   setIsActiveElement,
-
+  duplicate,
   setIsCopying
 } = counterSlice.actions;
 

@@ -11,6 +11,7 @@ import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListen
 import { sidebarDimension as sd } from "@/globals/globals";
 import {
   changeTool,
+  duplicate,
   edit,
   place,
   placeAndEdit,
@@ -69,6 +70,9 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           );
           dispatch(setIsActiveElement(false));
           return;
+        case "KeyD":
+          e.preventDefault();
+          dispatch(duplicate());
       }
     }
     if (isActiveText) pseudoInputRef?.current?.focus();
