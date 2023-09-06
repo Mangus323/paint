@@ -77,7 +77,6 @@ export const Canvas = (): JSX.Element => {
     if (!isActiveElement || !transformerRef.current || !lastElementRef.current)
       return;
     transformerRef.current.nodes([lastElementRef.current]);
-    transformerRef.current.getLayer()?.batchDraw();
   }, [activeElement, isActiveElement]);
 
   return (

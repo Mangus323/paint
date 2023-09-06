@@ -1,7 +1,11 @@
 import React, { ChangeEvent, JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
 import { FileUploader } from "@/components/elements/FileUplaoder/FileUploader";
-import { openFromFile, setIsDownloading } from "@/redux/slices/canvas/reducer";
+import {
+  openFromFile,
+  place,
+  setIsDownloading
+} from "@/redux/slices/canvas/reducer";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
 import s from "./index.module.scss";
@@ -10,6 +14,7 @@ export const TopPanel = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
 
   const onSaveClick = () => {
+    dispatch(place());
     dispatch(setIsDownloading(true));
   };
 

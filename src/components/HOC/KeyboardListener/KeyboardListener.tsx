@@ -18,6 +18,7 @@ import {
   redo,
   setIsActiveElement,
   setIsCopying,
+  setIsDownloading,
   undo
 } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
@@ -73,6 +74,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
         case "KeyD":
           e.preventDefault();
           dispatch(duplicate());
+          return;
+        case "KeyS":
+          e.preventDefault();
+          dispatch(place());
+          dispatch(setIsDownloading(true));
       }
     }
     if (isActiveText) pseudoInputRef?.current?.focus();

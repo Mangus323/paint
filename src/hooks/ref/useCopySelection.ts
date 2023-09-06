@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { sidebarDimension as sd } from "@/globals/globals";
 import { setIsCopying } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import Konva from "konva";
@@ -22,19 +23,22 @@ export const useCopySelection = (stageRef: React.RefObject<Stage>) => {
   const dispatch = useAppDispatch();
   const { isCopying } = useAppSelector(state => state.canvas);
   const { selection } = useAppSelector(state => state.canvasMeta);
+  const { zoom } = useAppSelector(state => state.browser);
 
   useEffect(() => {
     if (!isCopying) return;
     if (!stageRef.current) return;
     if (selection && stageRef.current.children) {
-      let ctx = stageRef.current.children[0].canvas._canvas.getContext("2d");
+      let ctx = stageRef.current.children[1].canvas._canvas.getContext("2d");
       if (!ctx) return;
+      ctx.scale(1 / zoom, 1 / zoom);
       const imageData = ctx.getImageData(
-        selection.x,
-        selection.y,
+        selection.x - sd.width,
+        selection.y - sd.height,
         selection.width,
         selection.height
       );
+      console.log(imageData.width);
       copyImage(imageData, imageData.width, imageData.height);
     }
     dispatch(setIsCopying(false));

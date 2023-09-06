@@ -1,4 +1,4 @@
-import { sidebarDimension } from "@/globals/globals";
+import { sidebarDimension as sd } from "@/globals/globals";
 import { IElementMeta } from "@/types/canvas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -57,8 +57,8 @@ export const counterSlice = createSlice({
       action: PayloadAction<{ width: number; height: number }>
     ) => {
       state.selection = {
-        x: sidebarDimension.width,
-        y: sidebarDimension.height,
+        x: sd.width,
+        y: sd.height,
         width: action.payload.width,
         height: action.payload.height
       };
