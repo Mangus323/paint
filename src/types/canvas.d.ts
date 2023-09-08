@@ -14,6 +14,9 @@ export interface IFigure extends IBaseElement, Vector2d {
   tool: "rect" | "ellipse";
   width: number;
   height: number;
+  fillType: "outline" | "fill";
+  strokeWidth: number;
+  cornerRadius: number;
 }
 
 export interface IPen extends IBaseElement, Vector2d {

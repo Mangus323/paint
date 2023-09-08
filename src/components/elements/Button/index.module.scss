@@ -29,9 +29,9 @@
   }
 
   &:disabled {
-    border: 1px solid var(--light-gray);
-    background: transparent;
-    color: var(--light-gray);
+    border: 1px solid var(--gray);
+    background: var(--gray);
+    cursor: default;
   }
 }
 

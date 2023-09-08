@@ -37,14 +37,20 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
     dispatch(stopDraw());
   };
 
+  const onContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+  };
+
   useEffect(() => {
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("wheel", onWheel, { passive: false });
     document.addEventListener("mouseover", onMouseOver);
+    document.addEventListener("contextmenu", onContextMenu);
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("wheel", onWheel);
       document.removeEventListener("mouseover", onMouseOver);
+      document.removeEventListener("contextmenu", onContextMenu);
     };
   }, []);
 

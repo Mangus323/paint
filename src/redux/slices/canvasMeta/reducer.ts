@@ -18,7 +18,7 @@ const initialState: IEditActiveObjectState = {
   selection: null
 };
 
-export const counterSlice = createSlice({
+export const canvasMetaSlice = createSlice({
   name: "canvasMeta",
   initialState,
   reducers: {
@@ -74,6 +74,6 @@ export const {
   startSelecting,
   editSelect,
   selectAll
-} = counterSlice.actions;
+} = canvasMetaSlice.actions;
 
-export default counterSlice.reducer;
+export default canvasMetaSlice.reducer;

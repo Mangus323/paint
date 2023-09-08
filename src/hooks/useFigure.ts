@@ -13,6 +13,7 @@ export const useFigure = (offset: Vector2d) => {
     state => state.canvas
   );
   const { zoom } = useAppSelector(state => state.browser);
+  const settings = useAppSelector(state => state.settings).tools.rect;
   const { activeElement, isActiveElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const isDrawingRef = useRef(false);
@@ -23,6 +24,7 @@ export const useFigure = (offset: Vector2d) => {
       const { x, y } = getPoints(e, zoom, offset);
       dispatch(
         placeAndEdit({
+          ...settings,
           width: 0,
           height: 0,
           x,
@@ -34,16 +36,19 @@ export const useFigure = (offset: Vector2d) => {
   };
 
   const handleMouseMove = (x: number, y: number) => {
-    if (!isDrawingRef.current) {
-      return;
-    }
-    if (isActiveElement && "x" in activeElement) {
-      dispatch(
-        edit({
-          width: x - activeElement.x,
-          height: y - activeElement.y
-        })
-      );
+    if (!isDrawingRef.current) return;
+    if (isActiveElement && "height" in activeElement) {
+      let xCond = x < activeElement.x;
+      let yCond = y < activeElement.y;
+      let next = {
+        x: xCond ? x : activeElement.x,
+        y: yCond ? y : activeElement.y,
+        width: xCond
+          ? Math.abs(x - activeElement.x) + activeElement.width
+          : Math.abs(x - activeElement.x),
+        height: Math.abs(activeElement.y - y)
+      };
+      dispatch(edit(next));
     }
   };
 

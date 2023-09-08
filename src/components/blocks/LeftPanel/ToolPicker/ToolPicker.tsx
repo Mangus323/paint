@@ -1,5 +1,7 @@
-import React, { JSX } from "react";
+import React, { JSX, useEffect, useState } from "react";
+import { ToolSettingsRect } from "@/components/blocks/ToolSettings/Rect/ToolSettingsRect";
 import { Button } from "@/components/elements/Button/Button";
+import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
 import { changeTool, redo, undo } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -15,40 +17,65 @@ import SelectionIcon from "~public/icons/Selection.svg";
 import SquareIcon from "~public/icons/Square.svg";
 import TextIcon from "~public/icons/Text.svg";
 
+const toolListIcons = [
+  SquareIcon,
+  PencilIcon,
+  TextIcon,
+  EraserIcon,
+  CircleIcon,
+  LineIcon,
+  SelectionIcon
+];
+
 export const ToolPicker = (): JSX.Element => {
-  const { selectedTool } = useAppSelector(state => state.canvas);
+  const { selectedTool, elements, history } = useAppSelector(
+    state => state.canvas
+  );
+  const settings = useAppSelector(state => state.settings);
   const dispatch = useAppDispatch();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [activePopover, setActivePopover] = useState<ToolType | null>(null);
+
+  const onClickUndo = () => {
+    dispatch(undo());
+  };
+
+  const onClickRedo = () => {
+    dispatch(redo());
+  };
 
   const onClick = (tool: ToolType) => {
     dispatch(changeTool(tool));
   };
 
-  const onClickUndo = () => {
-    dispatch(undo());
+  const onDoubleClick = (e: React.MouseEvent<HTMLElement>, tool: ToolType) => {
+    setAnchorEl(anchorEl ? null : e.currentTarget);
+    setActivePopover(tool);
   };
-  const onClickRedo = () => {
-    dispatch(redo());
+
+  const onContextMenu = (e: React.MouseEvent<HTMLElement>, tool: ToolType) => {
+    e.preventDefault();
+    onClick(tool);
+    onDoubleClick(e, tool);
   };
-  const toolListIcons = [
-    SquareIcon,
-    PencilIcon,
-    TextIcon,
-    EraserIcon,
-    CircleIcon,
-    LineIcon,
-    SelectionIcon
-  ];
+
+  const onClosePopper = () => {
+    setAnchorEl(null);
+    setActivePopover(null);
+  };
+
+  useEffect(() => {}, [settings, anchorEl]);
 
   return (
     <>
       <ul>
         <li>
-          <Button onClick={onClickUndo}>
+          <Button onClick={onClickUndo} disabled={elements.length === 0}>
             <ArrowLeftIcon />
           </Button>
         </li>
         <li>
-          <Button onClick={onClickRedo}>
+          <Button onClick={onClickRedo} disabled={history.length === 0}>
             <ArrowRightIcon />
           </Button>
         </li>
@@ -63,13 +90,25 @@ export const ToolPicker = (): JSX.Element => {
             <li key={tool}>
               <Button
                 selected={selectedTool === tool}
-                onClick={() => onClick(tool)}>
+                onClick={() => onClick(tool)}
+                onDoubleClick={e => {
+                  onDoubleClick(e, tool);
+                }}
+                onContextMenu={e => onContextMenu(e, tool)}
+                aria-describedby={anchorEl ? `tool-${index}` : undefined}>
                 <Icon />
               </Button>
             </li>
           );
         })}
       </ul>
+      <Popover
+        id={anchorEl ? `tool-${activePopover}` : undefined}
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        onClose={onClosePopper}>
+        {activePopover === "rect" && <ToolSettingsRect />}
+      </Popover>
     </>
   );
 };

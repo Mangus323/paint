@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface CanvasState {
-  history: Array<any>;
+  history: Array<IElement>;
   selectedTool: ToolType;
   selectedColor: string;
   elements: Array<IElement>;
@@ -24,7 +24,7 @@ const initialState: CanvasState = {
   isCopying: false
 };
 
-export const counterSlice = createSlice({
+export const canvasSlice = createSlice({
   name: "canvas",
   initialState,
   reducers: {
@@ -73,13 +73,17 @@ export const counterSlice = createSlice({
       }
       state.isActiveElement = state.elements.length > 1;
       if (state.elements.length) {
-        state.history.push(state.elements.pop());
+        const last = state.elements.pop();
+        if (last) state.history.push(last);
       }
     },
     redo: state => {
       if (state.history.length) {
-        state.elements.push(state.history.pop());
-        state.isActiveElement = true;
+        const last = state.history.pop();
+        if (last) {
+          state.elements.push(last);
+          state.isActiveElement = true;
+        }
       }
     },
     stopDraw: state => {
@@ -136,6 +140,6 @@ export const {
   setIsActiveElement,
   duplicate,
   setIsCopying
-} = counterSlice.actions;
+} = canvasSlice.actions;
 
-export default counterSlice.reducer;
+export default canvasSlice.reducer;

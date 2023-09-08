@@ -127,9 +127,23 @@ export const Canvas = (): JSX.Element => {
                 key: index,
                 ...elementProps
               };
+
               switch (element.tool) {
                 case "rect":
-                  return <Rect fill={element.color} {...props} />;
+                  return (
+                    <Rect
+                      fill={element.color}
+                      fillEnabled={element.fillType === "fill"}
+                      stroke={element.color}
+                      {...props}
+                      cornerRadius={
+                        Math.max(
+                          Math.abs(element.width),
+                          Math.abs(element.height)
+                        ) * element.cornerRadius
+                      }
+                    />
+                  );
                 case "ellipse":
                   // @ts-ignore
                   return <CustomEllipse {...props} />;
