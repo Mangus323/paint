@@ -137,10 +137,8 @@ export const Canvas = (): JSX.Element => {
                       stroke={element.color}
                       {...props}
                       cornerRadius={
-                        Math.max(
-                          Math.abs(element.width),
-                          Math.abs(element.height)
-                        ) * element.cornerRadius
+                        Math.max(element.width, element.height) *
+                        (element.cornerRadius / 100)
                       }
                     />
                   );

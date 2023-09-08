@@ -29,6 +29,8 @@ export const useFigure = (offset: Vector2d) => {
           height: 0,
           x,
           y,
+          startX: x,
+          startY: y,
           tool: tool
         })
       );
@@ -37,18 +39,15 @@ export const useFigure = (offset: Vector2d) => {
 
   const handleMouseMove = (x: number, y: number) => {
     if (!isDrawingRef.current) return;
-    if (isActiveElement && "height" in activeElement) {
-      let xCond = x < activeElement.x;
-      let yCond = y < activeElement.y;
-      let next = {
-        x: xCond ? x : activeElement.x,
-        y: yCond ? y : activeElement.y,
-        width: xCond
-          ? Math.abs(x - activeElement.x) + activeElement.width
-          : Math.abs(x - activeElement.x),
-        height: Math.abs(activeElement.y - y)
-      };
-      dispatch(edit(next));
+    if (isActiveElement && "startX" in activeElement) {
+      dispatch(
+        edit({
+          x: Math.min(activeElement.startX, x),
+          y: Math.min(activeElement.startY, y),
+          width: Math.abs(activeElement.startX - x),
+          height: Math.abs(activeElement.startY - y)
+        })
+      );
     }
   };
 

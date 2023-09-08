@@ -17,6 +17,8 @@ export interface IFigure extends IBaseElement, Vector2d {
   fillType: "outline" | "fill";
   strokeWidth: number;
   cornerRadius: number;
+  startX: number;
+  startY: number;
 }
 
 export interface IPen extends IBaseElement, Vector2d {
