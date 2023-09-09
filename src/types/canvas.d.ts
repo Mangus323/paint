@@ -19,11 +19,14 @@ export interface IFigure extends IBaseElement, Vector2d {
   cornerRadius: number;
   startX: number;
   startY: number;
+  dashEnabled: boolean;
 }
 
 export interface IPen extends IBaseElement, Vector2d {
   tool: "pen" | "eraser" | "line";
   points: number[];
+  strokeWidth: number;
+  dashEnabled: boolean;
 }
 
 export interface IText extends IBaseElement, Vector2d {

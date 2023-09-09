@@ -1,6 +1,6 @@
-import { createTheme } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material";
 
-export const theme = createTheme({
+let theme = createTheme({
   palette: {
     primary: { main: "#758585", contrastText: "#070d14" },
     grey: {
@@ -8,7 +8,15 @@ export const theme = createTheme({
     }
   },
   components: {
+    MuiSwitch: {
+      defaultProps: {
+        size: "small"
+      }
+    },
     MuiSlider: {
+      defaultProps: {
+        size: "small"
+      },
       styleOverrides: {
         thumb: {
           ":hover": {
@@ -22,10 +30,8 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontSize: 12
+    fontSize: 11
   }
 });
-
-//"& .MuiSlider-thumb.Mui-active" {
-//           boxShadow: "none"
-//         }
+theme = responsiveFontSizes(theme);
+export { theme };

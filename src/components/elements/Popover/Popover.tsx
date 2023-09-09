@@ -1,17 +1,22 @@
 import React, { JSX, ReactNode } from "react";
 import {
+  Box,
   Popover as MuiPopover,
-  PopoverProps as MuiPopoverProps
+  PopoverProps as MuiPopoverProps,
+  useTheme
 } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
-import s from "./index.module.scss";
 
 interface PopoverProps extends MuiPopoverProps {
-  children?: ReactNode;
+  children?: ReactNode | ReactNode[];
 }
 
 export const Popover = (props: PopoverProps): JSX.Element => {
   const { children, ...popoverProps } = props;
+  const theme = useTheme();
+
+  let isChildren =
+    children instanceof Array ? children.some(child => !!child) : !!children;
 
   return (
     <MuiPopover
@@ -25,14 +30,21 @@ export const Popover = (props: PopoverProps): JSX.Element => {
       }}
       {...popoverProps}>
       <AnimatePresence>
-        {children && (
-          <motion.div
-            className={s.container}
+        {isChildren && (
+          <Box
+            component={motion.div}
             exit={{ opacity: 0 }}
-            transition={{ delay: 0, duration: 0.5 }}
-            layout={"position"}>
+            transition={{ delay: 1, duration: 0.5 }}
+            sx={{
+              minWidth: "10rem",
+              p: "0.25rem 0",
+              color: theme.palette.primary.contrastText,
+              "& > *": {
+                px: "1rem"
+              }
+            }}>
             {props.children}
-          </motion.div>
+          </Box>
         )}
       </AnimatePresence>
     </MuiPopover>

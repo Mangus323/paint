@@ -1,8 +1,17 @@
-import { IFigure } from "@/types/canvas";
+import { IFigure, IPen } from "@/types/canvas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import Konva from "konva";
 
-type DefaultOmit = "tool" | "width" | "height" | "x" | "y";
+import Vector2d = Konva.Vector2d;
+
+type DefaultOmit =
+  | "tool"
+  | "width"
+  | "height"
+  | "startX"
+  | "startY"
+  | keyof Vector2d;
 
 interface ToolsKeys {
   text: {};
@@ -10,7 +19,7 @@ interface ToolsKeys {
   eraser: {};
   image: {};
   line: {};
-  pen: {};
+  pen: Omit<IPen, DefaultOmit | "points">;
   rect: Omit<IFigure, DefaultOmit>;
   selection: null;
 }
@@ -26,8 +35,13 @@ const initialState: SettingsState = {
     eraser: {},
     image: {},
     line: {},
-    pen: {},
-    rect: { fillType: "fill", strokeWidth: 2, cornerRadius: 0 },
+    pen: { strokeWidth: 5, dashEnabled: false },
+    rect: {
+      fillType: "fill",
+      strokeWidth: 2,
+      cornerRadius: 0,
+      dashEnabled: false
+    },
     selection: null
   }
 };

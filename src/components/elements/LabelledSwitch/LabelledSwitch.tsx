@@ -1,8 +1,8 @@
 import React, { JSX } from "react";
-import { Switch } from "@/components/elements/Switch/Switch";
 import {
   FormControlLabel,
   FormControlLabelProps,
+  Switch,
   useTheme
 } from "@mui/material";
 
@@ -14,7 +14,7 @@ export const LabelledSwitch = (
   return (
     <FormControlLabel
       {...otherProps}
-      control={<Switch />}
+      control={<Switch sx={{ ml: "0.25rem" }} />}
       sx={{
         textTransform: "capitalize",
         color: theme.palette.primary.contrastText,

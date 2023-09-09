@@ -13,9 +13,10 @@ export const usePen = (offset: Vector2d) => {
     state => state.canvas
   );
   const { zoom } = useAppSelector(state => state.browser);
+  const settings = useAppSelector(state => state.settings).tools.pen;
+  const { activeElement, isActiveElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const isDrawingRef = useRef(false);
-  const { activeElement, isActiveElement } = useActiveElement();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "pen" || tool === "eraser" || tool === "line") {
@@ -26,7 +27,8 @@ export const usePen = (offset: Vector2d) => {
           points: [x, y],
           tool: tool,
           x: 0,
-          y: 0
+          y: 0,
+          ...settings
         })
       );
     }

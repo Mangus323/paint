@@ -140,6 +140,11 @@ export const Canvas = (): JSX.Element => {
                         Math.max(element.width, element.height) *
                         (element.cornerRadius / 100)
                       }
+                      dash={
+                        element.dashEnabled
+                          ? [element.strokeWidth, element.strokeWidth * 2]
+                          : undefined
+                      }
                     />
                   );
                 case "ellipse":
@@ -152,10 +157,13 @@ export const Canvas = (): JSX.Element => {
                       {...props}
                       globalCompositeOperation={"source-over"}
                       stroke={element.color}
-                      strokeWidth={5}
-                      tension={0.5}
                       lineCap="round"
                       lineJoin="round"
+                      dash={
+                        element.dashEnabled
+                          ? [element.strokeWidth, element.strokeWidth * 2]
+                          : undefined
+                      }
                     />
                   );
                 case "eraser":
@@ -163,6 +171,8 @@ export const Canvas = (): JSX.Element => {
                     <Line
                       {...props}
                       stroke={"#ffffff"}
+                      lineCap="round"
+                      lineJoin="round"
                       globalCompositeOperation={"destination-out"}
                     />
                   );

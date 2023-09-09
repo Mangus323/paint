@@ -1,4 +1,5 @@
 import React, { JSX, ReactNode } from "react";
+import { Box } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface AnimateHeightProps {
@@ -11,13 +12,18 @@ export const AnimateHeight = (props: AnimateHeightProps): JSX.Element => {
   return (
     <AnimatePresence initial={false}>
       {open && (
-        <motion.div
+        <Box
+          component={motion.div}
           exit={{ height: 0 }}
           initial={{ height: 0 }}
           animate={{ height: "auto" }}
-          style={{ overflow: "hidden" }}>
+          sx={{
+            overflow: "visible",
+            overflowY: "hidden",
+            overflowX: "visible"
+          }}>
           {children}
-        </motion.div>
+        </Box>
       )}
     </AnimatePresence>
   );

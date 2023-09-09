@@ -1,5 +1,6 @@
 import React, { JSX, useEffect, useState } from "react";
-import { ToolSettingsRect } from "@/components/blocks/ToolSettings/Rect/ToolSettingsRect";
+import { ToolSettingsPen } from "@/components/blocks/ToolSettings/ToolSettingsPen";
+import { ToolSettingsRect } from "@/components/blocks/ToolSettings/ToolSettingsRect";
 import { Button } from "@/components/elements/Button/Button";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
@@ -108,6 +109,7 @@ export const ToolPicker = (): JSX.Element => {
         anchorEl={anchorEl}
         onClose={onClosePopper}>
         {activePopover === "rect" && <ToolSettingsRect />}
+        {activePopover === "pen" && <ToolSettingsPen />}
       </Popover>
     </>
   );

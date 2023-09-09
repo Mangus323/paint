@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Box, Slider, Typography } from "@mui/material";
 
 export const ToolSettingsRect = (): JSX.Element => {
-  const { fillType, strokeWidth, cornerRadius } = useAppSelector(
+  const { fillType, strokeWidth, cornerRadius, dashEnabled } = useAppSelector(
     state => state.settings
   ).tools.rect;
   const dispatch = useAppDispatch();
@@ -48,19 +48,33 @@ export const ToolSettingsRect = (): JSX.Element => {
     );
   };
 
+  const onChangeDash = () => {
+    dispatch(
+      setSettings({
+        tool: "rect",
+        settings: {
+          dashEnabled: !dashEnabled
+        }
+      })
+    );
+  };
+
   return (
     <>
+      <Typography variant={"h6"} color={"inherit"} align={"center"}>
+        Rect settings
+      </Typography>
       <LabelledSwitch
         label={fillType}
         onChange={onChangeFill}
         checked={fillType === "fill"}
-        sx={{ marginBottom: "0.25rem" }}
       />
       <AnimateHeight open={fillType === "outline"}>
-        <Typography color={"inherit"}>Stroke width</Typography>
-        <Box sx={{ px: "0.5rem" }}>
+        <Typography color={"inherit"} sx={{ pt: "0.25rem" }}>
+          Stroke width
+        </Typography>
+        <Box>
           <Slider
-            size={"small"}
             aria-label="Outline stroke width"
             value={strokeWidth}
             onChange={onChangeStroke}
@@ -70,17 +84,21 @@ export const ToolSettingsRect = (): JSX.Element => {
             max={50}
           />
         </Box>
+        <LabelledSwitch
+          label={"enable dash"}
+          onChange={onChangeDash}
+          checked={dashEnabled}
+        />
       </AnimateHeight>
       <Typography color={"inherit"}>Border radius (%)</Typography>
-      <Box sx={{ px: "0.5rem" }}>
+      <Box>
         <Slider
-          size={"small"}
           aria-label="Border Radius"
           value={cornerRadius}
           onChange={onChangeRadius}
           valueLabelDisplay={"auto"}
           step={1}
-          min={1}
+          min={0}
           max={100}
         />
       </Box>
