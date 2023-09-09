@@ -1,5 +1,4 @@
-# Тестовое задание для entmediagroup.com
-
+# Paint
 Запустить dev сервер
 ```shell
 yarn dev
