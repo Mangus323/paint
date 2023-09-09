@@ -141,7 +141,7 @@ export const Canvas = (): JSX.Element => {
                         (element.cornerRadius / 100)
                       }
                       dash={
-                        element.dashEnabled
+                        element.dashEnabled && element.fillType === "outline"
                           ? [element.strokeWidth, element.strokeWidth * 2]
                           : undefined
                       }
