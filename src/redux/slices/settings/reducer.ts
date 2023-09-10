@@ -1,4 +1,4 @@
-import { IFigure, IPen } from "@/types/canvas";
+import { IFigure, IPen, IText } from "@/types/canvas";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import Konva from "konva";
@@ -13,10 +13,10 @@ type DefaultOmit =
   | "startY"
   | keyof Vector2d;
 
-interface ToolsKeys {
-  text: {};
+export interface IToolsKeys {
+  text: Omit<IText, DefaultOmit | "text">;
   ellipse: {};
-  eraser: {};
+  eraser: Omit<IPen, DefaultOmit | "points" | "dashEnabled">;
   image: {};
   line: {};
   pen: Omit<IPen, DefaultOmit | "points">;
@@ -24,15 +24,15 @@ interface ToolsKeys {
   selection: null;
 }
 
-export interface SettingsState {
-  tools: ToolsKeys;
+interface SettingsState {
+  tools: IToolsKeys;
 }
 
 const initialState: SettingsState = {
   tools: {
-    text: {},
+    text: { fontSize: 14 },
     ellipse: {},
-    eraser: {},
+    eraser: { strokeWidth: 5 },
     image: {},
     line: {},
     pen: { strokeWidth: 5, dashEnabled: false },
@@ -50,9 +50,9 @@ export const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
-    setSettings: <T extends keyof ToolsKeys>(
+    setSettings: <T extends keyof IToolsKeys>(
       state,
-      action: PayloadAction<{ tool: T; settings: ToolsKeys[T] }>
+      action: PayloadAction<{ tool: T; settings: IToolsKeys[T] }>
     ) => {
       const tool = action.payload.tool;
       if (tool === "selection") return;

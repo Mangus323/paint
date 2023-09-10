@@ -9,6 +9,7 @@ import Vector2d = Konva.Vector2d;
 export const useText = (offset: Vector2d) => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const { zoom } = useAppSelector(state => state.browser);
+  const settings = useAppSelector(state => state.settings).tools.text;
   const dispatch = useAppDispatch();
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {
@@ -20,7 +21,8 @@ export const useText = (offset: Vector2d) => {
           x,
           y,
           tool: tool,
-          rotation: 0
+          rotation: 0,
+          ...settings
         })
       );
     }

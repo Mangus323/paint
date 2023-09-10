@@ -32,7 +32,7 @@ export interface IPen extends IBaseElement, Vector2d {
 export interface IText extends IBaseElement, Vector2d {
   tool: "text";
   text: string;
-  rotation: number;
+  fontSize: number;
 }
 
 export interface IArrow extends IBaseElement {

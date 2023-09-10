@@ -1,62 +1,34 @@
 import React, { JSX } from "react";
 import { AnimateHeight } from "@/components/elements/AnimateHeight/AnimateHeight";
 import { LabelledSwitch } from "@/components/elements/LabelledSwitch/LabelledSwitch";
-import { setSettings } from "@/redux/slices/settings/reducer";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useDispatchSettings } from "@/hooks/useDispatchSettings";
+import { useAppSelector } from "@/redux/store";
 import { Box, Slider, Typography } from "@mui/material";
 
 export const ToolSettingsRect = (): JSX.Element => {
   const { fillType, strokeWidth, cornerRadius, dashEnabled } = useAppSelector(
     state => state.settings
   ).tools.rect;
-  const dispatch = useAppDispatch();
+  const dispatchSettings = useDispatchSettings("rect");
 
   const onChangeFill = () => {
-    dispatch(
-      setSettings({
-        tool: "rect",
-        settings: {
-          fillType: fillType === "fill" ? "outline" : "fill"
-        }
-      })
-    );
+    dispatchSettings("fillType", fillType === "fill" ? "outline" : "fill");
   };
 
   const onChangeStroke = (e: Event) => {
     if (!e.target) return;
     const value = (e.target as any).value;
-    dispatch(
-      setSettings({
-        tool: "rect",
-        settings: {
-          strokeWidth: value
-        }
-      })
-    );
+    dispatchSettings("strokeWidth", value);
   };
 
   const onChangeRadius = (e: Event) => {
     if (!e.target) return;
     const value = (e.target as any).value;
-    dispatch(
-      setSettings({
-        tool: "rect",
-        settings: {
-          cornerRadius: value
-        }
-      })
-    );
+    dispatchSettings("cornerRadius", value);
   };
 
   const onChangeDash = () => {
-    dispatch(
-      setSettings({
-        tool: "rect",
-        settings: {
-          dashEnabled: !dashEnabled
-        }
-      })
-    );
+    dispatchSettings("dashEnabled", !dashEnabled);
   };
 
   return (
@@ -70,11 +42,16 @@ export const ToolSettingsRect = (): JSX.Element => {
         checked={fillType === "fill"}
       />
       <AnimateHeight open={fillType === "outline"}>
-        <Typography color={"inherit"} sx={{ pt: "0.25rem" }}>
+        <Typography
+          color={"inherit"}
+          sx={{ pt: "0.25rem" }}
+          component={"label"}
+          htmlFor={"rect_settings-stroke_width"}>
           Stroke width
         </Typography>
         <Box>
           <Slider
+            id={"rect_settings-stroke_width"}
             aria-label="Outline stroke width"
             value={strokeWidth}
             onChange={onChangeStroke}
@@ -90,9 +67,16 @@ export const ToolSettingsRect = (): JSX.Element => {
           checked={dashEnabled}
         />
       </AnimateHeight>
-      <Typography color={"inherit"}>Border radius (%)</Typography>
+      <Typography
+        color={"inherit"}
+        htmlFor={"rect_settings-border_radius"}
+        component={"label"}
+        sx={{ display: "block" }}>
+        Border radius (%)
+      </Typography>
       <Box>
         <Slider
+          id={"rect_settings-border_radius"}
           aria-label="Border Radius"
           value={cornerRadius}
           onChange={onChangeRadius}
