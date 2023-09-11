@@ -10,6 +10,10 @@ import {
   Typography
 } from "@mui/material";
 import clsx from "clsx";
+import BoldIcon from "~public/icons/Bold.svg";
+import ItalicIcon from "~public/icons/Italic.svg";
+import LineThroughIcon from "~public/icons/LineThrough.svg";
+import UnderlineIcon from "~public/icons/Underline.svg";
 
 export const ToolSettingsText = (): JSX.Element => {
   const { fontSize, fontFamily, fontStyle, textDecoration } = useAppSelector(
@@ -56,22 +60,22 @@ export const ToolSettingsText = (): JSX.Element => {
         <Button
           onClick={() => onChangeDecoration("bold")}
           selected={selectedBold}>
-          B
+          <BoldIcon />
         </Button>
         <Button
           onClick={() => onChangeDecoration("italic")}
           selected={selectedItalic}>
-          I
+          <ItalicIcon />
         </Button>
         <Button
           onClick={() => onChangeDecoration("line-through")}
           selected={selectedLineThrough}>
-          T
+          <LineThroughIcon />
         </Button>
         <Button
           onClick={() => onChangeDecoration("underline")}
           selected={selectedUnderline}>
-          U
+          <UnderlineIcon />
         </Button>
       </Box>
       <Typography

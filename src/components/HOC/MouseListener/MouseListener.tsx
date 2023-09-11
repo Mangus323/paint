@@ -1,10 +1,5 @@
-import React, {
-  JSX,
-  ReactNode,
-  createContext,
-  useEffect,
-  useState
-} from "react";
+import React, { JSX, ReactNode, createContext, useState } from "react";
+import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import { zoom } from "@/redux/slices/browser/reducer";
 import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch } from "@/redux/store";
@@ -22,11 +17,11 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
   const [position, setPosition] = useState<Vector2d>({ x: 0, y: 0 });
   const dispatch = useAppDispatch();
 
-  const onMouseMove = (e: MouseEvent) => {
+  const onMouseMove = (_, e: MouseEvent) => {
     setPosition({ x: e.clientX, y: e.clientY });
   };
 
-  const onWheel = (e: WheelEvent) => {
+  const onWheel = (_, e: WheelEvent) => {
     if (e.ctrlKey) {
       dispatch(zoom(-e.deltaY || e.deltaX));
       e.preventDefault();
@@ -37,22 +32,14 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
     dispatch(stopDraw());
   };
 
-  const onContextMenu = (e: MouseEvent) => {
+  const onContextMenu = (_, e: MouseEvent) => {
     e.preventDefault();
   };
 
-  useEffect(() => {
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("wheel", onWheel, { passive: false });
-    document.addEventListener("mouseover", onMouseOver);
-    document.addEventListener("contextmenu", onContextMenu);
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("wheel", onWheel);
-      document.removeEventListener("mouseover", onMouseOver);
-      document.removeEventListener("contextmenu", onContextMenu);
-    };
-  }, []);
+  useGlobalEventListener("document", "mousemove", onMouseMove);
+  useGlobalEventListener("document", "mouseover", onMouseOver);
+  useGlobalEventListener("document", "contextmenu", onContextMenu);
+  useGlobalEventListener("window", "wheel", onWheel, {}, { passive: false });
 
   return (
     <>

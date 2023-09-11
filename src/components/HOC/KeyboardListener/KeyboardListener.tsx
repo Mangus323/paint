@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { sidebarDimension as sd } from "@/globals/globals";
+import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import {
   changeTool,
   duplicate,
@@ -37,98 +38,128 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const { zoom, layerX, layerY, canvasWidth, canvasHeight } = useAppSelector(
     state => state.browser
   );
+  const settings = useAppSelector(state => state.settings.tools.text);
   const position = useContext(MousePositionContext);
   const { isActiveElement, activeElement } = useActiveElement();
   const isActiveText = isActiveElement && tool === "text";
-  const coordinateRef = useRef(position);
+  const coordinate = {
+    x: (position.x - sd.width - layerX) / zoom,
+    y: (position.y - sd.height - layerY) / zoom
+  };
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
-  const canvasDimensionRef = useRef({
-    width: canvasWidth,
-    height: canvasHeight
-  });
 
-  const listener = useCallback((e: KeyboardEvent) => {
-    switch (e.code) {
-      case "Escape":
-        dispatch(place());
-        return;
-    }
-    if (e.ctrlKey) {
+  const listener = useCallback(
+    ({ canvasWidth, canvasHeight }, e: KeyboardEvent) => {
       switch (e.code) {
-        case "KeyZ":
-          dispatch(undo());
+        case "Escape":
+          dispatch(place());
           return;
-        case "KeyY":
-          dispatch(redo());
-          return;
-        case "KeyA":
-          e.preventDefault();
+      }
+      if (e.ctrlKey) {
+        switch (e.code) {
+          case "KeyZ":
+            dispatch(undo());
+            return;
+          case "KeyY":
+            dispatch(redo());
+            return;
+          case "KeyA":
+            e.preventDefault();
+            dispatch(
+              selectAll({
+                width: canvasWidth,
+                height: canvasHeight
+              })
+            );
+            dispatch(setIsActiveElement(false));
+            return;
+          case "KeyD":
+            e.preventDefault();
+            dispatch(duplicate());
+            return;
+          case "KeyS":
+            e.preventDefault();
+            dispatch(place());
+            dispatch(setIsDownloading(true));
+        }
+      }
+      if (isActiveText) pseudoInputRef?.current?.focus();
+    },
+    []
+  );
+
+  const clipboardPaste = useCallback(
+    ({ settings, tool, isActiveElement, coordinate }, e: Event) => {
+      let clipboardData = (e as ClipboardEvent).clipboardData;
+      if (!clipboardData) return;
+      if (
+        clipboardPasteText(
+          clipboardData,
+          settings,
+          tool,
+          isActiveElement,
+          coordinate
+        )
+      )
+        return;
+
+      clipboardPasteImage(clipboardData, coordinate);
+    },
+    []
+  );
+
+  const clipboardPasteText = useCallback(
+    (
+      clipboardData: DataTransfer,
+      settings,
+      tool,
+      isActiveElement,
+      coordinate
+    ) => {
+      let text = clipboardData.getData("text/plain");
+      if (!text) return false;
+      if (tool === "text" && isActiveElement) {
+        return true;
+      }
+      const { x, y } = coordinate;
+      dispatch(changeTool("text"));
+      dispatch(
+        placeAndEdit({
+          tool: "text",
+          text: "",
+          rotation: 0,
+          x,
+          y,
+          ...settings
+        })
+      );
+      return true;
+    },
+    []
+  );
+  const clipboardPasteImage = useCallback(
+    (clipboardData: DataTransfer, coordinate) => {
+      if (!clipboardData.files || !clipboardData.files[0]) return;
+      const reader = new FileReader();
+      if (clipboardData.files[0].type.match(/^image\//)) {
+        const file = clipboardData.files[0];
+        let { x, y } = coordinate;
+        reader.onloadend = () => {
+          if (!reader.result) return;
           dispatch(
-            selectAll({
-              width: canvasDimensionRef.current.width,
-              height: canvasDimensionRef.current.height
+            placeAndEdit({
+              tool: "image",
+              src: reader.result,
+              x,
+              y
             })
           );
-          dispatch(setIsActiveElement(false));
-          return;
-        case "KeyD":
-          e.preventDefault();
-          dispatch(duplicate());
-          return;
-        case "KeyS":
-          e.preventDefault();
-          dispatch(place());
-          dispatch(setIsDownloading(true));
+        };
+        reader.readAsDataURL(file);
       }
-    }
-    if (isActiveText) pseudoInputRef?.current?.focus();
-  }, []);
-
-  const clipboardPaste = useCallback((e: Event) => {
-    let clipboardData = (e as ClipboardEvent).clipboardData;
-    if (!clipboardData) return;
-    if (clipboardPasteText(clipboardData)) return;
-    clipboardPasteImage(clipboardData);
-  }, []);
-
-  const clipboardPasteText = (clipboardData: DataTransfer) => {
-    let text = clipboardData.getData("text/plain");
-    if (!text) return false;
-    if (text && tool === "text") return true;
-    const { x, y } = coordinateRef.current;
-    dispatch(changeTool("text"));
-    dispatch(
-      placeAndEdit({
-        tool: "text",
-        text,
-        rotation: 0,
-        x,
-        y
-      })
-    );
-    return true;
-  };
-
-  const clipboardPasteImage = (clipboardData: DataTransfer) => {
-    if (!clipboardData.files || !clipboardData.files[0]) return;
-    const reader = new FileReader();
-    if (clipboardData.files[0].type.match(/^image\//)) {
-      const file = clipboardData.files[0];
-      let { x, y } = coordinateRef.current;
-      reader.onloadend = () => {
-        if (!reader.result) return;
-        dispatch(
-          placeAndEdit({
-            tool: "image",
-            src: reader.result,
-            x,
-            y
-          })
-        );
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+    },
+    []
+  );
 
   const clipboardCopy = useCallback(() => {
     dispatch(setIsCopying(true));
@@ -138,33 +169,23 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     dispatch(edit({ text: e.target.value }));
   };
 
-  useEffect(() => {
-    document.addEventListener("keydown", listener);
-    window.addEventListener("paste", clipboardPaste);
-    window.addEventListener("copy", clipboardCopy);
-    return () => {
-      document.removeEventListener("keydown", listener);
-      window.removeEventListener("paste", clipboardPaste);
-      window.removeEventListener("copy", clipboardCopy);
-    };
-  }, []);
-
-  useEffect(() => {
-    coordinateRef.current = {
-      x: (position.x - sd.width - layerX) / zoom,
-      y: (position.y - sd.height - layerY) / zoom
-    };
-  }, [position, zoom, layerX, layerY]);
+  useGlobalEventListener("window", "paste", clipboardPaste, {
+    settings,
+    tool,
+    isActiveElement,
+    coordinate
+  });
+  useGlobalEventListener("window", "copy", clipboardCopy);
+  useGlobalEventListener("document", "keydown", listener, {
+    canvasWidth,
+    canvasHeight
+  });
 
   useEffect(() => {
     if (isActiveText) {
       pseudoInputRef?.current?.focus();
     }
   }, [activeElement, tool]);
-
-  useEffect(() => {
-    canvasDimensionRef.current = { width: canvasWidth, height: canvasHeight };
-  }, [canvasWidth, canvasHeight]);
 
   return (
     <>
