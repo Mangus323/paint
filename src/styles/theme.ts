@@ -51,7 +51,10 @@ let theme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          padding: "2px 14px"
+          padding: "2px 14px",
+          "&.Mui-selected": {
+            backgroundColor: "var(--yellow)"
+          }
         }
       }
     },

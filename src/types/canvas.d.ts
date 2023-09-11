@@ -33,6 +33,9 @@ export interface IText extends IBaseElement, Vector2d {
   tool: "text";
   text: string;
   fontSize: number;
+  fontFamily: string;
+  fontStyle: string;
+  textDecoration: string;
 }
 
 export interface IArrow extends IBaseElement {

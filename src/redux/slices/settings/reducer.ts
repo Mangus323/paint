@@ -30,7 +30,12 @@ interface SettingsState {
 
 const initialState: SettingsState = {
   tools: {
-    text: { fontSize: 14 },
+    text: {
+      fontSize: 14,
+      fontFamily: "Arial",
+      fontStyle: "",
+      textDecoration: ""
+    },
     ellipse: {},
     eraser: { strokeWidth: 5 },
     image: {},

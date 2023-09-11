@@ -1,4 +1,5 @@
 import React, { JSX } from "react";
+import { Button } from "@/components/elements/Button/Button";
 import { useDispatchSettings } from "@/hooks/useDispatchSettings";
 import { useAppSelector } from "@/redux/store";
 import {
@@ -8,10 +9,18 @@ import {
   SelectChangeEvent,
   Typography
 } from "@mui/material";
+import clsx from "clsx";
 
 export const ToolSettingsText = (): JSX.Element => {
-  const { fontSize } = useAppSelector(state => state.settings).tools.text;
+  const { fontSize, fontFamily, fontStyle, textDecoration } = useAppSelector(
+    state => state.settings
+  ).tools.text;
   const dispatchSettings = useDispatchSettings("text");
+
+  const selectedBold = fontStyle.includes("bold");
+  const selectedItalic = fontStyle.includes("italic");
+  const selectedUnderline = textDecoration.includes("underline");
+  const selectedLineThrough = textDecoration.includes("line-through");
 
   const onChangeFontsize = (e: SelectChangeEvent<number>) => {
     if (!e.target) return;
@@ -19,11 +28,52 @@ export const ToolSettingsText = (): JSX.Element => {
     dispatchSettings("fontSize", +value);
   };
 
+  const onChangeDecoration = (target: string) => {
+    if (target === "bold" || target === "italic") {
+      const isBold = selectedBold !== (target === "bold");
+      const isItalic = selectedItalic !== (target === "italic");
+      dispatchSettings(
+        "fontStyle",
+        clsx(isItalic && "italic", isBold && "bold")
+      );
+    }
+    if (target === "underline" || target === "line-through") {
+      const isUnderline = selectedUnderline !== (target === "underline");
+      const isLineThrough = selectedLineThrough !== (target === "line-through");
+      dispatchSettings(
+        "textDecoration",
+        clsx(isUnderline && "underline", isLineThrough && "line-through")
+      );
+    }
+  };
+
   return (
     <>
       <Typography variant={"h6"} color={"inherit"} align={"center"}>
         Text settings
       </Typography>
+      <Box sx={{ display: "flex", gap: 0.5 }}>
+        <Button
+          onClick={() => onChangeDecoration("bold")}
+          selected={selectedBold}>
+          B
+        </Button>
+        <Button
+          onClick={() => onChangeDecoration("italic")}
+          selected={selectedItalic}>
+          I
+        </Button>
+        <Button
+          onClick={() => onChangeDecoration("line-through")}
+          selected={selectedLineThrough}>
+          T
+        </Button>
+        <Button
+          onClick={() => onChangeDecoration("underline")}
+          selected={selectedUnderline}>
+          U
+        </Button>
+      </Box>
       <Typography
         color={"inherit"}
         component={"label"}

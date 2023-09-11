@@ -6,6 +6,7 @@ import { ToolSettingsText } from "@/components/blocks/ToolSettings/ToolSettingsT
 import { Button } from "@/components/elements/Button/Button";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
+import { TextIcon } from "@/components/elements/TextIcon/TextIcon";
 import { changeTool, redo, undo } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
@@ -18,7 +19,6 @@ import LineIcon from "~public/icons/Line.svg";
 import PencilIcon from "~public/icons/Pencil.svg";
 import SelectionIcon from "~public/icons/Selection.svg";
 import SquareIcon from "~public/icons/Square.svg";
-import TextIcon from "~public/icons/Text.svg";
 
 const toolListIcons = [
   SquareIcon,
