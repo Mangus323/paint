@@ -1,3 +1,5 @@
+"use client";
+
 import React, { JSX, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
@@ -124,7 +126,6 @@ export const Canvas = (): JSX.Element => {
                 ref: isLast ? lastElementRef : undefined,
                 onTransformEnd: isLast ? onTransformEnd : undefined,
                 onTransformStart: isLast ? onTransformStart : undefined,
-                key: index,
                 ...elementProps
               };
 
@@ -132,6 +133,7 @@ export const Canvas = (): JSX.Element => {
                 case "rect":
                   return (
                     <Rect
+                      key={index}
                       fill={element.color}
                       fillEnabled={element.fillType === "fill"}
                       stroke={element.color}
@@ -149,11 +151,12 @@ export const Canvas = (): JSX.Element => {
                   );
                 case "ellipse":
                   // @ts-ignore
-                  return <CustomEllipse {...props} />;
+                  return <CustomEllipse key={index} {...props} />;
                 case "pen":
                 case "line":
                   return (
                     <Line
+                      key={index}
                       {...props}
                       globalCompositeOperation={"source-over"}
                       stroke={element.color}
@@ -169,6 +172,7 @@ export const Canvas = (): JSX.Element => {
                 case "eraser":
                   return (
                     <Line
+                      key={index}
                       {...props}
                       stroke={"#ffffff"}
                       lineCap="round"
@@ -177,9 +181,9 @@ export const Canvas = (): JSX.Element => {
                     />
                   );
                 case "text":
-                  return <Text {...props} fill={element.color} />;
+                  return <Text key={index} {...props} fill={element.color} />;
                 case "image":
-                  return <MemoImage {...props} />;
+                  return <MemoImage key={index} {...props} />;
               }
             })}
             {isActiveElement && (

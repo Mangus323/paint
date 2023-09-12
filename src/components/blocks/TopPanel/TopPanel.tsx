@@ -1,6 +1,6 @@
 import React, { ChangeEvent, JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
-import { FileUploader } from "@/components/elements/FileUplaoder/FileUploader";
+import { FileUploader } from "@/components/elements/FileUploader/FileUploader";
 import {
   openFromFile,
   place,

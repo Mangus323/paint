@@ -1,7 +1,11 @@
+"use client";
+
 import React, { JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
+import { FontPicker } from "@/components/elements/FontPicker/FontPicker";
 import { useDispatchSettings } from "@/hooks/useDispatchSettings";
 import { useAppSelector } from "@/redux/store";
+import { Font } from "@/utils/FontManager";
 import {
   Box,
   MenuItem,
@@ -51,12 +55,16 @@ export const ToolSettingsText = (): JSX.Element => {
     }
   };
 
+  const onChangeFontFamily = (font: Font) => {
+    dispatchSettings("fontFamily", font.family);
+  };
+
   return (
     <>
       <Typography variant={"h6"} color={"inherit"} align={"center"}>
         Text settings
       </Typography>
-      <Box sx={{ display: "flex", gap: 0.5 }}>
+      <Box sx={{ display: "flex", gap: 0.5, marginBottom: "0.25rem" }}>
         <Button
           onClick={() => onChangeDecoration("bold")}
           selected={selectedBold}>
@@ -84,7 +92,7 @@ export const ToolSettingsText = (): JSX.Element => {
         htmlFor={"text_settings-font_size"}>
         Font size
       </Typography>
-      <Box>
+      <Box sx={{ marginBottom: "0.25rem" }}>
         <Select
           id={"text_settings-font_size"}
           type={"number"}
@@ -98,6 +106,19 @@ export const ToolSettingsText = (): JSX.Element => {
             </MenuItem>
           ))}
         </Select>
+      </Box>
+      <Typography
+        color={"inherit"}
+        component={"label"}
+        htmlFor={"text_settings-font_family"}>
+        Font family
+      </Typography>
+      <Box>
+        <FontPicker
+          id={"text_settings-font_family"}
+          onChange={onChangeFontFamily}
+          value={fontFamily}
+        />
       </Box>
     </>
   );

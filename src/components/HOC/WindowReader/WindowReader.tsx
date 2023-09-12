@@ -1,3 +1,5 @@
+"use client";
+
 import React, { JSX, ReactNode, useEffect } from "react";
 import { sidebarDimension as sd, sp } from "@/globals/globals";
 import { set } from "@/redux/slices/browser/reducer";

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { JSX, useEffect, useState } from "react";
 import { ToolSettingsEraser } from "@/components/blocks/ToolSettings/ToolSettingsEraser";
 import { ToolSettingsPen } from "@/components/blocks/ToolSettings/ToolSettingsPen";

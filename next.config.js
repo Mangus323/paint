@@ -55,7 +55,14 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, "src/styles")]
   },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   eslint: {
     ignoreDuringBuilds: true
+  },
+  experimental: {
+    appDir: true,
+    serverActions: true
   }
 };

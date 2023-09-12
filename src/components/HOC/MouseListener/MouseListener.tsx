@@ -1,3 +1,5 @@
+"use client";
+
 import React, { JSX, ReactNode, createContext, useState } from "react";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import { zoom } from "@/redux/slices/browser/reducer";

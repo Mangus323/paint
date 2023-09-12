@@ -1,4 +1,5 @@
 import { IFigure, IPen, IText } from "@/types/canvas";
+import { Font } from "@/utils/FontManager";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import Konva from "konva";
@@ -26,13 +27,14 @@ export interface IToolsKeys {
 
 interface SettingsState {
   tools: IToolsKeys;
+  fonts: Font[];
 }
 
 const initialState: SettingsState = {
   tools: {
     text: {
       fontSize: 14,
-      fontFamily: "Arial",
+      fontFamily: "Roboto",
       fontStyle: "",
       textDecoration: ""
     },
@@ -48,7 +50,8 @@ const initialState: SettingsState = {
       dashEnabled: false
     },
     selection: null
-  }
+  },
+  fonts: []
 };
 
 export const settingsSlice = createSlice({
@@ -66,10 +69,13 @@ export const settingsSlice = createSlice({
         ...state.tools[tool],
         ...action.payload.settings
       };
+    },
+    setFonts: (state, action: PayloadAction<Font[]>) => {
+      state.fonts = action.payload;
     }
   }
 });
 
-export const { setSettings } = settingsSlice.actions;
+export const { setSettings, setFonts } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

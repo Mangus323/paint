@@ -1,14 +1,24 @@
+"use client";
+
 import React, { JSX } from "react";
 import { KeyboardListener } from "@/components/HOC/KeyboardListener/KeyboardListener";
 import { MouseListener } from "@/components/HOC/MouseListener/MouseListener";
-import { Canvas } from "@/components/blocks/Canvas/Canvas";
 import { LeftPanel } from "@/components/blocks/LeftPanel/LeftPanel";
 import { TopPanel } from "@/components/blocks/TopPanel/TopPanel";
 import { DefaultLayout } from "@/components/layouts/DefaultLayout/DefaultLayout";
 import { useAppSelector } from "@/redux/store";
+import "@/styles/globals.scss";
+import dynamic from "next/dynamic";
 import Head from "next/head";
 
-export const Homepage = (): JSX.Element => {
+const Canvas = dynamic(
+  () => import("@/components/blocks/Canvas/Canvas").then(res => res.Canvas),
+  {
+    ssr: false
+  }
+);
+
+export default function Homepage(): JSX.Element {
   const { canvasHeight, canvasWidth } = useAppSelector(state => state.browser);
 
   return (
@@ -25,4 +35,4 @@ export const Homepage = (): JSX.Element => {
       </KeyboardListener>
     </MouseListener>
   );
-};
+}
