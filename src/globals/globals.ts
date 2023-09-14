@@ -17,5 +17,5 @@ export const FontOptions: Options = {
   variants: ["regular"],
   filter: () => true,
   limit: 50,
-  exclude: ["icons"]
+  exclude: ["icons", "material"]
 };

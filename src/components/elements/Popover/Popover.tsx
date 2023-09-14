@@ -36,7 +36,7 @@ export const Popover = (props: PopoverProps): JSX.Element => {
             exit={{ opacity: 0 }}
             transition={{ delay: 1, duration: 0.5 }}
             sx={{
-              minWidth: "10rem",
+              minWidth: "12rem",
               p: "0.25rem 0",
               color: theme.palette.primary.contrastText,
               "& > *": {

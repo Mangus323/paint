@@ -83,3 +83,25 @@ button:hover {
 input {
   font: inherit;
 }
+
+*::-webkit-scrollbar {
+  width: 14px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff;
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid #ffffff;
+  border-radius: 8px;
+  background-color: var(--teal-200);
+
+  &:hover {
+    background-color: var(--teal-300);
+  }
+
+  &:active {
+    background-color: var(--teal-400);
+  }
+}
