@@ -18,6 +18,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>Paint</title>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>

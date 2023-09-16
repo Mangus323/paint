@@ -12,7 +12,8 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 
 const Canvas = dynamic(
-  () => import("@/components/blocks/Canvas/Canvas").then(res => res.Canvas),
+  () =>
+    import("@/components/blocks/Canvas/Canvas").then(module => module.Canvas),
   {
     ssr: false
   }
