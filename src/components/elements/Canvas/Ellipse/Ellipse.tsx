@@ -19,7 +19,6 @@ export const CustomEllipse = forwardRef<
       y={(y + height + y) / 2}
       radiusX={Math.abs(width / 2)}
       radiusY={Math.abs(height / 2)}
-      fill={color}
       ref={ref}
     />
   );

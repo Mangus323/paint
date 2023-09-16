@@ -1,7 +1,9 @@
 "use client";
 
 import React, { JSX, useEffect, useState } from "react";
+import { ToolSettingsEllipse } from "@/components/blocks/ToolSettings/ToolSettingsEllipse";
 import { ToolSettingsEraser } from "@/components/blocks/ToolSettings/ToolSettingsEraser";
+import { ToolSettingsLine } from "@/components/blocks/ToolSettings/ToolSettingsLine";
 import { ToolSettingsPen } from "@/components/blocks/ToolSettings/ToolSettingsPen";
 import { ToolSettingsRect } from "@/components/blocks/ToolSettings/ToolSettingsRect";
 import { ToolSettingsText } from "@/components/blocks/ToolSettings/ToolSettingsText";
@@ -54,14 +56,18 @@ export const ToolPicker = (): JSX.Element => {
   };
 
   const onDoubleClick = (e: React.MouseEvent<HTMLElement>, tool: ToolType) => {
+    if (tool === "selection") return;
+
     setAnchorEl(anchorEl ? null : e.currentTarget);
     setActivePopover(tool);
   };
 
   const onContextMenu = (e: React.MouseEvent<HTMLElement>, tool: ToolType) => {
     e.preventDefault();
-    onClick(tool);
-    onDoubleClick(e, tool);
+    if (tool !== "selection") {
+      onClick(tool);
+      onDoubleClick(e, tool);
+    }
   };
 
   const onClosePopper = () => {
@@ -116,6 +122,8 @@ export const ToolPicker = (): JSX.Element => {
         {activePopover === "pen" && <ToolSettingsPen />}
         {activePopover === "eraser" && <ToolSettingsEraser />}
         {activePopover === "text" && <ToolSettingsText />}
+        {activePopover === "ellipse" && <ToolSettingsEllipse />}
+        {activePopover === "line" && <ToolSettingsLine />}
       </Popover>
     </>
   );

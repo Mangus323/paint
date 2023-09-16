@@ -43,8 +43,9 @@ export const FontPicker = (props: FontPickerProps): JSX.Element => {
             <>
               {getFontId(value)} <LoaderIcon />
             </>
-          )}
-        />
+          )}>
+          <MenuItem value={"Roboto"} />
+        </Select>
       )}
       {fonts.length !== 0 && (
         <Select

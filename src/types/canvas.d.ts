@@ -16,17 +16,25 @@ export interface IFigure extends IBaseElement, Vector2d {
   height: number;
   fillType: "outline" | "fill";
   strokeWidth: number;
-  cornerRadius: number;
   startX: number;
   startY: number;
   dashEnabled: boolean;
 }
 
+export interface IRect extends IFigure {
+  cornerRadius: number;
+}
+
 export interface IPen extends IBaseElement, Vector2d {
-  tool: "pen" | "eraser" | "line";
+  tool: "pen" | "eraser";
   points: number[];
   strokeWidth: number;
   dashEnabled: boolean;
+}
+
+export interface ILine extends IPen {
+  tool: "line";
+  arrowType: "none" | "triangle" | "circle" | "line";
 }
 
 export interface IText extends IBaseElement, Vector2d {
@@ -51,7 +59,15 @@ export interface ISelection extends IBaseElement {
   tool: "selection";
 }
 
-export type IElement = IPen | IFigure | IText | IArrow | IImage | ISelection;
+export type IElement =
+  | IPen
+  | IFigure
+  | IText
+  | IArrow
+  | IImage
+  | ISelection
+  | IRect
+  | ILine;
 
 export interface IElementMeta extends Vector2d {
   width: number;

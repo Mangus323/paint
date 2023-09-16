@@ -13,7 +13,7 @@ export const useFigure = (offset: Vector2d) => {
     state => state.canvas
   );
   const { zoom } = useAppSelector(state => state.browser);
-  const settings = useAppSelector(state => state.settings).tools.rect;
+  const settings = useAppSelector(state => state.settings).tools;
   const { activeElement, isActiveElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const isDrawingRef = useRef(false);
@@ -22,9 +22,10 @@ export const useFigure = (offset: Vector2d) => {
     if (tool === "ellipse" || tool === "rect") {
       isDrawingRef.current = true;
       const { x, y } = getPoints(e, zoom, offset);
+
       dispatch(
         placeAndEdit({
-          ...settings,
+          ...settings[tool],
           width: 0,
           height: 0,
           x,

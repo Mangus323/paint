@@ -4,8 +4,9 @@ import React, { JSX, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
-import { CanvasImage } from "@/components/elements/Canvas/CanvasImage/CanvasImage";
 import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
+import { CanvasImage } from "@/components/elements/Canvas/Image/CanvasImage";
+import { CustomLine } from "@/components/elements/Canvas/Line/CanvasLine";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
@@ -13,6 +14,7 @@ import { edit, startDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { IRect } from "@/types/canvas";
 import Konva from "konva";
 import {
   Group,
@@ -140,7 +142,7 @@ export const Canvas = (): JSX.Element => {
                       {...props}
                       cornerRadius={
                         Math.max(element.width, element.height) *
-                        (element.cornerRadius / 100)
+                        ((element as IRect).cornerRadius / 100)
                       }
                       dash={
                         element.dashEnabled && element.fillType === "outline"
@@ -151,9 +153,21 @@ export const Canvas = (): JSX.Element => {
                   );
                 case "ellipse":
                   // @ts-ignore
-                  return <CustomEllipse key={index} {...props} />;
+                  return (
+                    <CustomEllipse
+                      key={index}
+                      fill={element.color}
+                      fillEnabled={element.fillType === "fill"}
+                      stroke={element.color}
+                      dash={
+                        element.dashEnabled && element.fillType === "outline"
+                          ? [element.strokeWidth, element.strokeWidth * 2]
+                          : undefined
+                      }
+                      {...props}
+                    />
+                  );
                 case "pen":
-                case "line":
                   return (
                     <Line
                       key={index}
@@ -162,6 +176,19 @@ export const Canvas = (): JSX.Element => {
                       stroke={element.color}
                       lineCap="round"
                       lineJoin="round"
+                      dash={
+                        element.dashEnabled
+                          ? [element.strokeWidth, element.strokeWidth * 2]
+                          : undefined
+                      }
+                    />
+                  );
+                case "line":
+                  return (
+                    <CustomLine
+                      key={index}
+                      {...props}
+                      stroke={element.color}
                       dash={
                         element.dashEnabled
                           ? [element.strokeWidth, element.strokeWidth * 2]

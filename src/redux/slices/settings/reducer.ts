@@ -1,4 +1,4 @@
-import { IFigure, IPen, IText } from "@/types/canvas";
+import { IFigure, ILine, IPen, IRect, IText } from "@/types/canvas";
 import { Font } from "@/utils/FontManager";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -16,12 +16,12 @@ type DefaultOmit =
 
 export interface IToolsKeys {
   text: Omit<IText, DefaultOmit | "text">;
-  ellipse: {};
+  ellipse: Omit<IFigure, DefaultOmit>;
   eraser: Omit<IPen, DefaultOmit | "points" | "dashEnabled">;
   image: {};
-  line: {};
+  line: Omit<ILine, DefaultOmit | "points" | "dashEnabled">;
   pen: Omit<IPen, DefaultOmit | "points">;
-  rect: Omit<IFigure, DefaultOmit>;
+  rect: Omit<IRect, DefaultOmit>;
   selection: null;
 }
 
@@ -38,10 +38,10 @@ const initialState: SettingsState = {
       fontStyle: "",
       textDecoration: ""
     },
-    ellipse: {},
+    ellipse: { fillType: "fill", strokeWidth: 2, dashEnabled: false },
     eraser: { strokeWidth: 5 },
     image: {},
-    line: {},
+    line: { strokeWidth: 5, arrowType: "none" },
     pen: { strokeWidth: 5, dashEnabled: false },
     rect: {
       fillType: "fill",
