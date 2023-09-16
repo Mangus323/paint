@@ -1,4 +1,4 @@
-import { IFigure, ILine, IPen, IRect, IText } from "@/types/canvas";
+import { IEllipse, ILine, IPen, IRect, IText } from "@/types/canvas";
 import { Font } from "@/utils/FontManager";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -12,11 +12,13 @@ type DefaultOmit =
   | "height"
   | "startX"
   | "startY"
+  | "radiusX"
+  | "radiusY"
   | keyof Vector2d;
 
 export interface IToolsKeys {
   text: Omit<IText, DefaultOmit | "text">;
-  ellipse: Omit<IFigure, DefaultOmit>;
+  ellipse: Omit<IEllipse, DefaultOmit>;
   eraser: Omit<IPen, DefaultOmit | "points" | "dashEnabled">;
   image: {};
   line: Omit<ILine, DefaultOmit | "points" | "dashEnabled">;

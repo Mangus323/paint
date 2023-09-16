@@ -22,7 +22,14 @@ export interface IFigure extends IBaseElement, Vector2d {
 }
 
 export interface IRect extends IFigure {
+  tool: "rect";
   cornerRadius: number;
+}
+
+export interface IEllipse extends IFigure {
+  tool: "ellipse";
+  radiusX: number;
+  radiusY: number;
 }
 
 export interface IPen extends IBaseElement, Vector2d {
@@ -61,7 +68,7 @@ export interface ISelection extends IBaseElement {
 
 export type IElement =
   | IPen
-  | IFigure
+  | IEllipse
   | IText
   | IArrow
   | IImage

@@ -4,7 +4,6 @@ import React, { JSX, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
-import { CustomEllipse } from "@/components/elements/Canvas/Ellipse/Ellipse";
 import { CanvasImage } from "@/components/elements/Canvas/Image/CanvasImage";
 import { CustomLine } from "@/components/elements/Canvas/Line/CanvasLine";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
@@ -14,9 +13,10 @@ import { edit, startDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { IRect } from "@/types/canvas";
+import { getCanvasElementProps } from "@/utils/getCanvasElementProps";
 import Konva from "konva";
 import {
+  Ellipse,
   Group,
   Layer,
   Line,
@@ -128,87 +128,23 @@ export const Canvas = (): JSX.Element => {
                 ref: isLast ? lastElementRef : undefined,
                 onTransformEnd: isLast ? onTransformEnd : undefined,
                 onTransformStart: isLast ? onTransformStart : undefined,
-                ...elementProps
+                ...elementProps,
+                ...getCanvasElementProps(element)
               };
 
               switch (element.tool) {
                 case "rect":
-                  return (
-                    <Rect
-                      key={index}
-                      fill={element.color}
-                      fillEnabled={element.fillType === "fill"}
-                      stroke={element.color}
-                      {...props}
-                      cornerRadius={
-                        Math.max(element.width, element.height) *
-                        ((element as IRect).cornerRadius / 100)
-                      }
-                      dash={
-                        element.dashEnabled && element.fillType === "outline"
-                          ? [element.strokeWidth, element.strokeWidth * 2]
-                          : undefined
-                      }
-                    />
-                  );
+                  return <Rect key={index} {...props} />;
                 case "ellipse":
                   // @ts-ignore
-                  return (
-                    <CustomEllipse
-                      key={index}
-                      fill={element.color}
-                      fillEnabled={element.fillType === "fill"}
-                      stroke={element.color}
-                      dash={
-                        element.dashEnabled && element.fillType === "outline"
-                          ? [element.strokeWidth, element.strokeWidth * 2]
-                          : undefined
-                      }
-                      {...props}
-                    />
-                  );
+                  return <Ellipse key={index} {...props} />;
                 case "pen":
-                  return (
-                    <Line
-                      key={index}
-                      {...props}
-                      globalCompositeOperation={"source-over"}
-                      stroke={element.color}
-                      lineCap="round"
-                      lineJoin="round"
-                      dash={
-                        element.dashEnabled
-                          ? [element.strokeWidth, element.strokeWidth * 2]
-                          : undefined
-                      }
-                    />
-                  );
-                case "line":
-                  return (
-                    <CustomLine
-                      key={index}
-                      {...props}
-                      stroke={element.color}
-                      dash={
-                        element.dashEnabled
-                          ? [element.strokeWidth, element.strokeWidth * 2]
-                          : undefined
-                      }
-                    />
-                  );
                 case "eraser":
-                  return (
-                    <Line
-                      key={index}
-                      {...props}
-                      stroke={"#ffffff"}
-                      lineCap="round"
-                      lineJoin="round"
-                      globalCompositeOperation={"destination-out"}
-                    />
-                  );
+                  return <Line key={index} {...props} />;
+                case "line":
+                  return <CustomLine key={index} {...props} />;
                 case "text":
-                  return <Text key={index} {...props} fill={element.color} />;
+                  return <Text key={index} {...props} />;
                 case "image":
                   return <MemoImage key={index} {...props} />;
               }
