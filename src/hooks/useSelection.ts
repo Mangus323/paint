@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { sidebarDimension as sd } from "@/globals/globals";
 import {
   changeSelectionZoom,
   editSelection,
@@ -11,7 +12,9 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 export const useSelection = () => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const { selection, isSelecting } = useAppSelector(state => state.canvasMeta);
-  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
+  const { zoom, layerX, layerY, layerWidth, layerHeight } = useAppSelector(
+    state => state.browser
+  );
   const dispatch = useAppDispatch();
   const position = useContext(MousePositionContext);
   const [isListening, setIsListening] = useState(false);
@@ -55,10 +58,20 @@ export const useSelection = () => {
 
   useEffect(() => {
     if (tool === "selection" && isSelecting && selection) {
+      const maxWidth = layerWidth * zoom - selection.x + sd.width;
+      const maxHeight = layerHeight * zoom - selection.y + sd.height;
+      const minWidth = (sd.width - selection.x) / zoom;
+      const minHeight = (sd.height - selection.y) / zoom;
       dispatch(
         editSelection({
-          width: (position.x - selection.x - layerX) / zoom,
-          height: (position.y - selection.y - layerY) / zoom
+          width: Math.max(
+            minWidth,
+            Math.min(maxWidth, (position.x - selection.x - layerX) / zoom)
+          ),
+          height: Math.max(
+            minHeight,
+            Math.min(maxHeight, (position.y - selection.y - layerY) / zoom)
+          )
         })
       );
     }
