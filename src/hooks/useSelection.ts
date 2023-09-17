@@ -1,7 +1,8 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import {
-  editSelect,
+  changeSelectionZoom,
+  editSelection,
   endSelecting,
   startSelecting
 } from "@/redux/slices/canvasMeta/reducer";
@@ -10,10 +11,16 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 export const useSelection = () => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const { selection, isSelecting } = useAppSelector(state => state.canvasMeta);
+  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
   const dispatch = useAppDispatch();
   const position = useContext(MousePositionContext);
-  const positionRef = useRef(position);
   const [isListening, setIsListening] = useState(false);
+  const coordinateRef = useRef({
+    position,
+    zoom,
+    layerX,
+    layerY
+  });
 
   useEffect(() => {
     if (tool === "selection") {
@@ -31,23 +38,44 @@ export const useSelection = () => {
     };
   }, [tool]);
 
-  const onMouseDown = () => {
-    dispatch(startSelecting(positionRef.current));
-  };
+  const onMouseDown = useCallback(() => {
+    const { layerX, layerY, position } = coordinateRef.current;
+    dispatch(
+      startSelecting({
+        x: position.x - layerX,
+        y: position.y - layerY,
+        currentZoom: coordinateRef.current.zoom
+      })
+    );
+  }, []);
 
-  const onMouseUp = () => {
+  const onMouseUp = useCallback(() => {
     dispatch(endSelecting());
-  };
+  }, []);
 
   useEffect(() => {
-    positionRef.current = position;
     if (tool === "selection" && isSelecting && selection) {
       dispatch(
-        editSelect({
-          width: position.x - selection.x,
-          height: position.y - selection.y
+        editSelection({
+          width: (position.x - selection.x - layerX) / zoom,
+          height: (position.y - selection.y - layerY) / zoom
         })
       );
     }
   }, [position]);
+
+  useEffect(() => {
+    if (tool === "selection" && selection) {
+      dispatch(changeSelectionZoom(zoom));
+    }
+  }, [zoom]);
+
+  useEffect(() => {
+    coordinateRef.current = {
+      zoom,
+      position,
+      layerX,
+      layerY
+    };
+  }, [zoom, position, layerY, layerX]);
 };

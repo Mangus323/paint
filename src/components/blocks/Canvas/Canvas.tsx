@@ -1,6 +1,6 @@
 "use client";
 
-import React, { JSX, useEffect, useRef } from "react";
+import React, { JSX, useCallback, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
@@ -61,7 +61,7 @@ export const Canvas = (): JSX.Element => {
     dispatch(startDraw());
   };
 
-  const onTransformEnd = () => {
+  const onTransformEnd = useCallback(() => {
     const { x, y } = lastElementRef.current.scale();
     dispatch(
       edit({
@@ -69,7 +69,7 @@ export const Canvas = (): JSX.Element => {
         scaleY: y
       })
     );
-  };
+  }, []);
 
   useEffect(() => {
     if (!(lastElementRef.current && !isDrawing && isActiveElement)) return;
@@ -160,7 +160,7 @@ export const Canvas = (): JSX.Element => {
                   return newBox;
                 }}
                 rotateEnabled={false}
-                borderStroke={"#070d14"}
+                borderStroke={"#070d1480"}
                 borderStrokeWidth={isDrawing ? 0 : 2}
                 anchorCornerRadius={1}
                 anchorSize={isDrawing ? 0 : 8}

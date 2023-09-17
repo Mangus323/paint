@@ -29,7 +29,10 @@ export const useCopySelection = (stageRef: React.RefObject<Stage>) => {
     if (!isCopying) return;
     if (!stageRef.current) return;
     if (selection && stageRef.current.children) {
-      let ctx = stageRef.current.children[1].canvas._canvas.getContext("2d");
+      // let ctx = stageRef.current.children[1].canvas._canvas.getContext("2d");
+      let ctx = stageRef.current.children[1]
+        .getNativeCanvasElement()
+        .getContext("2d");
       if (!ctx) return;
       ctx.scale(1 / zoom, 1 / zoom);
       const imageData = ctx.getImageData(

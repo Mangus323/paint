@@ -14,7 +14,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     state => state.canvasMeta
   );
   const { isDrawing } = useAppSelector(state => state.canvas);
-  const { zoom } = useAppSelector(state => state.browser);
+  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
   const { isActiveElement, activeElement } = useActiveElement();
   const dispatch = useAppDispatch();
   const position = useContext(MousePositionContext);
@@ -70,14 +70,11 @@ export const ActiveElementEdit = (): JSX.Element => {
         style={{
           width: dimension.width || 0,
           height: dimension.height || 0,
-          transform: `translate(${dimension.x || 0}px, ${dimension.y || 0}px)`
-        }}>
-        <div className={s.buttons}>
-          {/*<Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>*/}
-          {/*  d*/}
-          {/*</Button>*/}
-        </div>
-      </div>
+          transform: `translate(${(dimension.x || 0) + layerX}px, ${
+            (dimension.y || 0) + layerY
+          }px)`
+        }}
+      />
     );
   }
 

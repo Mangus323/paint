@@ -79,6 +79,7 @@ export type IElement =
 export interface IElementMeta extends Vector2d {
   width: number;
   height: number;
+  currentZoom: number;
 }
 
 export type ToolType = (typeof ToolList)[number];

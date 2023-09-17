@@ -35,7 +35,10 @@ export const canvasMetaSlice = createSlice({
         state.activeElementMeta = action.payload;
       }
     },
-    startSelecting: (state, action: PayloadAction<Vector2d>) => {
+    startSelecting: (
+      state,
+      action: PayloadAction<Vector2d & { currentZoom: number }>
+    ) => {
       state.isSelecting = true;
       state.selection = {
         ...action.payload,
@@ -43,9 +46,28 @@ export const canvasMetaSlice = createSlice({
         height: 0
       };
     },
-    editSelect: (state, action: PayloadAction<Partial<IElementMeta>>) => {
+    editSelection: (
+      state,
+      action: PayloadAction<{ width: number; height: number }>
+    ) => {
       // @ts-ignore
-      state.selection = { ...state.selection, ...action.payload };
+      state.selection = {
+        ...state.selection,
+        width: action.payload.width * (state?.selection?.currentZoom || 1),
+        height: action.payload.height * (state?.selection?.currentZoom || 1)
+      };
+    },
+    changeSelectionZoom: (state, action: PayloadAction<number>) => {
+      if (state.selection) {
+        let multiplier = action.payload / state.selection.currentZoom;
+        state.selection = {
+          x: (state.selection.x - sd.width) * multiplier + sd.width,
+          y: (state.selection.y - sd.height) * multiplier + sd.height,
+          width: state.selection.width * multiplier,
+          height: state.selection.height * multiplier,
+          currentZoom: action.payload
+        };
+      }
     },
     endSelecting: state => {
       state.isSelecting = false;
@@ -60,7 +82,8 @@ export const canvasMetaSlice = createSlice({
         x: sd.width,
         y: sd.height,
         width: action.payload.width,
-        height: action.payload.height
+        height: action.payload.height,
+        currentZoom: 1
       };
       state.isSelecting = false;
       state.activeElementMeta = null;
@@ -72,8 +95,9 @@ export const {
   changeMeta,
   endSelecting,
   startSelecting,
-  editSelect,
-  selectAll
+  editSelection,
+  selectAll,
+  changeSelectionZoom
 } = canvasMetaSlice.actions;
 
 export default canvasMetaSlice.reducer;

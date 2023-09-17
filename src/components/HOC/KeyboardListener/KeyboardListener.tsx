@@ -25,7 +25,7 @@ import {
   undo
 } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
-import { selectAll } from "@/redux/slices/canvasMeta/reducer";
+import { endSelecting, selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
 import s from "./index.module.scss";
@@ -55,6 +55,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       switch (e.code) {
         case "Escape":
           dispatch(place());
+          dispatch(endSelecting());
           return;
       }
       if (e.ctrlKey) {

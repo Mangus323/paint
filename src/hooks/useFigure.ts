@@ -22,18 +22,28 @@ export const useFigure = (offset: Vector2d) => {
     if (tool === "ellipse" || tool === "rect") {
       isDrawingRef.current = true;
       const { x, y } = getPoints(e, zoom, offset);
+      const data = {
+        width: 0,
+        height: 0,
+        x,
+        y,
+        startX: x,
+        startY: y,
+        tool: tool
+      };
 
       dispatch(
-        placeAndEdit({
-          ...settings[tool],
-          width: 0,
-          height: 0,
-          x,
-          y,
-          startX: x,
-          startY: y,
-          tool: tool
-        })
+        placeAndEdit(
+          tool === "ellipse"
+            ? {
+                ...settings[tool],
+                ...data,
+                radiusX: 0,
+                radiusY: 0,
+                tool: "ellipse"
+              }
+            : { ...settings[tool], ...data, cornerRadius: 0, tool: "rect" }
+        )
       );
     }
   };
