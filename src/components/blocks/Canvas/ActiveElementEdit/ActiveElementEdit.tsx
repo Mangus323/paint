@@ -79,11 +79,16 @@ export const ActiveElementEdit = (): JSX.Element => {
   }
 
   if (isActiveElement && activeElementMeta && !isDrawing) {
-    const x = activeElementMeta.x + 5 < 0 ? 0 : activeElementMeta.x + 5;
-    const y =
+    const x = Math.min(
+      window.innerWidth - sd.width - 40,
+      activeElementMeta.x + 5 < 0 ? 0 : activeElementMeta.x + 5
+    );
+    const y = Math.min(
+      window.innerHeight - sd.height,
       activeElementMeta.y + 8 < sd.height
         ? sd.height - 10
-        : activeElementMeta.y - 2;
+        : activeElementMeta.y - 2
+    );
     return (
       <div
         className={s.container}
