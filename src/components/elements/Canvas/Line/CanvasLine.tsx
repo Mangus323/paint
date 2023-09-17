@@ -12,24 +12,34 @@ interface CustomLineProps extends LineConfig {
   stroke: string;
   x: number;
   y: number;
+  onTransformStart: () => void;
 }
-
-const TwoPointsToDegree = (points: number[]) => {
-  let [x1, y1, x2, y2] = points;
-  let result = (180 / Math.PI) * Math.atan2(y2 - y1, x2 - x1) + 90;
-
-  return result < 0 ? result + 360 : result;
-};
 
 export const CustomLine = forwardRef<any, CustomLineProps>(
   (props: CustomLineProps, ref): JSX.Element => {
-    const { rotation, arrowType, ...lineProps } = props;
+    const {
+      rotation,
+      arrowType,
+      offsetX,
+      offsetY,
+      x,
+      y,
+      onTransformStart,
+      ...lineProps
+    } = props;
     const points = props.points;
     const lastPoint = [points[2] + props.x, points[3] + props.y];
     let angle = points.length === 4 ? TwoPointsToDegree(points) : 0;
 
     return (
-      <Group ref={ref} rotation={rotation}>
+      <Group
+        ref={ref}
+        rotation={rotation}
+        offsetX={offsetX}
+        offsetY={offsetY}
+        x={x}
+        y={y}
+        onTransformStart={onTransformStart}>
         {!isNaN(lastPoint[0]) && arrowType === "circle" && (
           <Circle
             fill={props.stroke}
@@ -85,4 +95,12 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
     );
   }
 );
+
 CustomLine.displayName = "CustomLine";
+
+const TwoPointsToDegree = (points: number[]) => {
+  let [x1, y1, x2, y2] = points;
+  let result = (180 / Math.PI) * Math.atan2(y2 - y1, x2 - x1) + 90;
+
+  return result < 0 ? result + 360 : result;
+};

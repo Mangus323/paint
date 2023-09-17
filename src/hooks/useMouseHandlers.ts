@@ -26,6 +26,7 @@ export const useMouseHandlers = () => {
     layerY,
     layerX
   } = useAppSelector(state => state.browser);
+  const { isDrawing } = useAppSelector(state => state.canvas);
 
   const offset = {
     x: layerX,
@@ -69,7 +70,9 @@ export const useMouseHandlers = () => {
   const handleMouseUp = () => {
     penUp();
     figureUp();
-    dispatch(stopDraw());
+    if (isDrawing) {
+      dispatch(stopDraw());
+    }
   };
 
   const handleClick = (e: KonvaEventObject<MouseEvent>) => {

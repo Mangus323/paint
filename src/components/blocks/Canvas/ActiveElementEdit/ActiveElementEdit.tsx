@@ -7,6 +7,8 @@ import { edit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { calculateMetaSelection } from "@/utils/calculateMeta";
+import DragIcon from "~public/icons/Drag.svg";
+import RotateIcon from "~public/icons/Rotate.svg";
 import s from "./index.module.scss";
 
 export const ActiveElementEdit = (): JSX.Element => {
@@ -97,12 +99,12 @@ export const ActiveElementEdit = (): JSX.Element => {
         }}>
         <div className={s.buttons}>
           <Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>
-            d
+            <DragIcon />
           </Button>
           <Button
             className={s.buttons__rotation}
             onMouseDown={onMouseDownRotation}>
-            r
+            <RotateIcon />
           </Button>
         </div>
       </div>

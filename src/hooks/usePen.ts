@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { edit, placeAndEdit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { IPen } from "@/types/canvas";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 
@@ -60,6 +61,9 @@ export const usePen = (offset: Vector2d) => {
   };
 
   const handleMouseUp = () => {
+    if (isDrawingRef.current) {
+      dispatch(edit(normalizePoints(activeElement as IPen)));
+    }
     isDrawingRef.current = false;
   };
 
@@ -68,4 +72,34 @@ export const usePen = (offset: Vector2d) => {
   }, [isDrawing]);
 
   return { handleMouseDown, handleMouseMove, handleMouseUp };
+};
+
+const normalizePoints = (element: IPen): IPen => {
+  const points = element.points;
+  let maxX = 0,
+    minX = Infinity,
+    maxY = 0,
+    minY = Infinity;
+  for (let i = 0; i < points.length; i += 2) {
+    minX = Math.min(minX, points[i]);
+    maxX = Math.max(maxX, points[i]);
+  }
+  for (let i = 1; i < points.length; i += 2) {
+    minY = Math.min(minY, points[i]);
+    maxY = Math.max(maxY, points[i]);
+  }
+  const newPoints = points.map((point, index) => {
+    return index % 2 === 0 ? point - minX : point - minY;
+  });
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  return {
+    ...element,
+    points: newPoints,
+    x: minX + width / 2,
+    y: minY + height / 2,
+    offsetX: width / 2,
+    offsetY: height / 2
+  };
 };

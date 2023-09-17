@@ -57,18 +57,42 @@ export const Canvas = (): JSX.Element => {
   useCopySelection(stageRef);
   const { activeElement, isActiveElement } = useActiveElement();
 
-  const onTransformStart = () => {
-    dispatch(startDraw());
-  };
+  const onTransformStart = useCallback(() => dispatch(startDraw()), []);
 
   const onTransformEnd = useCallback(() => {
-    const { x, y } = lastElementRef.current.scale();
-    dispatch(
-      edit({
-        scaleX: x,
-        scaleY: y
-      })
-    );
+    const current = lastElementRef.current;
+    const tool = current.attrs.tool;
+    const { x: scaleX, y: scaleY } = current.scale();
+    const { x, y } = current.position();
+
+    if (tool === "ellipse") {
+      dispatch(
+        edit({
+          x: x - current.attrs.radiusX,
+          y: y - current.attrs.radiusY,
+          scaleX,
+          scaleY
+        })
+      );
+    } else if (tool === "pen" || tool === "eraser" || tool === "line") {
+      dispatch(
+        edit({
+          x: x,
+          y: y,
+          scaleX,
+          scaleY
+        })
+      );
+    } else {
+      dispatch(
+        edit({
+          x: x - current.offsetX(),
+          y: y - current.offsetY(),
+          scaleX,
+          scaleY
+        })
+      );
+    }
   }, []);
 
   useEffect(() => {
@@ -122,13 +146,12 @@ export const Canvas = (): JSX.Element => {
               fill={"#ffffff"}
             />
             {elements.map((element, index, array) => {
-              const { tool, ...elementProps } = element;
               const isLast = index === array.length - 1;
               const props = {
                 ref: isLast ? lastElementRef : undefined,
                 onTransformEnd: isLast ? onTransformEnd : undefined,
                 onTransformStart: isLast ? onTransformStart : undefined,
-                ...elementProps,
+                ...element,
                 ...getCanvasElementProps(element)
               };
 

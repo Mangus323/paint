@@ -8,6 +8,8 @@ interface IBaseElement {
   rotation?: number;
   scaleX?: number;
   scaleY?: number;
+  offsetX?: number;
+  offsetY?: number;
 }
 
 export interface IFigure extends IBaseElement, Vector2d {

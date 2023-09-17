@@ -1,4 +1,4 @@
-import { IElement, IRect } from "@/types/canvas";
+import { IElement } from "@/types/canvas";
 
 export const getCanvasElementProps = (element: IElement) => {
   switch (element.tool) {
@@ -9,11 +9,17 @@ export const getCanvasElementProps = (element: IElement) => {
         stroke: element.color,
         cornerRadius:
           Math.max(element.width, element.height) *
-          ((element as IRect).cornerRadius / 100),
+          (element.cornerRadius / 100),
         dash:
           element.dashEnabled && element.fillType === "outline"
             ? [element.strokeWidth, element.strokeWidth * 2]
-            : undefined
+            : undefined,
+        x: element.x + Math.abs(element.width / 2),
+        y: element.y + Math.abs(element.height / 2),
+        offset: {
+          x: Math.abs(element.width) / 2,
+          y: Math.abs(element.height) / 2
+        }
       };
     case "ellipse":
       return {
@@ -24,12 +30,13 @@ export const getCanvasElementProps = (element: IElement) => {
           element.dashEnabled && element.fillType === "outline"
             ? [element.strokeWidth, element.strokeWidth * 2]
             : undefined,
-        x: (element.x + element.width + element.x) / 2,
-        y: (element.y + element.height + element.y) / 2,
+        x: (element.x * 2 + element.width) / 2,
+        y: (element.y * 2 + element.height) / 2,
         radiusX: Math.abs(element.width / 2),
         radiusY: Math.abs(element.height / 2)
       };
     case "pen":
+      // offset calculates in onMouseUp
       return {
         globalCompositeOperation: "source-over" as const,
         stroke: element.color,
