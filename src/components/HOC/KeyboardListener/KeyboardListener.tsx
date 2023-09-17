@@ -155,6 +155,9 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
               src: reader.result,
               x,
               y
+              // TODO
+              // scaleY: 0.25,
+              // scaleX: 0.25
             })
           );
         };
