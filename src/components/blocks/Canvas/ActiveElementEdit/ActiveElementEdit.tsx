@@ -23,6 +23,7 @@ export const ActiveElementEdit = (): JSX.Element => {
   const previousLastPosition = usePrevious<typeof position>(position);
   const [action, setAction] = useState<string | null>(null);
   const [originalAngle, setOriginalAngle] = useState(0);
+  const [startRotationPosition, setStartRotationPosition] = useState(0);
 
   const onMouseDownDrag = () => {
     setAction("drag");
@@ -34,6 +35,7 @@ export const ActiveElementEdit = (): JSX.Element => {
     document.addEventListener("mouseup", onMouseUp);
     if ("rotation" in activeElement)
       setOriginalAngle(activeElement.rotation || 0);
+    setStartRotationPosition(position.x);
   };
 
   const onMouseUp = () => {
@@ -53,8 +55,7 @@ export const ActiveElementEdit = (): JSX.Element => {
         );
       }
       if (action === "rotation" && "x" in activeElement) {
-        const angle =
-          (activeElement.x - position.x + sd.width + 22) / 2 + originalAngle;
+        const angle = (position.x - startRotationPosition) / 2 + originalAngle;
         dispatch(
           edit({
             rotation: angle
@@ -80,7 +81,12 @@ export const ActiveElementEdit = (): JSX.Element => {
     );
   }
 
-  if (isActiveElement && activeElementMeta && !isDrawing) {
+  if (
+    isActiveElement &&
+    activeElementMeta &&
+    !isDrawing &&
+    action !== "rotation"
+  ) {
     const x = Math.min(
       window.innerWidth - sd.width - 40,
       activeElementMeta.x + 5 < 0 ? 0 : activeElementMeta.x + 5

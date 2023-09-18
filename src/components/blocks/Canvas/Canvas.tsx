@@ -13,6 +13,7 @@ import { edit, startDraw } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { IElement } from "@/types/canvas";
 import { getCanvasElementProps } from "@/utils/getCanvasElementProps";
 import Konva from "konva";
 import {
@@ -64,35 +65,31 @@ export const Canvas = (): JSX.Element => {
     const tool = current.attrs.tool;
     const { x: scaleX, y: scaleY } = current.scale();
     const { x, y } = current.position();
+    let editObj: Partial<IElement>;
 
-    if (tool === "ellipse") {
-      dispatch(
-        edit({
-          x: x - current.attrs.radiusX,
-          y: y - current.attrs.radiusY,
-          scaleX,
-          scaleY
-        })
-      );
-    } else if (tool === "pen" || tool === "eraser" || tool === "line") {
-      dispatch(
-        edit({
-          x: x,
-          y: y,
-          scaleX,
-          scaleY
-        })
-      );
-    } else {
-      dispatch(
-        edit({
-          x: x - current.offsetX(),
-          y: y - current.offsetY(),
-          scaleX,
-          scaleY
-        })
-      );
-    }
+    if (tool === "ellipse")
+      editObj = {
+        x: x - current.attrs.radiusX,
+        y: y - current.attrs.radiusY,
+        scaleX,
+        scaleY
+      };
+    else if (tool === "pen" || tool === "eraser" || tool === "line")
+      editObj = {
+        x: x,
+        y: y,
+        scaleX,
+        scaleY
+      };
+    else
+      editObj = {
+        x: x - current.offsetX(),
+        y: y - current.offsetY(),
+        scaleX,
+        scaleY
+      };
+
+    if (Object.keys(editObj).length) dispatch(edit(editObj));
   }, []);
 
   useEffect(() => {
@@ -106,6 +103,25 @@ export const Canvas = (): JSX.Element => {
       return;
     transformerRef.current.nodes([lastElementRef.current]);
   }, [activeElement, isActiveElement]);
+
+  // TODO decide how to transform text
+  // useEffect(() => {
+  //   if (
+  //     isActiveElement &&
+  //     activeElement.tool === "text" &&
+  //     lastElementRef.current
+  //   ) {
+  //     const current = lastElementRef.current;
+  //     dispatch(
+  //       edit({
+  //         offsetX: current.width() / 2,
+  //         offsetY: current.height() / 2,
+  //         x: current.attrs.x,
+  //         y: current.attrs.y
+  //       })
+  //     );
+  //   }
+  // }, [(activeElement as IText)?.text]);
 
   return (
     <section className={s.container}>

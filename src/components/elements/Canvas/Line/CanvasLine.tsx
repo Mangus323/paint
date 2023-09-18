@@ -28,7 +28,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
       ...lineProps
     } = props;
     const points = props.points;
-    const lastPoint = [points[2] + props.x, points[3] + props.y];
+    const lastPoint = [points[2], points[3]];
     let angle = points.length === 4 ? TwoPointsToDegree(points) : 0;
 
     return (
@@ -43,7 +43,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
         {!isNaN(lastPoint[0]) && arrowType === "circle" && (
           <Circle
             fill={props.stroke}
-            radius={props.strokeWidth + 2}
+            radius={props.strokeWidth + 4}
             x={lastPoint[0]}
             y={lastPoint[1]}
           />
@@ -53,7 +53,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
             rotation={angle}
             sides={3}
             fill={props.stroke}
-            radius={props.strokeWidth + 2}
+            radius={props.strokeWidth + 4}
             x={lastPoint[0]}
             y={lastPoint[1]}
           />
@@ -64,7 +64,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
               rotation={(angle + 330) % 360}
               stroke={props.stroke}
               strokeWidth={props.strokeWidth}
-              points={[0, 0, 0, props.strokeWidth * 4]}
+              points={[0, 0, 0, props.strokeWidth * 3]}
               x={lastPoint[0]}
               y={lastPoint[1]}
               lineCap={"round"}
@@ -75,7 +75,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
               rotation={(angle + 30) % 360}
               stroke={props.stroke}
               strokeWidth={props.strokeWidth}
-              points={[0, 0, 0, props.strokeWidth * 4]}
+              points={[0, 0, 0, props.strokeWidth * 3]}
               x={lastPoint[0]}
               y={lastPoint[1]}
               lineCap={"round"}
