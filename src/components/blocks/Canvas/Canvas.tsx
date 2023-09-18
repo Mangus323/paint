@@ -15,6 +15,7 @@ import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IElement } from "@/types/canvas";
 import { getCanvasElementProps } from "@/utils/getCanvasElementProps";
+import { Box } from "@mui/material";
 import Konva from "konva";
 import {
   Ellipse,
@@ -26,7 +27,6 @@ import {
   Text,
   Transformer
 } from "react-konva";
-import s from "./index.module.scss";
 
 const MemoImage = React.memo(CanvasImage);
 const MemoStatusBar = React.memo(StatusBar);
@@ -124,7 +124,9 @@ const CanvasComponent = (): JSX.Element => {
   // }, [(activeElement as IText)?.text]);
 
   return (
-    <section className={s.container}>
+    <Box
+      component={"section"}
+      sx={{ position: "relative", overflow: "hidden" }}>
       <Stage
         width={canvasWidth}
         height={canvasHeight}
@@ -213,7 +215,7 @@ const CanvasComponent = (): JSX.Element => {
       </Stage>
       <ActiveElementEdit />
       <MemoStatusBar />
-    </section>
+    </Box>
   );
 };
 

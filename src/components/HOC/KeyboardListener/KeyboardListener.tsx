@@ -28,7 +28,6 @@ import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
-import s from "./index.module.scss";
 
 interface KeyboardListenerProps {
   children: ReactNode;
@@ -198,7 +197,14 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       {isActiveText && (
         <textarea
           ref={pseudoInputRef}
-          className={s.input}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            maxWidth: 0,
+            maxHeight: 0,
+            opacity: 0
+          }}
           tabIndex={-1}
           onChange={onPseudoInputChange}
           value={(activeElement as IText)?.text || ""}

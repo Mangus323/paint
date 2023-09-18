@@ -2,7 +2,7 @@ import React, { JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
 import { changeColor } from "@/redux/slices/canvas/reducer";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/redux/store";
-import s from "./index.module.scss";
+import { Box } from "@mui/material";
 
 export const ColorPanel = (): JSX.Element => {
   const { selectedColor } = useAppSelector(state => state.canvas);
@@ -28,8 +28,12 @@ export const ColorPanel = (): JSX.Element => {
   return (
     <>
       <h3>Colors</h3>
-      <div
-        className={s.selected_color}
+      <Box
+        sx={{
+          width: "100%",
+          marginBottom: "-2px",
+          aspectRatio: 1
+        }}
         style={{ backgroundColor: selectedColor }}
       />
       <p>current</p>
@@ -38,8 +42,11 @@ export const ColorPanel = (): JSX.Element => {
           return (
             <li key={color}>
               <Button onClick={() => setColor(color)}>
-                <div
-                  className={s.color_button}
+                <Box
+                  sx={{
+                    width: "100%",
+                    aspectRatio: 1
+                  }}
                   style={{ backgroundColor: color }}
                 />
               </Button>

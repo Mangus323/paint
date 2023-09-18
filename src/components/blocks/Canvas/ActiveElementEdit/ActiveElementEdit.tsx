@@ -7,9 +7,9 @@ import { edit } from "@/redux/slices/canvas/reducer";
 import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { calculateMetaSelection } from "@/utils/calculateMeta";
+import { Box } from "@mui/material";
 import DragIcon from "~public/icons/Drag.svg";
 import RotateIcon from "~public/icons/Rotate.svg";
-import s from "./index.module.scss";
 
 export const ActiveElementEdit = (): JSX.Element => {
   const { activeElementMeta, selection } = useAppSelector(
@@ -68,8 +68,15 @@ export const ActiveElementEdit = (): JSX.Element => {
   if (selection) {
     const dimension = calculateMetaSelection(selection);
     return (
-      <div
-        className={s.selection}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          border: "1px dashed var(--black)",
+          background: "transparent",
+          pointerEvents: "none"
+        }}
         style={{
           width: dimension.width || 0,
           height: dimension.height || 0,
@@ -98,22 +105,42 @@ export const ActiveElementEdit = (): JSX.Element => {
         : activeElementMeta.y - 2
     );
     return (
-      <div
-        className={s.container}
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          height: 2,
+          backgroundColor: "var(--black)"
+        }}
         style={{
           transform: `translate(${x}px, ${y}px)`
         }}>
-        <div className={s.buttons}>
-          <Button className={s.buttons__drag} onMouseDown={onMouseDownDrag}>
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: "100%",
+            left: 0,
+            display: "flex"
+          }}>
+          <Button
+            sx={{
+              cursor: "move !important",
+              fontSize: 14
+            }}
+            onMouseDown={onMouseDownDrag}>
             <DragIcon />
           </Button>
           <Button
-            className={s.buttons__rotation}
+            sx={{
+              cursor: "e-resize !important",
+              fontSize: 14
+            }}
             onMouseDown={onMouseDownRotation}>
             <RotateIcon />
           </Button>
-        </div>
-      </div>
+        </Box>
+      </Box>
     );
   }
   return <></>;

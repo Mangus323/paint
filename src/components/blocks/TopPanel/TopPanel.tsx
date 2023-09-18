@@ -7,8 +7,8 @@ import {
   setIsDownloading
 } from "@/redux/slices/canvas/reducer";
 import { AppDispatch } from "@/redux/store";
+import { Box } from "@mui/material";
 import { useDispatch } from "react-redux";
-import s from "./index.module.scss";
 
 export const TopPanel = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
@@ -32,11 +32,21 @@ export const TopPanel = (): JSX.Element => {
   };
 
   return (
-    <section className={s.container}>
+    <Box
+      component={"section"}
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: 0.5,
+        borderBottom: "1px solid var(--teal-300)",
+        backgroundColor: "var(--teal-100)",
+        gap: 0.5
+      }}>
       <FileUploader onChange={onOpenClick}>Open</FileUploader>
       <Button styleType={"default"} onClick={onSaveClick}>
         Save
       </Button>
-    </section>
+    </Box>
   );
 };

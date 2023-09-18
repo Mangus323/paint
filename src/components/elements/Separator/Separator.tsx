@@ -1,6 +1,5 @@
 import React, { JSX } from "react";
-import clsx from "clsx";
-import s from "./index.module.scss";
+import { Box } from "@mui/material";
 
 type OrientationType = "vertical" | "horizontal";
 
@@ -11,11 +10,21 @@ interface SeparatorProps {
 export const Separator = (props: SeparatorProps): JSX.Element => {
   const { orientation } = props;
   return (
-    <div
-      className={clsx(
-        s.container,
-        orientation === "vertical" ? s.vertical : s.horizontal
-      )}
+    <Box
+      sx={{
+        backgroundColor: "var(--teal-300)",
+        ...(orientation === "vertical"
+          ? {
+              width: "1px",
+              height: "100%",
+              margin: "0 5px"
+            }
+          : {
+              width: "100%",
+              height: "1px",
+              margin: "5px 0"
+            })
+      }}
     />
   );
 };
