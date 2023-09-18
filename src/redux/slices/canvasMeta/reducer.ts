@@ -74,6 +74,10 @@ export const canvasMetaSlice = createSlice({
       if (!state.selection) return;
       state.activeElementMeta = null;
     },
+    removeSelection: state => {
+      state.isSelecting = false;
+      state.selection = null;
+    },
     selectAll: (
       state,
       action: PayloadAction<{ width: number; height: number }>
@@ -96,6 +100,7 @@ export const {
   endSelecting,
   startSelecting,
   editSelection,
+  removeSelection,
   selectAll,
   changeSelectionZoom
 } = canvasMetaSlice.actions;
