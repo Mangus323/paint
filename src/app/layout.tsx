@@ -2,6 +2,8 @@
 
 import React from "react";
 import { WindowReader } from "@/components/HOC/WindowReader/WindowReader";
+import { MobilePage } from "@/components/layouts/MobilePage/MobilePage";
+import useIsTouchDevice from "@/hooks/useIsTouchDevice";
 import { store } from "@/redux/store";
 import { ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
@@ -16,6 +18,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const isMobile = useIsTouchDevice();
+
   return (
     <html lang="en">
       <head>
@@ -26,14 +30,21 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <ThemeProvider theme={theme}>
-              <WindowReader>{children}</WindowReader>
-            </ThemeProvider>
-          </PersistGate>
-        </Provider>
+        <ThemeProvider theme={theme}>
+          {isMobile && <MobilePage />}
+          {!isMobile && <DefaultProviders>{children}</DefaultProviders>}
+        </ThemeProvider>
       </body>
     </html>
   );
 }
+
+const DefaultProviders = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <WindowReader>{children}</WindowReader>
+      </PersistGate>
+    </Provider>
+  );
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { JSX, useCallback, useEffect, useRef } from "react";
+import React, { JSX, memo, useCallback, useEffect, useRef } from "react";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
@@ -32,7 +32,7 @@ const MemoImage = React.memo(CanvasImage);
 const MemoStatusBar = React.memo(StatusBar);
 const MemoScrollbar = React.memo(Scrollbar);
 
-export const Canvas = (): JSX.Element => {
+const CanvasComponent = (): JSX.Element => {
   const {
     canvasHeight,
     canvasWidth,
@@ -216,3 +216,5 @@ export const Canvas = (): JSX.Element => {
     </section>
   );
 };
+
+export const Canvas = memo(CanvasComponent);
