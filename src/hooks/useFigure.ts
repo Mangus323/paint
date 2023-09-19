@@ -1,27 +1,30 @@
 import { useEffect, useRef } from "react";
-import { edit, placeAndEdit } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useActiveElement } from "@/hooks/useActiveElement";
+import { useSettings } from "@/redux/slices/settings/selectors";
+import { useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 
 import KonvaEventObject = Konva.KonvaEventObject;
-import Vector2d = Konva.Vector2d;
 
-export const useFigure = (offset: Vector2d) => {
+export const useFigure = () => {
   const { selectedTool: tool, isDrawing } = useAppSelector(
     state => state.canvas
   );
-  const { zoom } = useAppSelector(state => state.browser);
-  const settings = useAppSelector(state => state.settings).tools;
-  const { activeElement, isActiveElement } = useActiveElement();
-  const dispatch = useAppDispatch();
+  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
+  const rectSettings = useSettings("rect");
+  const ellipseSettings = useSettings("ellipse");
+  const { activeElement, setActiveElement, setNewActiveElement } =
+    useActiveElement();
   const isDrawingRef = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "ellipse" || tool === "rect") {
       isDrawingRef.current = true;
-      const { x, y } = getPoints(e, zoom, offset);
+      const { x, y } = getPoints(e, zoom, {
+        x: layerX,
+        y: layerY
+      });
       const data = {
         width: 0,
         height: 0,
@@ -32,33 +35,30 @@ export const useFigure = (offset: Vector2d) => {
         tool: tool
       };
 
-      dispatch(
-        placeAndEdit(
-          tool === "ellipse"
-            ? {
-                ...settings[tool],
-                ...data,
-                radiusX: 0,
-                radiusY: 0,
-                tool: "ellipse"
-              }
-            : { ...settings[tool], ...data, cornerRadius: 0, tool: "rect" }
-        )
+      setNewActiveElement(
+        tool === "ellipse"
+          ? {
+              ...ellipseSettings,
+              ...data,
+              radiusX: 0,
+              radiusY: 0,
+              tool: "ellipse"
+            }
+          : { ...rectSettings, ...data, cornerRadius: 0, tool: "rect" }
       );
     }
   };
 
   const handleMouseMove = (x: number, y: number) => {
     if (!isDrawingRef.current) return;
-    if (isActiveElement && "startX" in activeElement) {
-      dispatch(
-        edit({
-          x: Math.min(activeElement.startX, x),
-          y: Math.min(activeElement.startY, y),
-          width: Math.abs(activeElement.startX - x),
-          height: Math.abs(activeElement.startY - y)
-        })
-      );
+    if (activeElement && "startX" in activeElement) {
+      setActiveElement({
+        ...activeElement,
+        x: Math.min(activeElement.startX, x),
+        y: Math.min(activeElement.startY, y),
+        width: Math.abs(activeElement.startX - x),
+        height: Math.abs(activeElement.startY - y)
+      });
     }
   };
 

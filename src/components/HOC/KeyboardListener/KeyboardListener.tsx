@@ -11,21 +11,18 @@ import React, {
 } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { sidebarDimension as sd } from "@/globals/globals";
+import { useActiveElement } from "@/hooks/useActiveElement";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import {
   changeTool,
   duplicate,
-  edit,
-  place,
-  placeAndEdit,
   redo,
-  setIsActiveElement,
   setIsCopying,
   setIsDownloading,
   undo
 } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
 import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
+import { useSettings } from "@/redux/slices/settings/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
 
@@ -39,10 +36,11 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const { zoom, layerX, layerY, canvasWidth, canvasHeight } = useAppSelector(
     state => state.browser
   );
-  const settings = useAppSelector(state => state.settings.tools.text);
+  const settings = useSettings("text");
   const position = useContext(MousePositionContext);
-  const { isActiveElement, activeElement } = useActiveElement();
-  const isActiveText = isActiveElement && tool === "text";
+  const { activeElement, setActiveElement, setNewActiveElement } =
+    useActiveElement();
+  const isActiveText = activeElement && tool === "text";
   const coordinate = {
     x: (position.x - sd.width - layerX) / zoom,
     y: (position.y - sd.height - layerY) / zoom
@@ -53,7 +51,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     ({ canvasWidth, canvasHeight }, e: KeyboardEvent) => {
       switch (e.code) {
         case "Escape":
-          dispatch(place());
+          setActiveElement(null);
           dispatch(removeSelection());
           return;
       }
@@ -73,7 +71,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
                 height: canvasHeight
               })
             );
-            dispatch(setIsActiveElement(false));
+            setActiveElement(null);
             return;
           case "KeyD":
             e.preventDefault();
@@ -81,7 +79,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
             return;
           case "KeyS":
             e.preventDefault();
-            dispatch(place());
+            if (activeElement) setActiveElement(null);
             dispatch(setIsDownloading(true));
         }
       }
@@ -91,7 +89,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   );
 
   const clipboardPaste = useCallback(
-    ({ settings, tool, isActiveElement, coordinate }, e: Event) => {
+    ({ settings, tool, activeElement, coordinate }, e: Event) => {
       let clipboardData = (e as ClipboardEvent).clipboardData;
       if (!clipboardData) return;
       if (
@@ -99,7 +97,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           clipboardData,
           settings,
           tool,
-          isActiveElement,
+          activeElement,
           coordinate
         )
       )
@@ -115,27 +113,22 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       clipboardData: DataTransfer,
       settings,
       tool,
-      isActiveElement,
+      activeElement,
       coordinate
     ) => {
       let text = clipboardData.getData("text/plain");
       if (!text) return false;
-      if (tool === "text" && isActiveElement) {
-        return true;
-      }
+      if (tool === "text" && activeElement) return true;
       const { x, y } = coordinate;
       dispatch(changeTool("text"));
-      dispatch(
-        placeAndEdit({
-          tool: "text",
-          text: "",
-          rotation: 0,
-          x,
-          y,
-          ...settings
-        })
-      );
-      return true;
+      setNewActiveElement({
+        tool: "text",
+        text: text,
+        rotation: 0,
+        x,
+        y,
+        ...settings
+      });
     },
     []
   );
@@ -148,17 +141,16 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
         let { x, y } = coordinate;
         reader.onloadend = () => {
           if (!reader.result) return;
-          dispatch(
-            placeAndEdit({
-              tool: "image",
-              src: reader.result,
-              x,
-              y
-              // TODO
-              // scaleY: 0.25,
-              // scaleX: 0.25
-            })
-          );
+
+          setNewActiveElement({
+            tool: "image",
+            src: reader.result,
+            x,
+            y
+            // TODO
+            // scaleY: 0.25,
+            // scaleX: 0.25
+          });
         };
         reader.readAsDataURL(file);
       }
@@ -171,13 +163,17 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, []);
 
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    dispatch(edit({ text: e.target.value }));
+    if (activeElement && "text" in activeElement)
+      setActiveElement({
+        ...activeElement,
+        text: e.target.value
+      });
   };
 
   useGlobalEventListener("window", "paste", clipboardPaste, {
     settings,
     tool,
-    isActiveElement,
+    activeElement,
     coordinate
   });
   useGlobalEventListener("window", "copy", clipboardCopy);
@@ -194,7 +190,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
 
   return (
     <>
-      {isActiveText && (
+      {
         <textarea
           ref={pseudoInputRef}
           style={{
@@ -210,7 +206,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           value={(activeElement as IText)?.text || ""}
           id={"pseudo"}
         />
-      )}
+      }
       {props.children}
     </>
   );

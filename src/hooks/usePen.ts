@@ -1,68 +1,64 @@
 import { useEffect, useRef } from "react";
-import { edit, placeAndEdit } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useActiveElement } from "@/hooks/useActiveElement";
+import { useSettings } from "@/redux/slices/settings/selectors";
+import { useAppSelector } from "@/redux/store";
 import { IPen } from "@/types/canvas";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
 
 import KonvaEventObject = Konva.KonvaEventObject;
-import Vector2d = Konva.Vector2d;
 
-export const usePen = (offset: Vector2d) => {
+export const usePen = () => {
   const { selectedTool: tool, isDrawing } = useAppSelector(
     state => state.canvas
   );
-  const { zoom } = useAppSelector(state => state.browser);
-  const settings = useAppSelector(state => state.settings).tools;
-  const { activeElement, isActiveElement } = useActiveElement();
-  const dispatch = useAppDispatch();
+  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
+  const settings = useSettings(tool);
   const isDrawingRef = useRef(false);
+  const { setActiveElement, activeElement, setNewActiveElement } =
+    useActiveElement();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     if (tool === "pen" || tool === "eraser" || tool === "line") {
-      const toolSettings = settings[tool];
       isDrawingRef.current = true;
-      const { x, y } = getPoints(e, zoom, offset);
-      dispatch(
-        placeAndEdit({
-          points: [x, y],
-          tool: tool,
-          x: 0,
-          y: 0,
-          ...(toolSettings as any)
-        })
-      );
+      const { x, y } = getPoints(e, zoom, {
+        x: layerX,
+        y: layerY
+      });
+      setNewActiveElement({
+        points: [x, y],
+        tool: tool,
+        x: 0,
+        y: 0,
+        ...settings
+      });
     }
   };
 
   const handleMouseMove = (x: number, y: number) => {
-    if (!isDrawingRef.current) {
-      return;
-    }
-    if (isActiveElement && "points" in activeElement) {
-      if (tool === "line") {
-        let p1 = activeElement.points[0];
-        let p2 = activeElement.points[1];
-        dispatch(
-          edit({
-            points: [p1, p2, x, y]
-          })
-        );
-        return;
-      }
+    if (!isDrawingRef.current) return;
+    if (!(activeElement && "points" in activeElement)) return;
 
-      dispatch(
-        edit({
-          points: activeElement.points.concat([x, y])
-        })
-      );
+    if (tool === "line") {
+      let p1 = activeElement.points[0];
+      let p2 = activeElement.points[1];
+
+      setActiveElement({
+        ...activeElement,
+        points: [p1, p2, x, y]
+      });
+    }
+    if (tool !== "line") {
+      setActiveElement({
+        ...activeElement,
+        points: activeElement.points.concat([x, y])
+      });
     }
   };
 
   const handleMouseUp = () => {
-    if (isDrawingRef.current) {
-      dispatch(edit(normalizePoints(activeElement as IPen)));
+    if (isDrawingRef.current && activeElement) {
+      setActiveElement(normalizePoints(activeElement as IPen));
     }
     isDrawingRef.current = false;
   };

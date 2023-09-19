@@ -4,8 +4,7 @@ import { usePen } from "@/hooks/usePen";
 import { useSelection } from "@/hooks/useSelection";
 import { useText } from "@/hooks/useText";
 import { set } from "@/redux/slices/browser/reducer";
-import { place, stopDraw } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
 import Konva from "konva";
@@ -14,7 +13,6 @@ import KonvaEventObject = Konva.KonvaEventObject;
 
 export const useMouseHandlers = () => {
   const dispatch = useAppDispatch();
-  const { isActiveElement } = useActiveElement();
   const {
     canvasHeight,
     canvasWidth,
@@ -28,41 +26,28 @@ export const useMouseHandlers = () => {
   } = useAppSelector(state => state.browser);
   const { isDrawing } = useAppSelector(state => state.canvas);
 
-  const offset = {
-    x: layerX,
-    y: layerY
-  };
-
   useSelection();
   const {
     handleMouseUp: penUp,
     handleMouseDown: penDown,
     handleMouseMove: penMove
-  } = usePen(offset);
+  } = usePen();
   const {
     handleMouseDown: figureDown,
     handleMouseMove: figureMove,
     handleMouseUp: figureUp
-  } = useFigure(offset);
-  const { handleClick: handleTextClick } = useText(offset);
-
-  const placePrevious = () => {
-    if (isActiveElement) {
-      dispatch(place());
-      return;
-    }
-  };
+  } = useFigure();
+  const { handleClick: handleTextClick } = useText();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
     // Left mouse button
     if (e.evt.button !== 0) return;
-    placePrevious();
     penDown(e);
     figureDown(e);
   };
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-    let { x, y } = getPoints(e, zoom, offset);
+    let { x, y } = getPoints(e, zoom, { x: layerX, y: layerY });
     penMove(x, y);
     figureMove(x, y);
   };

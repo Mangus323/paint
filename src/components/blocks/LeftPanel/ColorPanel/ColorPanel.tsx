@@ -1,15 +1,15 @@
 import React, { JSX } from "react";
 import { Button } from "@/components/elements/Button/Button";
-import { changeColor } from "@/redux/slices/canvas/reducer";
+import { setColor } from "@/redux/slices/settings/reducer";
 import { AppDispatch, useAppDispatch, useAppSelector } from "@/redux/store";
 import { Box } from "@mui/material";
 
 export const ColorPanel = (): JSX.Element => {
-  const { selectedColor } = useAppSelector(state => state.canvas);
+  const { selectedColor } = useAppSelector(state => state.settings);
   const dispatch: AppDispatch = useAppDispatch();
 
-  const setColor = (color: string) => {
-    dispatch(changeColor(color));
+  const onSetColor = (color: string) => {
+    dispatch(setColor(color));
   };
 
   const defaultColors = [
@@ -41,7 +41,7 @@ export const ColorPanel = (): JSX.Element => {
         {defaultColors.map(color => {
           return (
             <li key={color}>
-              <Button onClick={() => setColor(color)}>
+              <Button onClick={() => onSetColor(color)}>
                 <Box
                   sx={{
                     width: "100%",

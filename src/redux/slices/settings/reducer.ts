@@ -30,6 +30,7 @@ export interface IToolsKeys {
 interface SettingsState {
   tools: IToolsKeys;
   fonts: Font[];
+  selectedColor: string;
 }
 
 const initialState: SettingsState = {
@@ -53,7 +54,8 @@ const initialState: SettingsState = {
     },
     selection: null
   },
-  fonts: []
+  fonts: [],
+  selectedColor: "#000000"
 };
 
 export const settingsSlice = createSlice({
@@ -74,10 +76,13 @@ export const settingsSlice = createSlice({
     },
     setFonts: (state, action: PayloadAction<Font[]>) => {
       state.fonts = action.payload;
+    },
+    setColor: (state, action: PayloadAction<string>) => {
+      state.selectedColor = action.payload;
     }
   }
 });
 
-export const { setSettings, setFonts } = settingsSlice.actions;
+export const { setSettings, setFonts, setColor } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

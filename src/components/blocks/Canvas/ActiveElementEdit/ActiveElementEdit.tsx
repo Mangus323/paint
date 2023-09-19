@@ -2,10 +2,9 @@ import React, { JSX, useContext, useEffect, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
 import { Button } from "@/components/elements/Button/Button";
 import { sidebarDimension as sd } from "@/globals/globals";
+import { useActiveElement } from "@/hooks/useActiveElement";
 import usePrevious from "@/hooks/usePrevious";
-import { edit } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { useAppSelector } from "@/redux/store";
 import { calculateMetaSelection } from "@/utils/calculateMeta";
 import { Box } from "@mui/material";
 import DragIcon from "~public/icons/Drag.svg";
@@ -17,8 +16,7 @@ export const ActiveElementEdit = (): JSX.Element => {
   );
   const { isDrawing } = useAppSelector(state => state.canvas);
   const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
-  const { isActiveElement, activeElement } = useActiveElement();
-  const dispatch = useAppDispatch();
+  const { activeElement, setActiveElement } = useActiveElement();
   const position = useContext(MousePositionContext);
   const previousLastPosition = usePrevious<typeof position>(position);
   const [action, setAction] = useState<string | null>(null);
@@ -33,7 +31,7 @@ export const ActiveElementEdit = (): JSX.Element => {
   const onMouseDownRotation = () => {
     setAction("rotation");
     document.addEventListener("mouseup", onMouseUp);
-    if ("rotation" in activeElement)
+    if (activeElement && "rotation" in activeElement)
       setOriginalAngle(activeElement.rotation || 0);
     setStartRotationPosition(position.x);
   };
@@ -44,24 +42,20 @@ export const ActiveElementEdit = (): JSX.Element => {
   };
 
   useEffect(() => {
-    if (!action) return;
-    if (isActiveElement && previousLastPosition) {
-      if (action === "drag" && "x" in activeElement) {
-        dispatch(
-          edit({
-            x: activeElement.x - (previousLastPosition.x - position.x) / zoom,
-            y: activeElement.y - (previousLastPosition.y - position.y) / zoom
-          })
-        );
-      }
-      if (action === "rotation" && "x" in activeElement) {
-        const angle = (position.x - startRotationPosition) / 2 + originalAngle;
-        dispatch(
-          edit({
-            rotation: angle
-          })
-        );
-      }
+    if (!action || !previousLastPosition) return;
+    if (activeElement && action === "drag" && "x" in activeElement) {
+      setActiveElement({
+        ...activeElement,
+        x: activeElement.x - (previousLastPosition.x - position.x) / zoom,
+        y: activeElement.y - (previousLastPosition.y - position.y) / zoom
+      });
+    }
+    if (activeElement && action === "rotation" && "x" in activeElement) {
+      const angle = (position.x - startRotationPosition) / 2 + originalAngle;
+      setActiveElement({
+        ...activeElement,
+        rotation: angle
+      });
     }
   }, [position, zoom]);
 
@@ -89,7 +83,7 @@ export const ActiveElementEdit = (): JSX.Element => {
   }
 
   if (
-    isActiveElement &&
+    activeElement &&
     activeElementMeta &&
     !isDrawing &&
     action !== "rotation"

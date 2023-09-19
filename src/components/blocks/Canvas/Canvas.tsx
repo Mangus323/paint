@@ -8,9 +8,9 @@ import { CanvasImage } from "@/components/elements/Canvas/Image/CanvasImage";
 import { CustomLine } from "@/components/elements/Canvas/Line/CanvasLine";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
+import { useActiveElement } from "@/hooks/useActiveElement";
 import { useMouseHandlers } from "@/hooks/useMouseHandlers";
-import { edit, startDraw } from "@/redux/slices/canvas/reducer";
-import { useActiveElement } from "@/redux/slices/canvas/selectors";
+import { startDraw } from "@/redux/slices/canvas/reducer";
 import { changeMeta } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IElement } from "@/types/canvas";
@@ -56,7 +56,7 @@ const CanvasComponent = (): JSX.Element => {
   } = useMouseHandlers();
   useDownloadingImage(stageRef);
   useCopySelection(stageRef);
-  const { activeElement, isActiveElement } = useActiveElement();
+  const { setActiveElement, activeElement } = useActiveElement();
 
   const onTransformStart = useCallback(() => dispatch(startDraw()), []);
 
@@ -89,20 +89,24 @@ const CanvasComponent = (): JSX.Element => {
         scaleY
       };
 
-    if (Object.keys(editObj).length) dispatch(edit(editObj));
-  }, []);
+    if (Object.keys(editObj).length)
+      setActiveElement({
+        ...activeElement,
+        ...editObj
+      } as any);
+  }, [activeElement]);
 
   useEffect(() => {
-    if (!(lastElementRef.current && !isDrawing && isActiveElement)) return;
+    if (!lastElementRef.current || isDrawing || !activeElement) return;
     const meta = lastElementRef.current.getClientRect();
     if (meta) dispatch(changeMeta(meta));
-  }, [isDrawing, activeElement, isActiveElement, zoom, layerY, layerX]);
+  }, [isDrawing, activeElement, zoom, layerY, layerX]);
 
   useEffect(() => {
-    if (!isActiveElement || !transformerRef.current || !lastElementRef.current)
+    if (!activeElement || !transformerRef.current || !lastElementRef.current)
       return;
     transformerRef.current.nodes([lastElementRef.current]);
-  }, [activeElement, isActiveElement]);
+  }, [activeElement]);
 
   // TODO decide how to transform text
   // useEffect(() => {
@@ -163,8 +167,11 @@ const CanvasComponent = (): JSX.Element => {
               height={layerHeight}
               fill={"#ffffff"}
             />
-            {elements.map((element, index, array) => {
-              const isLast = index === array.length - 1;
+            {[...elements, activeElement].map((element, index, array) => {
+              if (!element) return null;
+              const isLast = activeElement
+                ? index === array.length - 1
+                : index === array.length - 2;
               const props = {
                 ref: isLast ? lastElementRef : undefined,
                 onTransformEnd: isLast ? onTransformEnd : undefined,
@@ -190,7 +197,7 @@ const CanvasComponent = (): JSX.Element => {
                   return <MemoImage key={index} {...props} />;
               }
             })}
-            {isActiveElement && (
+            {activeElement && (
               <Transformer
                 ref={transformerRef}
                 onMouseDown={e => {
