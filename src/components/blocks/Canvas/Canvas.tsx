@@ -74,7 +74,12 @@ const CanvasComponent = (): JSX.Element => {
         scaleX,
         scaleY
       };
-    else if (tool === "pen" || tool === "eraser" || tool === "line")
+    else if (
+      tool === "pen" ||
+      tool === "eraser" ||
+      tool === "line" ||
+      tool === "image"
+    )
       editObj = {
         x: x,
         y: y,

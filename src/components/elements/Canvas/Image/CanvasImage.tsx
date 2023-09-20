@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useState } from "react";
 import { useActiveElement } from "@/hooks/useActiveElement";
+import { IImage } from "@/types/canvas";
 import Konva from "konva";
 import { Image as KonvaImage } from "react-konva";
 
@@ -19,7 +20,17 @@ export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
     image.onload = () => {
       setImage(image);
       // rerender meta
-      if (activeElement) setActiveElement({ ...activeElement });
+      if (!ref || !activeElement) return;
+      const imageRef = (ref as any).current as Konva.Image;
+      const offsetX = imageRef.width() / 2;
+      const offsetY = imageRef.height() / 2;
+      setActiveElement({
+        ...activeElement,
+        offsetX,
+        offsetY,
+        x: imageRef.position().x + offsetX,
+        y: imageRef.position().y + offsetY
+      } as IImage);
     };
   }
 
