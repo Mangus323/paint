@@ -14,12 +14,9 @@ import { sidebarDimension as sd } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import {
-  changeTool,
   duplicate,
-  redo,
   setIsCopying,
-  setIsDownloading,
-  undo
+  setIsDownloading
 } from "@/redux/slices/canvas/reducer";
 import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useSettings } from "@/redux/slices/settings/selectors";
@@ -38,7 +35,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   );
   const settings = useSettings("text");
   const position = useContext(MousePositionContext);
-  const { activeElement, setActiveElement, setNewActiveElement } =
+  const { activeElement, setActiveElement, setNewActiveElement, undo, redo } =
     useActiveElement();
   const isActiveText = activeElement && tool === "text";
   const coordinate = {
@@ -46,6 +43,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     y: (position.y - sd.height - layerY) / zoom
   };
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
+  const activeElementRef = useRef(activeElement);
 
   const listener = useCallback(
     ({ canvasWidth, canvasHeight }, e: KeyboardEvent) => {
@@ -58,10 +56,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       if (e.ctrlKey) {
         switch (e.code) {
           case "KeyZ":
-            dispatch(undo());
+            undo();
             return;
           case "KeyY":
-            dispatch(redo());
+            redo();
             return;
           case "KeyA":
             e.preventDefault();
@@ -75,7 +73,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
             return;
           case "KeyD":
             e.preventDefault();
-            dispatch(duplicate());
+            dispatch(duplicate(activeElementRef.current));
             return;
           case "KeyS":
             e.preventDefault();
@@ -120,7 +118,6 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       if (!text) return false;
       if (tool === "text" && activeElement) return true;
       const { x, y } = coordinate;
-      dispatch(changeTool("text"));
       setNewActiveElement({
         tool: "text",
         text: text,
@@ -187,6 +184,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
       pseudoInputRef?.current?.focus();
     }
   }, [activeElement, tool]);
+
+  useEffect(() => {
+    activeElementRef.current = activeElement;
+  }, [activeElement]);
 
   return (
     <>

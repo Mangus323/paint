@@ -11,7 +11,8 @@ import { Button } from "@/components/elements/Button/Button";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
 import { TextIcon } from "@/components/elements/TextIcon/TextIcon";
-import { changeTool, redo, undo } from "@/redux/slices/canvas/reducer";
+import { useActiveElement } from "@/hooks/useActiveElement";
+import { changeTool } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
@@ -42,17 +43,11 @@ export const ToolPicker = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [activePopover, setActivePopover] = useState<ToolType | null>(null);
-
-  const onClickUndo = () => {
-    dispatch(undo());
-  };
-
-  const onClickRedo = () => {
-    dispatch(redo());
-  };
+  const { redo, undo, setActiveElement } = useActiveElement();
 
   const onClick = (tool: ToolType) => {
     dispatch(changeTool(tool));
+    setActiveElement(null);
   };
 
   const onDoubleClick = (e: React.MouseEvent<HTMLElement>, tool: ToolType) => {
@@ -81,12 +76,12 @@ export const ToolPicker = (): JSX.Element => {
     <>
       <ul>
         <li>
-          <Button onClick={onClickUndo} disabled={elements.length === 0}>
+          <Button onClick={undo} disabled={elements.length === 0}>
             <ArrowLeftIcon />
           </Button>
         </li>
         <li>
-          <Button onClick={onClickRedo} disabled={history.length === 0}>
+          <Button onClick={redo} disabled={history.length === 0}>
             <ArrowRightIcon />
           </Button>
         </li>

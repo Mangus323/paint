@@ -1,7 +1,4 @@
-import React, { JSX, createContext, useEffect, useState } from "react";
-import usePrevious from "@/hooks/usePrevious";
-import { place, placeAndEdit } from "@/redux/slices/canvas/reducer";
-import { useAppDispatch } from "@/redux/store";
+import React, { JSX, createContext, useState } from "react";
 import { IElement } from "@/types/canvas";
 
 interface IActiveElementContext {
@@ -22,17 +19,6 @@ export const ActiveElementProvider = ({
   children
 }: ActiveElementProviderProps): JSX.Element => {
   const [activeElement, setActiveElement] = useState<IElement | null>(null);
-  const previous = usePrevious<typeof activeElement>(activeElement);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (previous === null) {
-      dispatch(placeAndEdit(activeElement as IElement));
-    }
-    if (previous && activeElement === null) {
-      dispatch(place(previous));
-    }
-  }, [activeElement]);
 
   return (
     <ActiveElementContext.Provider

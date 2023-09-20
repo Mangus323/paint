@@ -18,8 +18,8 @@ export const CanvasImage = forwardRef<any, ImageConfig>((props, ref) => {
     image.src = props.src;
     image.onload = () => {
       setImage(image);
-      // todo check
-      // dispatch(edit({}));
+      // rerender meta
+      if (activeElement) setActiveElement({ ...activeElement });
     };
   }
 

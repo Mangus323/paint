@@ -32,42 +32,30 @@ export const canvasSlice = createSlice({
       }
       if ("text" in action.payload) {
         state.isDrawing = false;
+        state.selectedTool = "text";
       }
+      state.history = [];
     },
     place: (state, action: PayloadAction<IElement>) => {
       state.elements.push(action.payload);
-      state.history = [];
     },
     changeTool: (state, action: PayloadAction<ToolType>) => {
-      // state.isActiveElement = false;
       state.selectedTool = action.payload;
     },
-    undo: state => {
-      // if (!state.isActiveElement && state.elements.length) {
-      //   state.isActiveElement = true;
-      //   return;
-      // }
-      // state.isActiveElement = state.elements.length > 1;
-      if (state.elements.length) {
+    undo: (state, action: PayloadAction<IElement | null>) => {
+      if (action.payload) {
+        state.history.push(action.payload);
+        state.elements.pop();
+      } else if (state.elements.length) {
         const last = state.elements.pop();
         if (last) state.history.push(last);
+        else if (action.payload) state.history.push(action.payload);
       }
     },
     redo: state => {
-      if (state.history.length) {
-        const last = state.history.pop();
-        if (last) {
-          state.elements.push(last);
-          // state.isActiveElement = true;
-        }
-      }
+      state.history.pop();
     },
     stopDraw: state => {
-      let last = state.elements[state.elements.length - 1];
-      if (last && "width" in last && last.width === 0) {
-        // state.isActiveElement = false;
-        state.elements.pop();
-      }
       state.isDrawing = false;
     },
     startDraw: state => {
@@ -91,9 +79,9 @@ export const canvasSlice = createSlice({
         }
       ];
     },
-    duplicate: state => {
-      // if (!state.isActiveElement) return;
-      state.elements.push(state.elements[state.elements.length - 1]);
+    duplicate: (state, action: PayloadAction<IElement | null>) => {
+      if (!action.payload) return;
+      state.elements.push(action.payload);
     }
   }
 });
