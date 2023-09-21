@@ -1,6 +1,6 @@
 import React, { JSX, useContext, useEffect, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
-import { Button } from "@/components/elements/Button/Button";
+import { SimpleButton } from "@/components/elements/Button/Button";
 import { sidebarDimension as sd } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import usePrevious from "@/hooks/usePrevious";
@@ -117,22 +117,22 @@ export const ActiveElementEdit = (): JSX.Element => {
             left: 0,
             display: "flex"
           }}>
-          <Button
+          <SimpleButton
             sx={{
               cursor: "move !important",
               fontSize: 14
             }}
             onMouseDown={onMouseDownDrag}>
             <DragIcon />
-          </Button>
-          <Button
+          </SimpleButton>
+          <SimpleButton
             sx={{
               cursor: "e-resize !important",
               fontSize: 14
             }}
             onMouseDown={onMouseDownRotation}>
             <RotateIcon />
-          </Button>
+          </SimpleButton>
         </Box>
       </Box>
     );

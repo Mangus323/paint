@@ -1,5 +1,6 @@
 import React, { JSX } from "react";
-import { Box, Typography } from "@mui/material";
+import { Button } from "@/components/elements/Button/Button";
+import { Box } from "@mui/material";
 
 interface FileUploaderProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className"> {}
@@ -26,35 +27,9 @@ export const FileUploader = (props: FileUploaderProps): JSX.Element => {
         {...inputProps}
         accept={"image/png"}
       />
-      <Typography
-        component={"span"}
-        sx={{
-          fontSize: 12,
-          position: "relative",
-          display: "flex",
-          height: "1.25rem",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "2px 4px",
-          border: "1px solid var(--teal-200)",
-          borderRadius: "2px",
-          backgroundColor: "var(--light-gray)",
-          color: "var(--blue)",
-          gap: "10px",
-          gridGap: "10px",
-          outline: "none",
-          transition: "0.1s all",
-          userSelect: "none",
-          "&:hover": {
-            border: "1px solid var(--black)"
-          },
-          "&:active": {
-            border: "1px solid var(--black)",
-            backgroundColor: "var(--teal-300)"
-          }
-        }}>
+      <Button styleType={"default"} component={"span"}>
         {children}
-      </Typography>
+      </Button>
     </Box>
   );
 };

@@ -32,10 +32,11 @@ export const Toaster = (): JSX.Element => {
       sx={{
         position: "absolute",
         top: sidebarDimension.height + 2,
-        left: 0,
-        right: 0,
+        left: "50%",
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
+        userSelect: "none",
+        pointerEvent: "none"
       }}>
       <AnimatePresence>
         {toast.value && (
@@ -43,6 +44,7 @@ export const Toaster = (): JSX.Element => {
             component={motion.div}
             exit={{ opacity: 0 }}
             sx={{
+              transform: "translateX(-50%)",
               border: "1px solid var(--black)",
               padding: "2px 4px",
               minWidth: 60,
