@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { sidebarDimension as sd } from "@/globals/globals";
 import { setIsCopying } from "@/redux/slices/canvas/reducer";
+import { setToast } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import Konva from "konva";
 
@@ -28,6 +29,7 @@ export const useCopySelection = (stageRef: React.RefObject<Stage>) => {
         selection.height
       );
       copyImage(imageData);
+      dispatch(setToast("copy selection"));
     }
     dispatch(setIsCopying(false));
   }, [isCopying]);

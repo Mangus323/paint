@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef } from "react";
 import { ActiveElementContext } from "@/components/HOC/ActiveElementProvider/ActiveElementProvider";
 import { place, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
+import { setToast } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IElement } from "@/types/canvas";
 
@@ -15,7 +16,7 @@ export const useActiveElement = () => {
   const historyRef = useRef(history);
 
   const setNewActiveElement = (element: IElement) => {
-    if (activeElement) dispatch(place(activeElement));
+    if (activeElementRef.current) dispatch(place(activeElementRef.current));
     dispatch(placeAndEdit(element));
     setElement(element);
   };
@@ -40,6 +41,8 @@ export const useActiveElement = () => {
     const last = current[current.length - 1] || null;
     dispatch(undo(activeElementRef.current));
     setElement(last);
+    if (!last && !activeElementRef.current) return;
+    dispatch(setToast("undo"));
   };
 
   const activeElementRedo = () => {
@@ -51,6 +54,7 @@ export const useActiveElement = () => {
     if (element) dispatch(place(element));
     setElement(last);
     dispatch(redo());
+    dispatch(setToast("redo"));
   };
 
   useEffect(() => {

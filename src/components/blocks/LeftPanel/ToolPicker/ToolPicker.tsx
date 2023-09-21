@@ -16,6 +16,7 @@ import { changeTool } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
+import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import ArrowLeftIcon from "~public/icons/ArrowLeft.svg";
 import ArrowRightIcon from "~public/icons/ArrowRight.svg";
 import CircleIcon from "~public/icons/Circle.svg";
@@ -43,7 +44,7 @@ export const ToolPicker = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [activePopover, setActivePopover] = useState<ToolType | null>(null);
-  const { redo, undo, setActiveElement } = useActiveElement();
+  const { redo, undo, setActiveElement, activeElement } = useActiveElement();
 
   const onClick = (tool: ToolType) => {
     dispatch(changeTool(tool));
@@ -76,12 +77,15 @@ export const ToolPicker = (): JSX.Element => {
     <>
       <ul>
         <li>
-          <Button onClick={undo} disabled={elements.length === 0}>
+          <Button
+            onClick={undo}
+            disabled={elements.length === 0 && !activeElement}
+            title={"Undo"}>
             <ArrowLeftIcon />
           </Button>
         </li>
         <li>
-          <Button onClick={redo} disabled={history.length === 0}>
+          <Button onClick={redo} disabled={history.length === 0} title={"Redo"}>
             <ArrowRightIcon />
           </Button>
         </li>
@@ -100,6 +104,7 @@ export const ToolPicker = (): JSX.Element => {
                 onDoubleClick={e => {
                   onDoubleClick(e, tool);
                 }}
+                title={capitalizeFirstLetter(tool)}
                 onContextMenu={e => onContextMenu(e, tool)}
                 aria-describedby={anchorEl ? `tool-${index}` : undefined}>
                 <Icon />

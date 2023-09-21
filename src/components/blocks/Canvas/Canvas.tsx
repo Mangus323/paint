@@ -80,12 +80,7 @@ const CanvasComponent = (): JSX.Element => {
       tool === "line" ||
       tool === "image"
     )
-      editObj = {
-        x: x,
-        y: y,
-        scaleX,
-        scaleY
-      };
+      editObj = {};
     else
       editObj = {
         x: x - current.offsetX(),
@@ -112,25 +107,6 @@ const CanvasComponent = (): JSX.Element => {
       return;
     transformerRef.current.nodes([lastElementRef.current]);
   }, [activeElement]);
-
-  // TODO decide how to transform text
-  // useEffect(() => {
-  //   if (
-  //     isActiveElement &&
-  //     activeElement.tool === "text" &&
-  //     lastElementRef.current
-  //   ) {
-  //     const current = lastElementRef.current;
-  //     dispatch(
-  //       edit({
-  //         offsetX: current.width() / 2,
-  //         offsetY: current.height() / 2,
-  //         x: current.attrs.x,
-  //         y: current.attrs.y
-  //       })
-  //     );
-  //   }
-  // }, [(activeElement as IText)?.text]);
 
   return (
     <Box
@@ -219,6 +195,7 @@ const CanvasComponent = (): JSX.Element => {
                 anchorSize={isDrawing ? 0 : 8}
                 anchorStrokeWidth={1}
                 anchorStroke={"#c4dfdf"}
+                padding={5}
               />
             )}
           </Group>

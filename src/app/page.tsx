@@ -6,6 +6,7 @@ import { KeyboardListener } from "@/components/HOC/KeyboardListener/KeyboardList
 import { MouseListener } from "@/components/HOC/MouseListener/MouseListener";
 import { LeftPanel } from "@/components/blocks/LeftPanel/LeftPanel";
 import { TopPanel } from "@/components/blocks/TopPanel/TopPanel";
+import { Toaster } from "@/components/elements/Toaster/Toaster";
 import { DefaultLayout } from "@/components/layouts/DefaultLayout/DefaultLayout";
 import { useAppSelector } from "@/redux/store";
 import "@/styles/globals.scss";
@@ -36,6 +37,7 @@ export default function Homepage(): JSX.Element {
             <TopPanel />
             <LeftPanel />
             {canvasHeight !== 0 && canvasWidth !== 0 && <MemoCanvas />}
+            <Toaster />
           </DefaultLayout>
         </KeyboardListener>
       </MouseListener>

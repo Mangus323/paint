@@ -18,7 +18,11 @@ import {
   setIsCopying,
   setIsDownloading
 } from "@/redux/slices/canvas/reducer";
-import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
+import {
+  removeSelection,
+  selectAll,
+  setToast
+} from "@/redux/slices/canvasMeta/reducer";
 import { useSettings } from "@/redux/slices/settings/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";
@@ -70,10 +74,12 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
               })
             );
             setActiveElement(null);
+            dispatch(setToast("select all"));
             return;
           case "KeyD":
             e.preventDefault();
             dispatch(duplicate(activeElementRef.current));
+            dispatch(setToast("duplicate"));
             return;
           case "KeyS":
             e.preventDefault();
@@ -126,6 +132,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
         y,
         ...settings
       });
+      dispatch(setToast("paste text"));
     },
     []
   );
@@ -148,6 +155,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
             // scaleY: 0.25,
             // scaleX: 0.25
           });
+          dispatch(setToast("paste image"));
         };
         reader.readAsDataURL(file);
       }

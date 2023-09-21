@@ -94,9 +94,9 @@ export const ActiveElementEdit = (): JSX.Element => {
     );
     const y = Math.min(
       window.innerHeight - sd.height,
-      activeElementMeta.y + 8 < sd.height
-        ? sd.height - 10
-        : activeElementMeta.y - 2
+      activeElementMeta.y + 4 < sd.height
+        ? sd.height - 6
+        : activeElementMeta.y - 6
     );
     return (
       <Box
