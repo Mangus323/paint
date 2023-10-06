@@ -1,8 +1,8 @@
 import { sp } from "@/globals/globals";
-import { useFigure } from "@/hooks/useFigure";
-import { usePen } from "@/hooks/usePen";
-import { useSelection } from "@/hooks/useSelection";
-import { useText } from "@/hooks/useText";
+import { useFigure } from "@/hooks/mouseHandlers/useFigure";
+import { usePen } from "@/hooks/mouseHandlers/usePen";
+import { useSelection } from "@/hooks/mouseHandlers/useSelection";
+import { useText } from "@/hooks/mouseHandlers/useText";
 import { set } from "@/redux/slices/browser/reducer";
 import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
@@ -48,8 +48,8 @@ export const useMouseHandlers = () => {
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     let { x, y } = getPoints(e, zoom, { x: layerX, y: layerY });
-    penMove(x, y);
-    figureMove(x, y);
+    penMove(e, x, y);
+    figureMove(e, x, y);
   };
 
   const handleMouseUp = () => {

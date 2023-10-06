@@ -49,9 +49,35 @@ export const useFigure = () => {
     }
   };
 
-  const handleMouseMove = (x: number, y: number) => {
+  const handleMouseMove = (
+    e: KonvaEventObject<MouseEvent>,
+    x: number,
+    y: number
+  ) => {
     if (!isDrawingRef.current) return;
     if (activeElement && "startX" in activeElement) {
+      if (e.evt.shiftKey) {
+        const min = Math.min(
+          Math.abs(activeElement.startX - x),
+          Math.abs(activeElement.startY - y)
+        );
+
+        setActiveElement({
+          ...activeElement,
+          x: Math.min(
+            activeElement.startX,
+            Math.max(x, activeElement.startX - min)
+          ),
+          y: Math.min(
+            activeElement.startY,
+            Math.max(y, activeElement.startY - min)
+          ),
+          width: min,
+          height: min
+        });
+        return;
+      }
+
       setActiveElement({
         ...activeElement,
         x: Math.min(activeElement.startX, x),

@@ -4,6 +4,7 @@ import { useSettings } from "@/redux/slices/settings/selectors";
 import { useAppSelector } from "@/redux/store";
 import { IPen } from "@/types/canvas";
 import { getPoints } from "@/utils/getCanvasPoints";
+import { twoPointsToSmoothPoints } from "@/utils/math";
 import Konva from "konva";
 
 import KonvaEventObject = Konva.KonvaEventObject;
@@ -35,13 +36,27 @@ export const usePen = () => {
     }
   };
 
-  const handleMouseMove = (x: number, y: number) => {
+  const handleMouseMove = (
+    e: KonvaEventObject<MouseEvent>,
+    x: number,
+    y: number
+  ) => {
     if (!isDrawingRef.current) return;
     if (!(activeElement && "points" in activeElement)) return;
 
     if (tool === "line") {
-      let p1 = activeElement.points[0];
-      let p2 = activeElement.points[1];
+      const p1 = activeElement.points[0];
+      const p2 = activeElement.points[1];
+
+      if (e.evt.shiftKey) {
+        const smoothPoints = twoPointsToSmoothPoints([p1, p2, x, y], 8);
+
+        setActiveElement({
+          ...activeElement,
+          points: smoothPoints
+        });
+        return;
+      }
 
       setActiveElement({
         ...activeElement,

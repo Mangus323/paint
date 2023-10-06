@@ -1,5 +1,6 @@
 import React, { JSX, forwardRef } from "react";
 import { ILine } from "@/types/canvas";
+import { twoPointsToDegree } from "@/utils/math";
 import Konva from "konva";
 import { Circle, Group, Line, RegularPolygon } from "react-konva";
 
@@ -29,7 +30,7 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
     } = props;
     const points = props.points;
     const lastPoint = [points[2], points[3]];
-    let angle = points.length === 4 ? TwoPointsToDegree(points) : 0;
+    let angle = points.length === 4 ? twoPointsToDegree(points) : 0;
 
     return (
       <Group
@@ -97,10 +98,3 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
 );
 
 CustomLine.displayName = "CustomLine";
-
-const TwoPointsToDegree = (points: number[]) => {
-  let [x1, y1, x2, y2] = points;
-  let result = (180 / Math.PI) * Math.atan2(y2 - y1, x2 - x1) + 90;
-
-  return result < 0 ? result + 360 : result;
-};

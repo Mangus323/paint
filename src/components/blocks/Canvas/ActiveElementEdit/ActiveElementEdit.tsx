@@ -104,8 +104,7 @@ export const ActiveElementEdit = (): JSX.Element => {
           position: "absolute",
           top: 0,
           left: 0,
-          height: 2,
-          backgroundColor: "var(--black)"
+          height: 2
         }}
         style={{
           transform: `translate(${x}px, ${y}px)`
