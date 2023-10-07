@@ -19,3 +19,16 @@ export const FontOptions: Options = {
   limit: 50,
   exclude: ["icons", "material"]
 };
+
+export const defaultColors = [
+  "#FFFFFF",
+  "#000000",
+  "#ED7D31",
+  "#4472C4",
+  "#70AD47",
+  "#FFC000",
+  "#A5A5A5",
+  "#F24C3D",
+  "#22A699",
+  "#6554AF"
+];

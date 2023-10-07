@@ -15,6 +15,7 @@ export interface BrowserState {
   horizontalBar: Vector2d;
   layerX: number;
   layerY: number;
+  toast: { value: string; timestamp: number };
 }
 
 const initialState: BrowserState = {
@@ -26,7 +27,11 @@ const initialState: BrowserState = {
   verticalBar: { x: 0, y: 0 },
   horizontalBar: { x: 0, y: 0 },
   layerX: 0,
-  layerY: 0
+  layerY: 0,
+  toast: {
+    value: "",
+    timestamp: 0
+  }
 };
 
 export const browserSlice = createSlice({
@@ -83,9 +88,12 @@ export const browserSlice = createSlice({
       }
       state.verticalBar.y =
         (nextLayerY / (canvasHeight - innerHeight)) * availableHeight + sp;
+    },
+    setToast: (state, action: PayloadAction<string>) => {
+      state.toast = { value: action.payload, timestamp: Date.now() };
     }
   }
 });
-export const { set, zoom } = browserSlice.actions;
+export const { set, zoom, setToast } = browserSlice.actions;
 
 export default browserSlice.reducer;

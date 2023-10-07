@@ -19,7 +19,7 @@ export const useGlobalEventListener = <T, D>(
   const depsRef = useRef(deps);
 
   useEffect(() => {
-    document.addEventListener(type, localListener, options);
+    env.addEventListener(type, localListener, options);
 
     return () => {
       env.removeEventListener(type, localListener);

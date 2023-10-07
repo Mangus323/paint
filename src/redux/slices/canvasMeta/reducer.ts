@@ -10,17 +10,12 @@ export interface IEditActiveObjectState {
   activeElementMeta: IElementMeta | null;
   isSelecting: boolean;
   selection: IElementMeta | null;
-  toast: { value: string; timestamp: number };
 }
 
 const initialState: IEditActiveObjectState = {
   activeElementMeta: null,
   isSelecting: false,
-  selection: null,
-  toast: {
-    value: "",
-    timestamp: 0
-  }
+  selection: null
 };
 
 export const canvasMetaSlice = createSlice({
@@ -96,9 +91,6 @@ export const canvasMetaSlice = createSlice({
       };
       state.isSelecting = false;
       state.activeElementMeta = null;
-    },
-    setToast: (state, action: PayloadAction<string>) => {
-      state.toast = { value: action.payload, timestamp: Date.now() };
     }
   }
 });
@@ -110,8 +102,7 @@ export const {
   editSelection,
   removeSelection,
   selectAll,
-  changeSelectionZoom,
-  setToast
+  changeSelectionZoom
 } = canvasMetaSlice.actions;
 
 export default canvasMetaSlice.reducer;

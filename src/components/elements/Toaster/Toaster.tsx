@@ -1,13 +1,13 @@
 import React, { JSX, useEffect, useState } from "react";
 import { sidebarDimension } from "@/globals/globals";
-import { setToast } from "@/redux/slices/canvasMeta/reducer";
+import { setToast } from "@/redux/slices/browser/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
 import { Box, Typography } from "@mui/material";
 import { AnimatePresence, motion } from "framer-motion";
 
 export const Toaster = (): JSX.Element => {
-  const { toast } = useAppSelector(state => state.canvasMeta);
+  const { toast } = useAppSelector(state => state.browser);
   const dispatch = useAppDispatch();
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(
     null

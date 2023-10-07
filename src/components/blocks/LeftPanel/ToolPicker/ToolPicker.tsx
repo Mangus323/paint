@@ -1,12 +1,12 @@
 "use client";
 
 import React, { JSX, useEffect, useState } from "react";
-import { ToolSettingsEllipse } from "@/components/blocks/ToolSettings/ToolSettingsEllipse";
-import { ToolSettingsEraser } from "@/components/blocks/ToolSettings/ToolSettingsEraser";
-import { ToolSettingsLine } from "@/components/blocks/ToolSettings/ToolSettingsLine";
-import { ToolSettingsPen } from "@/components/blocks/ToolSettings/ToolSettingsPen";
-import { ToolSettingsRect } from "@/components/blocks/ToolSettings/ToolSettingsRect";
-import { ToolSettingsText } from "@/components/blocks/ToolSettings/ToolSettingsText";
+import { ToolSettingsEllipse } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsEllipse";
+import { ToolSettingsEraser } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsEraser";
+import { ToolSettingsLine } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsLine";
+import { ToolSettingsPen } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsPen";
+import { ToolSettingsRect } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsRect";
+import { ToolSettingsText } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsText";
 import { Button } from "@/components/elements/Button/Button";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { ToolType } from "@/types/canvas";
 import { ToolList } from "@/types/const";
 import { capitalizeFirstLetter } from "@/utils/capitalizeFirstLetter";
+import { Tooltip } from "@mui/material";
 import ArrowLeftIcon from "~public/icons/ArrowLeft.svg";
 import ArrowRightIcon from "~public/icons/ArrowRight.svg";
 import CircleIcon from "~public/icons/Circle.svg";
@@ -66,7 +67,7 @@ export const ToolPicker = (): JSX.Element => {
     }
   };
 
-  const onClosePopper = () => {
+  const onClosePopover = () => {
     setAnchorEl(null);
     setActivePopover(null);
   };
@@ -77,17 +78,24 @@ export const ToolPicker = (): JSX.Element => {
     <>
       <ul>
         <li>
-          <Button
-            onClick={undo}
-            disabled={elements.length === 0 && !activeElement}
-            title={"Undo"}>
-            <ArrowLeftIcon />
-          </Button>
+          <Tooltip title={"Undo"} placement={"bottom"}>
+            <div>
+              <Button
+                onClick={undo}
+                disabled={elements.length === 0 && !activeElement}>
+                <ArrowLeftIcon />
+              </Button>
+            </div>
+          </Tooltip>
         </li>
         <li>
-          <Button onClick={redo} disabled={history.length === 0} title={"Redo"}>
-            <ArrowRightIcon />
-          </Button>
+          <Tooltip title={"Redo"} placement={"bottom"}>
+            <div>
+              <Button onClick={redo} disabled={history.length === 0}>
+                <ArrowRightIcon />
+              </Button>
+            </div>
+          </Tooltip>
         </li>
       </ul>
       <Separator orientation={"horizontal"} />
@@ -98,17 +106,20 @@ export const ToolPicker = (): JSX.Element => {
           if (!Icon) return null;
           return (
             <li key={tool}>
-              <Button
-                selected={selectedTool === tool}
-                onClick={() => onClick(tool)}
-                onDoubleClick={e => {
-                  onDoubleClick(e, tool);
-                }}
-                title={capitalizeFirstLetter(tool)}
-                onContextMenu={e => onContextMenu(e, tool)}
-                aria-describedby={anchorEl ? `tool-${index}` : undefined}>
-                <Icon />
-              </Button>
+              <Tooltip title={capitalizeFirstLetter(tool)}>
+                <div>
+                  <Button
+                    selected={selectedTool === tool}
+                    onClick={() => onClick(tool)}
+                    onDoubleClick={e => {
+                      onDoubleClick(e, tool);
+                    }}
+                    onContextMenu={e => onContextMenu(e, tool)}
+                    aria-describedby={anchorEl ? `tool-${index}` : undefined}>
+                    <Icon />
+                  </Button>
+                </div>
+              </Tooltip>
             </li>
           );
         })}
@@ -117,7 +128,7 @@ export const ToolPicker = (): JSX.Element => {
         id={anchorEl ? `tool-${activePopover}` : undefined}
         open={!!anchorEl}
         anchorEl={anchorEl}
-        onClose={onClosePopper}>
+        onClose={onClosePopover}>
         {activePopover === "rect" && <ToolSettingsRect />}
         {activePopover === "pen" && <ToolSettingsPen />}
         {activePopover === "eraser" && <ToolSettingsEraser />}

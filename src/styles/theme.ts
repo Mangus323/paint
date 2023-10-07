@@ -82,6 +82,29 @@ let theme = createTheme({
           }
         }
       }
+    },
+    MuiTooltip: {
+      defaultProps: { placement: "top" },
+      styleOverrides: {
+        popper: {
+          pointerEvents: "none",
+          userSelect: "none",
+          '&[data-popper-placement*="top"]': {
+            marginBottom: 2
+          }
+        },
+        tooltip: {
+          fontSize: "0.65rem",
+          position: "relative"
+        },
+
+        tooltipPlacementTop: {
+          top: 8
+        },
+        tooltipPlacementBottom: {
+          bottom: 8
+        }
+      }
     }
   },
   typography: {

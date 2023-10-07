@@ -13,16 +13,13 @@ import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListen
 import { sidebarDimension as sd } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
+import { setToast } from "@/redux/slices/browser/reducer";
 import {
   duplicate,
   setIsCopying,
   setIsDownloading
 } from "@/redux/slices/canvas/reducer";
-import {
-  removeSelection,
-  selectAll,
-  setToast
-} from "@/redux/slices/canvasMeta/reducer";
+import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useSettings } from "@/redux/slices/settings/selectors";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IText } from "@/types/canvas";

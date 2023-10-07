@@ -82,8 +82,12 @@
     "arrow-body-style": "off",
     "prefer-arrow-callback": "off",
     "quotes": [
-      "warn",
-      "double"
+      "error",
+      "double",
+      {
+        "avoidEscape": true,
+        "allowTemplateLiterals": false
+      }
     ],
     "max-len": [
       2,

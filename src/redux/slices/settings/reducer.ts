@@ -31,6 +31,7 @@ interface SettingsState {
   tools: IToolsKeys;
   fonts: Font[];
   selectedColor: string;
+  colorList: string[];
 }
 
 const initialState: SettingsState = {
@@ -55,7 +56,8 @@ const initialState: SettingsState = {
     selection: null
   },
   fonts: [],
-  selectedColor: "#000000"
+  selectedColor: "#000000",
+  colorList: []
 };
 
 export const settingsSlice = createSlice({
@@ -79,10 +81,14 @@ export const settingsSlice = createSlice({
     },
     setColor: (state, action: PayloadAction<string>) => {
       state.selectedColor = action.payload;
+    },
+    addNewColor: (state, action: PayloadAction<string>) => {
+      state.colorList.push(action.payload);
     }
   }
 });
 
-export const { setSettings, setFonts, setColor } = settingsSlice.actions;
+export const { setSettings, setFonts, setColor, addNewColor } =
+  settingsSlice.actions;
 
 export default settingsSlice.reducer;

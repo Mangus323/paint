@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef } from "react";
 import { ActiveElementContext } from "@/components/HOC/ActiveElementProvider/ActiveElementProvider";
+import { setToast } from "@/redux/slices/browser/reducer";
 import { place, placeAndEdit, redo, undo } from "@/redux/slices/canvas/reducer";
-import { setToast } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { IElement } from "@/types/canvas";
 

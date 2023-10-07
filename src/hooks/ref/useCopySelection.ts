@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { sidebarDimension as sd } from "@/globals/globals";
+import { setToast } from "@/redux/slices/browser/reducer";
 import { setIsCopying } from "@/redux/slices/canvas/reducer";
-import { setToast } from "@/redux/slices/canvasMeta/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import Konva from "konva";
 

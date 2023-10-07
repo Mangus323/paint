@@ -10,6 +10,7 @@ import {
 interface ButtonProps extends MuiButtonProps {
   selected?: boolean;
   styleType?: "icon" | "default" | "simple-icon";
+  hoverEffects?: boolean;
 }
 
 const iconStyle: SxProps<Theme> = {
@@ -21,7 +22,17 @@ const defaultStyle: SxProps<Theme> = {
 };
 
 const selectedStyle: SxProps<Theme> = {
-  backgroundColor: "var(--yellow)"
+  backgroundColor: "var(--yellow)",
+  "&:hover": {
+    backgroundColor: "var(--yellow)"
+  },
+  "&:active": {
+    backgroundColor: "var(--yellow)"
+  }
+};
+
+const hoverEffectsStyle: SxProps<Theme> = {
+  "&:hover": { transform: "scale(1.2)" }
 };
 
 export const SimpleButton = (props: ButtonProps): JSX.Element => {
@@ -77,6 +88,7 @@ export const Button = (props: ButtonProps): JSX.Element => {
     selected,
     styleType = "icon",
     sx,
+    hoverEffects,
     ...buttonProps
   } = props;
 
@@ -116,6 +128,7 @@ export const Button = (props: ButtonProps): JSX.Element => {
         ...(styleType === "icon" && iconStyle),
         ...(styleType === "default" && defaultStyle),
         ...(selected && selectedStyle),
+        ...(hoverEffects && hoverEffectsStyle),
         ...sx
       }}
       {...buttonProps}>
