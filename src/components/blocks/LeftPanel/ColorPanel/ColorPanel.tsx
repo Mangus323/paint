@@ -25,10 +25,11 @@ export const ColorPanel = (): JSX.Element => {
 
   const onClosePopover = () => {
     setAnchorEl(null);
-    if (defaultColors.includes(selectedColor)) return;
-    if (colorList.includes(selectedColor)) return;
-
-    if (colorList.length >= 20) {
+    if (
+      defaultColors.includes(selectedColor) ||
+      colorList.includes(selectedColor) ||
+      colorList.length >= 20
+    ) {
       dispatch(setToast(`Set color ${selectedColor}`));
       return;
     }
