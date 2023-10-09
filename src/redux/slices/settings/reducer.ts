@@ -84,11 +84,14 @@ export const settingsSlice = createSlice({
     },
     addNewColor: (state, action: PayloadAction<string>) => {
       state.colorList.push(action.payload);
+    },
+    removeColor: (state, action: PayloadAction<number>) => {
+      state.colorList.splice(action.payload, 1);
     }
   }
 });
 
-export const { setSettings, setFonts, setColor, addNewColor } =
+export const { setSettings, setFonts, setColor, addNewColor, removeColor } =
   settingsSlice.actions;
 
 export default settingsSlice.reducer;

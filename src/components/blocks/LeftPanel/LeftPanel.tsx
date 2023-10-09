@@ -15,6 +15,7 @@ export const LeftPanel = (): JSX.Element => {
         textAlign: "center",
         fontWeight: 400,
         lineHeight: "150%",
+        overflowY: "auto",
         "& > ul": {
           display: "grid",
           gridGap: "2px",
