@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { WindowReader } from "@/components/HOC/WindowReader/WindowReader";
 import { MobilePage } from "@/components/layouts/MobilePage/MobilePage";
 import useIsTouchDevice from "@/hooks/useIsTouchDevice";
 import { store } from "@/redux/store";
@@ -43,7 +42,7 @@ const DefaultProviders = ({ children }: { children: React.ReactNode }) => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <WindowReader>{children}</WindowReader>
+        {children}
       </PersistGate>
     </Provider>
   );

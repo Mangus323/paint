@@ -1,5 +1,6 @@
 import React, { JSX, useContext, useEffect, useState } from "react";
-import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { MousePositionContext } from "@/components/HOC/MouseListener";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { SimpleButton } from "@/components/elements/Button/Button";
 import { sidebarDimension as sd } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
@@ -15,8 +16,9 @@ export const ActiveElementEdit = (): JSX.Element => {
     state => state.canvasMeta
   );
   const { isDrawing } = useAppSelector(state => state.canvas);
-  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
+  const { zoom } = useAppSelector(state => state.browser);
   const { activeElement, setActiveElement } = useActiveElement();
+  const { layerX, layerY } = useContext(ScrollContext).scroll;
   const position = useContext(MousePositionContext);
   const previousLastPosition = usePrevious<typeof position>(position);
   const [action, setAction] = useState<string | null>(null);

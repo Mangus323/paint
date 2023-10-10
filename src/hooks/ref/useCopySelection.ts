@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { sidebarDimension as sd } from "@/globals/globals";
 import { setToast } from "@/redux/slices/browser/reducer";
 import { setIsCopying } from "@/redux/slices/canvas/reducer";
@@ -11,7 +12,7 @@ export const useCopySelection = (stageRef: React.RefObject<Stage>) => {
   const dispatch = useAppDispatch();
   const { isCopying } = useAppSelector(state => state.canvas);
   const { selection } = useAppSelector(state => state.canvasMeta);
-  const { layerX, layerY } = useAppSelector(state => state.browser);
+  const { layerX, layerY } = useContext(ScrollContext).scroll;
 
   useEffect(() => {
     if (!isCopying) return;

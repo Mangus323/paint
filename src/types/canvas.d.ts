@@ -85,3 +85,10 @@ export interface IElementMeta extends Vector2d {
 }
 
 export type ToolType = (typeof ToolList)[number];
+
+export interface IScroll {
+  verticalBar: Vector2d;
+  horizontalBar: Vector2d;
+  layerX: number;
+  layerY: number;
+}

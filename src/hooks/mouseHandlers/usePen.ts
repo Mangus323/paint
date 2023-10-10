@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import { useSettings } from "@/redux/slices/settings/selectors";
 import { useAppSelector } from "@/redux/store";
@@ -10,10 +11,11 @@ import Konva from "konva";
 import KonvaEventObject = Konva.KonvaEventObject;
 
 export const usePen = () => {
+  const { layerX, layerY } = useContext(ScrollContext).scroll;
   const { selectedTool: tool, isDrawing } = useAppSelector(
     state => state.canvas
   );
-  const { zoom, layerX, layerY } = useAppSelector(state => state.browser);
+  const { zoom } = useAppSelector(state => state.browser);
   const settings = useSettings(tool);
   const isDrawingRef = useRef(false);
   const { setActiveElement, activeElement, setNewActiveElement } =

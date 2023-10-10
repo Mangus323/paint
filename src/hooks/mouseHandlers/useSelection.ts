@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { MousePositionContext } from "@/components/HOC/MouseListener";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { sidebarDimension as sd } from "@/globals/globals";
 import {
   changeSelectionZoom,
@@ -12,7 +13,8 @@ import { useAppDispatch, useAppSelector } from "@/redux/store";
 export const useSelection = () => {
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
   const { selection, isSelecting } = useAppSelector(state => state.canvasMeta);
-  const { zoom, layerX, layerY, layerWidth, layerHeight } = useAppSelector(
+  const { layerX, layerY } = useContext(ScrollContext).scroll;
+  const { zoom, layerWidth, layerHeight } = useAppSelector(
     state => state.browser
   );
   const dispatch = useAppDispatch();

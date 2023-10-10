@@ -1,6 +1,14 @@
 "use client";
 
-import React, { JSX, memo, useCallback, useEffect, useRef } from "react";
+import React, {
+  JSX,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef
+} from "react";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/ActiveElementEdit";
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
@@ -33,16 +41,10 @@ const MemoStatusBar = React.memo(StatusBar);
 const MemoScrollbar = React.memo(Scrollbar);
 
 const CanvasComponent = (): JSX.Element => {
-  const {
-    canvasHeight,
-    canvasWidth,
-    zoom,
-    layerWidth,
-    layerHeight,
-    layerX,
-    layerY
-  } = useAppSelector(state => state.browser);
+  const { canvasHeight, canvasWidth, zoom, layerWidth, layerHeight } =
+    useAppSelector(state => state.browser);
   const { elements, isDrawing } = useAppSelector(state => state.canvas);
+  const { layerY, layerX } = useContext(ScrollContext).scroll;
   const dispatch = useAppDispatch();
   const lastElementRef = useRef<any>(null);
   const transformerRef = React.useRef<Konva.Transformer>(null);

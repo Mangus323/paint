@@ -1,9 +1,10 @@
+import { useContext } from "react";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { sp } from "@/globals/globals";
 import { useFigure } from "@/hooks/mouseHandlers/useFigure";
 import { usePen } from "@/hooks/mouseHandlers/usePen";
 import { useSelection } from "@/hooks/mouseHandlers/useSelection";
 import { useText } from "@/hooks/mouseHandlers/useText";
-import { set } from "@/redux/slices/browser/reducer";
 import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { getPoints } from "@/utils/getCanvasPoints";
@@ -13,17 +14,10 @@ import KonvaEventObject = Konva.KonvaEventObject;
 
 export const useMouseHandlers = () => {
   const dispatch = useAppDispatch();
-  const {
-    canvasHeight,
-    canvasWidth,
-    zoom,
-    layerWidth,
-    layerHeight,
-    verticalBar,
-    horizontalBar,
-    layerY,
-    layerX
-  } = useAppSelector(state => state.browser);
+  const { setScroll, scroll } = useContext(ScrollContext);
+  const { layerX, layerY, horizontalBar, verticalBar } = scroll;
+  const { canvasHeight, canvasWidth, zoom, layerWidth, layerHeight } =
+    useAppSelector(state => state.browser);
   const { isDrawing } = useAppSelector(state => state.canvas);
 
   useSelection();
@@ -81,15 +75,14 @@ export const useMouseHandlers = () => {
       const availableHeight = canvasHeight - sp * 2 - 100;
       const vy =
         (localLayerY / (-innerHeight + canvasHeight)) * availableHeight + sp;
-      dispatch(
-        set({
-          layerY: localLayerY,
-          verticalBar: {
-            x: verticalBar.x,
-            y: vy
-          }
-        })
-      );
+
+      setScroll({
+        layerY: localLayerY,
+        verticalBar: {
+          x: verticalBar.x,
+          y: vy
+        }
+      });
     }
     if (dx) {
       const minX = -(innerWidth - canvasWidth);
@@ -97,15 +90,14 @@ export const useMouseHandlers = () => {
       const availableWidth = canvasWidth - sp * 2 - 100;
       const vx =
         (localLayerX / (-innerWidth + canvasWidth)) * availableWidth + sp;
-      dispatch(
-        set({
-          layerX: localLayerX,
-          horizontalBar: {
-            x: vx,
-            y: horizontalBar.y
-          }
-        })
-      );
+
+      setScroll({
+        layerX: localLayerX,
+        horizontalBar: {
+          x: vx,
+          y: horizontalBar.y
+        }
+      });
     }
   };
 

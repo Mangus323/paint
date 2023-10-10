@@ -9,7 +9,8 @@ import React, {
   useEffect,
   useRef
 } from "react";
-import { MousePositionContext } from "@/components/HOC/MouseListener/MouseListener";
+import { MousePositionContext } from "@/components/HOC/MouseListener";
+import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { sidebarDimension as sd } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
@@ -30,8 +31,9 @@ interface KeyboardListenerProps {
 
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const { layerY, layerX } = useContext(ScrollContext).scroll;
   const { selectedTool: tool } = useAppSelector(state => state.canvas);
-  const { zoom, layerX, layerY, canvasWidth, canvasHeight } = useAppSelector(
+  const { zoom, canvasWidth, canvasHeight } = useAppSelector(
     state => state.browser
   );
   const settings = useSettings("text");
