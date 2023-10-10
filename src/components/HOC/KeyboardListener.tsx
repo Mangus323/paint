@@ -18,7 +18,7 @@ import { setToast } from "@/redux/slices/browser/reducer";
 import {
   duplicate,
   setIsCopying,
-  setIsDownloading
+  setIsOpenDownloadModal
 } from "@/redux/slices/canvas/reducer";
 import { removeSelection, selectAll } from "@/redux/slices/canvasMeta/reducer";
 import { useSettings } from "@/redux/slices/settings/selectors";
@@ -83,7 +83,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
           case "KeyS":
             e.preventDefault();
             if (activeElement) setActiveElement(null);
-            dispatch(setIsDownloading(true));
+            dispatch(setIsOpenDownloadModal(true));
         }
       }
       if (isActiveText) pseudoInputRef?.current?.focus();

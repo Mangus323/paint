@@ -18,7 +18,7 @@ const iconStyle: SxProps<Theme> = {
 };
 
 const defaultStyle: SxProps<Theme> = {
-  padding: "2px 4px"
+  padding: "3px 4px 1px 4px"
 };
 
 const selectedStyle: SxProps<Theme> = {
@@ -32,7 +32,7 @@ const selectedStyle: SxProps<Theme> = {
 };
 
 const hoverEffectsStyle: SxProps<Theme> = {
-  "&:hover": { transform: "scale(1.2)" }
+  transform: "scale(1.2)"
 };
 
 export const SimpleButton = (props: ButtonProps): JSX.Element => {
@@ -114,7 +114,9 @@ export const Button = (props: ButtonProps): JSX.Element => {
         minWidth: 2.5,
         textTransform: "unset",
         "&:hover": {
-          border: "1px solid var(--black)"
+          border: "1px solid var(--black)",
+          backgroundColor: "var(--teal-200)",
+          ...(hoverEffects && hoverEffectsStyle)
         },
         "&:active": {
           border: "1px solid var(--black)",
@@ -128,7 +130,6 @@ export const Button = (props: ButtonProps): JSX.Element => {
         ...(styleType === "icon" && iconStyle),
         ...(styleType === "default" && defaultStyle),
         ...(selected && selectedStyle),
-        ...(hoverEffects && hoverEffectsStyle),
         ...sx
       }}
       {...buttonProps}>

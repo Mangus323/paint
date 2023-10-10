@@ -10,12 +10,19 @@ export interface IEditActiveObjectState {
   activeElementMeta: IElementMeta | null;
   isSelecting: boolean;
   selection: IElementMeta | null;
+  // save file
+  dataURL: null | string;
+  dataURLPreview: null | string;
+  imageScale: number;
 }
 
 const initialState: IEditActiveObjectState = {
   activeElementMeta: null,
   isSelecting: false,
-  selection: null
+  selection: null,
+  dataURL: null,
+  dataURLPreview: null,
+  imageScale: 1
 };
 
 export const canvasMetaSlice = createSlice({
@@ -91,6 +98,19 @@ export const canvasMetaSlice = createSlice({
       };
       state.isSelecting = false;
       state.activeElementMeta = null;
+    },
+    setDataURL: (state, action: PayloadAction<string>) => {
+      state.dataURL = action.payload;
+    },
+    setDataURLPreview: (state, action: PayloadAction<string>) => {
+      state.dataURLPreview = action.payload;
+    },
+    disposeDataURLS: state => {
+      state.dataURL = null;
+      state.dataURLPreview = null;
+    },
+    setImageScale: (state, action: PayloadAction<number>) => {
+      state.imageScale = action.payload;
     }
   }
 });
@@ -102,7 +122,11 @@ export const {
   editSelection,
   removeSelection,
   selectAll,
-  changeSelectionZoom
+  changeSelectionZoom,
+  setDataURL,
+  setDataURLPreview,
+  disposeDataURLS,
+  setImageScale
 } = canvasMetaSlice.actions;
 
 export default canvasMetaSlice.reducer;

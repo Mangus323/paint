@@ -8,6 +8,7 @@ export interface CanvasState {
   elements: Array<IElement>;
   isDrawing: boolean;
   isDownloading: boolean;
+  isOpenDownloadModal: boolean;
   isCopying: boolean;
 }
 
@@ -17,7 +18,8 @@ const initialState: CanvasState = {
   elements: [],
   isDrawing: false,
   isDownloading: false,
-  isCopying: false
+  isCopying: false,
+  isOpenDownloadModal: false
 };
 
 export const canvasSlice = createSlice({
@@ -82,6 +84,9 @@ export const canvasSlice = createSlice({
     duplicate: (state, action: PayloadAction<IElement | null>) => {
       if (!action.payload) return;
       state.elements.push(action.payload);
+    },
+    setIsOpenDownloadModal: (state, action: PayloadAction<boolean>) => {
+      state.isOpenDownloadModal = action.payload;
     }
   }
 });
@@ -97,7 +102,8 @@ export const {
   setIsDownloading,
   openFromFile,
   duplicate,
-  setIsCopying
+  setIsCopying,
+  setIsOpenDownloadModal
 } = canvasSlice.actions;
 
 export default canvasSlice.reducer;
