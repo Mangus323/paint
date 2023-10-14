@@ -48,10 +48,10 @@ export const WindowReader = (props: WindowReaderProps): JSX.Element => {
       })
     );
     onResize();
-    document.addEventListener("resize", onResize);
+    window.addEventListener("resize", onResize);
     window.addEventListener("blur", onBlur);
     return () => {
-      document.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("blur", onBlur);
     };
   }, []);
