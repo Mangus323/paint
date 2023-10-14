@@ -1,5 +1,6 @@
 import React, { ChangeEvent, JSX, useEffect, useState } from "react";
 import { Button } from "@/components/elements/Button/Button";
+import { sidebarDimension as sd } from "@/globals/globals";
 import { set } from "@/redux/slices/browser/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
 import { Box, TextField, Typography } from "@mui/material";
@@ -56,6 +57,13 @@ const presets: Array<{ name: string; resolution: Vector2d }> = [
     resolution: {
       x: 2000,
       y: 2000
+    }
+  },
+  {
+    name: "fit screen",
+    resolution: {
+      x: window.innerWidth - sd.width,
+      y: window.innerHeight - sd.height
     }
   }
 ];

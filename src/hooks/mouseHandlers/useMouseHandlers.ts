@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { ScrollContext } from "@/components/HOC/ScrollProvider";
 import { sp } from "@/globals/globals";
+import { useDragScrolling } from "@/hooks/mouseHandlers/useDragScrolling";
 import { useFigure } from "@/hooks/mouseHandlers/useFigure";
 import { usePen } from "@/hooks/mouseHandlers/usePen";
 import { useSelection } from "@/hooks/mouseHandlers/useSelection";
@@ -23,17 +24,26 @@ export const useMouseHandlers = () => {
   useSelection();
   const {
     handleMouseUp: penUp,
-    handleMouseDown: penDown,
-    handleMouseMove: penMove
+    handleMouseMove: penMove,
+    handleMouseDown: penDown
   } = usePen();
   const {
     handleMouseDown: figureDown,
     handleMouseMove: figureMove,
     handleMouseUp: figureUp
   } = useFigure();
+  const {
+    handleMouseDown: dragDown,
+    handleMouseMove: dragMove,
+    handleMouseUp: dragUp
+  } = useDragScrolling();
   const { handleClick: handleTextClick } = useText();
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
+    // Middle mouse button
+    if (e.evt.button === 1) {
+      dragDown();
+    }
     // Left mouse button
     if (e.evt.button !== 0) return;
     penDown(e);
@@ -42,11 +52,14 @@ export const useMouseHandlers = () => {
 
   const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
     let { x, y } = getPoints(e, zoom, { x: layerX, y: layerY });
+    dragMove();
+
     penMove(e, x, y);
     figureMove(e, x, y);
   };
 
   const handleMouseUp = () => {
+    dragUp();
     penUp();
     figureUp();
     if (isDrawing) {
