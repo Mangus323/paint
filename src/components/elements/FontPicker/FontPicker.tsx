@@ -55,6 +55,7 @@ export const FontPicker = (props: FontPickerProps): JSX.Element => {
           id={id}
           sx={{ width: "100%" }}>
           {fonts.map(font => {
+            if (!font) return null;
             return (
               <MenuItem
                 key={font.id}

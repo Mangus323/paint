@@ -7,6 +7,7 @@ import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
 import { set } from "@/redux/slices/browser/reducer";
 import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { loadActiveFont } from "@/utils/FontManager/googleAPI/loadFonts";
 
 interface WindowReaderProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export const WindowReader = (props: WindowReaderProps): JSX.Element => {
   const { layerX, layerY } = scroll;
   const { canvasWidth, canvasHeight, layerWidth, layerHeight, zoom } =
     useAppSelector(state => state.browser);
+  const { tools, fonts } = useAppSelector(state => state.settings);
 
   const onResize = ({
     canvasWidth,
@@ -98,6 +100,12 @@ export const WindowReader = (props: WindowReaderProps): JSX.Element => {
         canvasHeight: window.innerHeight - sd.height
       })
     );
+  }, []);
+
+  useEffect(() => {
+    if (!fonts.length) return;
+    const font = fonts.find(font => font.family === tools.text.fontFamily);
+    if (font) loadActiveFont(font, "", "");
   }, []);
 
   return <>{props.children}</>;

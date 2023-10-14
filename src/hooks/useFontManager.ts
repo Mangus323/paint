@@ -26,7 +26,6 @@ export const useFontManager = (onChange: any, fontFamily: string) => {
   }, [onChange]);
 
   useEffect(() => {
-    if (fonts.length) return;
     fontManager
       .init()
       .then((): void => {
@@ -48,5 +47,9 @@ export const useFontManager = (onChange: any, fontFamily: string) => {
     }
   };
 
-  return { fontManager, fonts, setActiveFontFamily };
+  return {
+    fontManager,
+    fonts: loadingStatus === "finished" ? fonts : [],
+    setActiveFontFamily
+  };
 };
