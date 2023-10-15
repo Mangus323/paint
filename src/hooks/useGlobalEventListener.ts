@@ -1,19 +1,18 @@
 import { useCallback, useEffect, useRef } from "react";
 
-// TODO fix
 type EventType<C> = C extends "document"
-  ? Parameters<typeof document.addEventListener>[0]
-  : Parameters<typeof window.addEventListener>[0];
+  ? keyof DocumentEventMap
+  : keyof WindowEventMap;
 
-export const useGlobalEventListener = <T, D>(
-  context: "document" | "window",
-  type: EventType<typeof context>,
+export const useGlobalEventListener = <E extends "document" | "window", D>(
+  context: E,
+  type: EventType<E>,
   listener: (deps: D, ...args) => void,
   deps?: D,
   options?: any
 ) => {
   const localListener = useCallback((...args) => {
-    listener(depsRef.current ? depsRef.current : ({} as unknown as D), ...args);
+    if (depsRef.current) listener(depsRef.current, ...args);
   }, []);
   const env = context === "document" ? document : window;
   const depsRef = useRef(deps);

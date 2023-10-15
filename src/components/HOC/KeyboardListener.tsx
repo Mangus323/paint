@@ -135,6 +135,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
     },
     []
   );
+
   const clipboardPasteImage = useCallback(
     (clipboardData: DataTransfer, coordinate) => {
       if (!clipboardData.files || !clipboardData.files[0]) return;

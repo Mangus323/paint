@@ -21,6 +21,15 @@
         "unused-imports/no-unused-vars": "off",
         "no-unused-vars": "off"
       }
+    },
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {
+        "no-undef": "off"
+      }
     }
   ],
   "extends": [
@@ -34,7 +43,7 @@
   "env": {
     "browser": true,
     "node": true,
-    "es6": true
+    "es2022": true
   },
   "root": true,
   "parser": "@typescript-eslint/parser",
