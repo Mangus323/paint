@@ -13,6 +13,7 @@ export const useGlobalEventListener = <E extends "document" | "window", D>(
 ) => {
   const localListener = useCallback((...args) => {
     if (depsRef.current) listener(depsRef.current, ...args);
+    if (!deps) listener(deps as D, ...args);
   }, []);
   const env = context === "document" ? document : window;
   const depsRef = useRef(deps);
