@@ -114,18 +114,16 @@ export const ToolPicker = (): JSX.Element => {
           return (
             <li key={tool}>
               <Tooltip title={capitalizeFirstLetter(tool)}>
-                <div>
-                  <Button
-                    selected={selectedTool === tool}
-                    onClick={() => onClick(tool)}
-                    onDoubleClick={e => {
-                      onDoubleClick(e, tool);
-                    }}
-                    onContextMenu={e => onContextMenu(e, tool)}
-                    aria-describedby={anchorEl ? `tool-${index}` : undefined}>
-                    <Icon />
-                  </Button>
-                </div>
+                <Button
+                  selected={selectedTool === tool}
+                  onClick={() => onClick(tool)}
+                  onDoubleClick={e => {
+                    onDoubleClick(e, tool);
+                  }}
+                  onContextMenu={e => onContextMenu(e, tool)}
+                  aria-describedby={anchorEl ? `tool-${index}` : undefined}>
+                  <Icon />
+                </Button>
               </Tooltip>
             </li>
           );

@@ -40,21 +40,21 @@ export const Toaster = (): JSX.Element => {
       }}>
       <AnimatePresence>
         {toast.value && (
-          <Box
-            component={motion.div}
-            exit={{ opacity: 0 }}
-            sx={{
-              transform: "translateX(-50%)",
-              border: "1px solid var(--black)",
-              padding: "2px 4px",
-              minWidth: 60,
-              borderRadius: 1,
-              textAlign: "center"
-            }}>
-            <Typography component={"p"} sx={{ fontSize: 14 }}>
-              {capitalizeFirstLetter(toast.value)}
-            </Typography>
-          </Box>
+          <motion.div exit={{ opacity: 0, y: -5 }}>
+            <Box
+              sx={{
+                transform: "translateX(-50%)",
+                border: "1px solid var(--black)",
+                padding: "2px 4px",
+                minWidth: 60,
+                borderRadius: 1,
+                textAlign: "center"
+              }}>
+              <Typography component={"p"} sx={{ fontSize: 14 }}>
+                {capitalizeFirstLetter(toast.value)}
+              </Typography>
+            </Box>
+          </motion.div>
         )}
       </AnimatePresence>
     </Box>
