@@ -5,9 +5,11 @@ import { ToolSettingsEllipse } from "@/components/blocks/LeftPanel/ToolSettings/
 import { ToolSettingsEraser } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsEraser";
 import { ToolSettingsLine } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsLine";
 import { ToolSettingsPen } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsPen";
+import { ToolSettingsPolygon } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsPolygon";
 import { ToolSettingsRect } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsRect";
 import { ToolSettingsText } from "@/components/blocks/LeftPanel/ToolSettings/ToolSettingsText";
 import { Button } from "@/components/elements/Button/Button";
+import { PolygonIcon } from "@/components/elements/PolygonIcon/PolygonIcon";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
 import { TextIcon } from "@/components/elements/TextIcon/TextIcon";
@@ -27,15 +29,20 @@ import PencilIcon from "~public/icons/Pencil.svg";
 import SelectionIcon from "~public/icons/Selection.svg";
 import SquareIcon from "~public/icons/Square.svg";
 
-const toolListIcons = [
-  SquareIcon,
-  PencilIcon,
-  TextIcon,
-  EraserIcon,
-  CircleIcon,
-  LineIcon,
-  SelectionIcon
-];
+const toolListIcons: Record<
+  ToolType,
+  React.FC<React.SVGProps<SVGSVGElement>> | null
+> = {
+  rect: SquareIcon,
+  pen: PencilIcon,
+  text: TextIcon,
+  eraser: EraserIcon,
+  ellipse: CircleIcon,
+  line: LineIcon,
+  selection: SelectionIcon,
+  polygon: PolygonIcon,
+  image: null
+};
 
 export const ToolPicker = (): JSX.Element => {
   const { selectedTool, elements, history } = useAppSelector(
@@ -102,7 +109,7 @@ export const ToolPicker = (): JSX.Element => {
       <h3>Tools</h3>
       <ul>
         {ToolList.map((tool, index) => {
-          const Icon = toolListIcons[index];
+          const Icon = toolListIcons[tool];
           if (!Icon) return null;
           return (
             <li key={tool}>
@@ -135,6 +142,7 @@ export const ToolPicker = (): JSX.Element => {
         {activePopover === "text" && <ToolSettingsText />}
         {activePopover === "ellipse" && <ToolSettingsEllipse />}
         {activePopover === "line" && <ToolSettingsLine />}
+        {activePopover === "polygon" && <ToolSettingsPolygon />}
       </Popover>
     </>
   );

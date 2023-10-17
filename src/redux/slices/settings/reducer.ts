@@ -1,4 +1,4 @@
-import { IEllipse, ILine, IPen, IRect, IText } from "@/types/canvas";
+import { IEllipse, ILine, IPen, IPolygon, IRect, IText } from "@/types/canvas";
 import { Font } from "@/utils/FontManager";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -19,6 +19,7 @@ type DefaultOmit =
 export interface IToolsKeys {
   text: Omit<IText, DefaultOmit | "text">;
   ellipse: Omit<IEllipse, DefaultOmit>;
+  polygon: Omit<IPolygon, DefaultOmit>;
   eraser: Omit<IPen, DefaultOmit | "points" | "dashEnabled">;
   image: {};
   line: Omit<ILine, DefaultOmit | "points" | "dashEnabled">;
@@ -51,6 +52,12 @@ const initialState: SettingsState = {
       fillType: "fill",
       strokeWidth: 2,
       cornerRadius: 0,
+      dashEnabled: false
+    },
+    polygon: {
+      fillType: "fill",
+      strokeWidth: 2,
+      sides: 3,
       dashEnabled: false
     },
     selection: null

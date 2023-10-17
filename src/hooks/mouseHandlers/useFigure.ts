@@ -16,18 +16,19 @@ export const useFigure = () => {
   const { zoom } = useAppSelector(state => state.browser);
   const rectSettings = useSettings("rect");
   const ellipseSettings = useSettings("ellipse");
+  const polygonSettings = useSettings("polygon");
   const { activeElement, setActiveElement, setNewActiveElement } =
     useActiveElement();
   const isDrawingRef = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (tool === "ellipse" || tool === "rect") {
+    if (tool === "ellipse" || tool === "rect" || tool === "polygon") {
       isDrawingRef.current = true;
       const { x, y } = getPoints(e, zoom, {
         x: layerX,
         y: layerY
       });
-      const data = {
+      const defaultProps = {
         width: 0,
         height: 0,
         x,
@@ -37,17 +38,31 @@ export const useFigure = () => {
         tool: tool
       };
 
-      setNewActiveElement(
-        tool === "ellipse"
-          ? {
-              ...ellipseSettings,
-              ...data,
-              radiusX: 0,
-              radiusY: 0,
-              tool: "ellipse"
-            }
-          : { ...rectSettings, ...data, cornerRadius: 0, tool: "rect" }
-      );
+      switch (tool) {
+        case "ellipse":
+          setNewActiveElement({
+            ...ellipseSettings,
+            ...defaultProps,
+            radiusX: 0,
+            radiusY: 0,
+            tool: "ellipse"
+          });
+          return;
+        case "rect":
+          setNewActiveElement({
+            ...rectSettings,
+            ...defaultProps,
+            cornerRadius: 0,
+            tool: "rect"
+          });
+          return;
+        case "polygon":
+          setNewActiveElement({
+            ...polygonSettings,
+            ...defaultProps,
+            tool: "polygon"
+          });
+      }
     }
   };
 

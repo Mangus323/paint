@@ -13,7 +13,7 @@ interface IBaseElement {
 }
 
 export interface IFigure extends IBaseElement, Vector2d {
-  tool: "rect" | "ellipse";
+  tool: "rect" | "ellipse" | "polygon";
   width: number;
   height: number;
   fillType: "outline" | "fill";
@@ -32,6 +32,11 @@ export interface IEllipse extends IFigure {
   tool: "ellipse";
   radiusX: number;
   radiusY: number;
+}
+
+export interface IPolygon extends IFigure {
+  tool: "polygon";
+  sides: 3 | 5 | 6 | 8;
 }
 
 export interface IPen extends IBaseElement, Vector2d {
@@ -71,6 +76,7 @@ export interface ISelection extends IBaseElement {
 export type IElement =
   | IPen
   | IEllipse
+  | IPolygon
   | IText
   | IArrow
   | IImage

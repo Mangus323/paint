@@ -1,4 +1,5 @@
 import { IElement } from "@/types/canvas";
+import { calculatePolygonPoints } from "@/utils/math";
 
 export const getCanvasElementProps = (element: IElement) => {
   switch (element.tool) {
@@ -34,6 +35,28 @@ export const getCanvasElementProps = (element: IElement) => {
         y: (element.y * 2 + element.height) / 2,
         radiusX: Math.abs(element.width / 2),
         radiusY: Math.abs(element.height / 2)
+      };
+    case "polygon":
+      return {
+        fill: element.color,
+        fillEnabled: element.fillType === "fill",
+        stroke: element.color,
+        dash:
+          element.dashEnabled && element.fillType === "outline"
+            ? [element.strokeWidth, element.strokeWidth * 2]
+            : undefined,
+        x: element.x + Math.abs(element.width / 2),
+        y: element.y + Math.abs(element.height / 2),
+        offset: {
+          x: Math.abs(element.width) / 2,
+          y: Math.abs(element.height) / 2
+        },
+        closed: true,
+        points: calculatePolygonPoints(
+          element.width,
+          element.height,
+          element.sides
+        )
       };
     case "pen":
       // offset calculates in onMouseUp

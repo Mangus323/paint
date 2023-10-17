@@ -169,6 +169,8 @@ const CanvasComponent = (): JSX.Element => {
                 case "ellipse":
                   // @ts-ignore
                   return <Ellipse key={index} {...props} />;
+                case "polygon":
+                  return <Line key={index} {...props} />;
                 case "pen":
                 case "eraser":
                   return <Line key={index} {...props} />;

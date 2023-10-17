@@ -3,6 +3,7 @@ export const ToolList = [
   "pen",
   "text",
   "eraser",
+  "polygon",
   "ellipse",
   "line",
   "selection",
