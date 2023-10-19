@@ -6,11 +6,16 @@ export const twoPointsToDegree = (points: number[]) => {
   return result < 0 ? result + 360 : result;
 };
 
+export const getSmoothAngle = (angle: number, sides: number) => {
+  const sideDegrees = 360 / sides;
+  return (~~(angle / sideDegrees) * 360) / sides;
+};
+
 export const twoPointsToDegreeSmooth = (points: number[], sides: number) => {
   const originalAngle = twoPointsToDegree(points);
   const sideDegrees = 360 / sides;
   const sideAngle = originalAngle % sideDegrees;
-  const smoothAngle = (~~(originalAngle / sideDegrees) * 360) / sides;
+  const smoothAngle = getSmoothAngle(originalAngle, sides);
 
   if (sideAngle > sideDegrees / 2) {
     return smoothAngle + sideDegrees;

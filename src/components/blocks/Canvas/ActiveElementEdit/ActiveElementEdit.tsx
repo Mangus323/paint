@@ -7,6 +7,7 @@ import { useActiveElement } from "@/hooks/useActiveElement";
 import usePrevious from "@/hooks/usePrevious";
 import { useAppSelector } from "@/redux/store";
 import { calculateMetaSelection } from "@/utils/calculateMeta";
+import { getSmoothAngle } from "@/utils/math";
 import { Box } from "@mui/material";
 import DragIcon from "~public/icons/Drag.svg";
 import RotateIcon from "~public/icons/Rotate.svg";
@@ -53,7 +54,9 @@ export const ActiveElementEdit = (): JSX.Element => {
       });
     }
     if (activeElement && action === "rotation" && "x" in activeElement) {
-      const angle = (position.x - startRotationPosition) / 2 + originalAngle;
+      let angle = (position.x - startRotationPosition) / 2 + originalAngle;
+      if (position.shiftKey) angle = getSmoothAngle(angle, 8);
+
       setActiveElement({
         ...activeElement,
         rotation: angle

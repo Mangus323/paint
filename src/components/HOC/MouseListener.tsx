@@ -18,21 +18,33 @@ import Konva from "konva";
 
 import Vector2d = Konva.Vector2d;
 
-export const MousePositionContext = createContext<Vector2d>({ x: 0, y: 0 });
+interface IMousePosition extends Vector2d {
+  shiftKey: boolean;
+}
+
+export const MousePositionContext = createContext<IMousePosition>({
+  x: 0,
+  y: 0,
+  shiftKey: false
+});
 
 interface MouseListenerProps {
   children: ReactNode;
 }
 
 export const MouseListener = (props: MouseListenerProps): JSX.Element => {
-  const [position, setPosition] = useState<Vector2d>({ x: 0, y: 0 });
+  const [position, setPosition] = useState<IMousePosition>({
+    x: 0,
+    y: 0,
+    shiftKey: false
+  });
   const dispatch = useAppDispatch();
   const { isDrawing } = useAppSelector(state => state.canvas);
   const browser = useAppSelector(state => state.browser);
   const { scroll, setScroll } = useContext(ScrollContext);
 
   const onMouseMove = (_, e: MouseEvent) => {
-    setPosition({ x: e.clientX, y: e.clientY });
+    setPosition({ x: e.clientX, y: e.clientY, shiftKey: e.shiftKey });
   };
 
   const onWheel = (state, e: WheelEvent) => {
@@ -43,55 +55,6 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
       setScroll({ layerX, layerY, horizontalBar, verticalBar });
       e.preventDefault();
     }
-  };
-
-  const calculateZoom = (state: IScroll & BrowserState, delta: number) => {
-    const result = {
-      ...state
-    };
-    let nextZoom = state.zoom;
-    if (delta > 0) nextZoom *= 2;
-    else nextZoom /= 2;
-    result.zoom = nextZoom;
-
-    const {
-      canvasHeight,
-      canvasWidth,
-      layerHeight,
-      layerWidth,
-      layerX,
-      layerY,
-      verticalBar,
-      horizontalBar
-    } = state;
-
-    const innerWidth = layerWidth * nextZoom;
-    const availableWidth = canvasWidth - sp * 2 - 100;
-    const nextLayerX = Math.max(
-      layerX,
-      canvasWidth > innerWidth ? 0 : canvasWidth - innerWidth
-    );
-    if (nextLayerX !== layerX) {
-      result.layerX = nextLayerX;
-      result.horizontalBar.x = Math.min(horizontalBar.x, layerWidth * nextZoom);
-    }
-    result.horizontalBar.x =
-      (nextLayerX / (canvasWidth - innerWidth)) * availableWidth + sp;
-    // copy for Y
-    const innerHeight = layerHeight * nextZoom;
-    const availableHeight = canvasHeight - sp * 2 - 100;
-    const nextLayerY = Math.max(
-      layerY,
-      canvasHeight > innerHeight ? 0 : canvasHeight - innerHeight
-    );
-    if (nextLayerY !== layerY) {
-      result.layerY = nextLayerY;
-      result.verticalBar.y = Math.min(verticalBar.y, layerHeight * nextZoom);
-    }
-    result.verticalBar.y =
-      (nextLayerY / (canvasHeight - innerHeight)) * availableHeight + sp;
-
-    return result;
   };
 
   const onMouseOver = () => {
@@ -120,4 +83,53 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
       </MousePositionContext.Provider>
     </>
   );
+};
+
+const calculateZoom = (state: IScroll & BrowserState, delta: number) => {
+  const result = {
+    ...state
+  };
+  let nextZoom = state.zoom;
+  if (delta > 0) nextZoom *= 2;
+  else nextZoom /= 2;
+  result.zoom = nextZoom;
+
+  const {
+    canvasHeight,
+    canvasWidth,
+    layerHeight,
+    layerWidth,
+    layerX,
+    layerY,
+    verticalBar,
+    horizontalBar
+  } = state;
+
+  const innerWidth = layerWidth * nextZoom;
+  const availableWidth = canvasWidth - sp * 2 - 100;
+  const nextLayerX = Math.max(
+    layerX,
+    canvasWidth > innerWidth ? 0 : canvasWidth - innerWidth
+  );
+  if (nextLayerX !== layerX) {
+    result.layerX = nextLayerX;
+    result.horizontalBar.x = Math.min(horizontalBar.x, layerWidth * nextZoom);
+  }
+  result.horizontalBar.x =
+    (nextLayerX / (canvasWidth - innerWidth)) * availableWidth + sp;
+  // copy for Y
+  const innerHeight = layerHeight * nextZoom;
+  const availableHeight = canvasHeight - sp * 2 - 100;
+  const nextLayerY = Math.max(
+    layerY,
+    canvasHeight > innerHeight ? 0 : canvasHeight - innerHeight
+  );
+  if (nextLayerY !== layerY) {
+    result.layerY = nextLayerY;
+    result.verticalBar.y = Math.min(verticalBar.y, layerHeight * nextZoom);
+  }
+  result.verticalBar.y =
+    (nextLayerY / (canvasHeight - innerHeight)) * availableHeight + sp;
+
+  return result;
 };
