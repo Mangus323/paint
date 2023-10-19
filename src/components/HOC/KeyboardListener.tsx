@@ -29,6 +29,13 @@ interface KeyboardListenerProps {
   children: ReactNode;
 }
 
+interface Keys {
+  ArrowUp: boolean;
+  ArrowRight: boolean;
+  ArrowDown: boolean;
+  ArrowLeft: boolean;
+}
+
 export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const { layerY, layerX } = useContext(ScrollContext).scroll;
@@ -47,13 +54,41 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   };
   const pseudoInputRef = useRef<HTMLTextAreaElement>(null);
   const activeElementRef = useRef(activeElement);
+  const keysPressed = useRef<Keys>({
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false,
+    ArrowUp: false
+  });
+
+  const keyUp = useCallback((_: never, e: KeyboardEvent) => {
+    if (keysPressed.current[e.code] !== undefined) {
+      keysPressed.current[e.code] = false;
+    }
+  }, []);
 
   const listener = useCallback(
-    ({ canvasWidth, canvasHeight }, e: KeyboardEvent) => {
+    ({ canvasWidth, canvasHeight, activeElement }, e: KeyboardEvent) => {
       switch (e.code) {
         case "Escape":
           setActiveElement(null);
           dispatch(removeSelection());
+          return;
+        case "ArrowUp":
+        case "ArrowRight":
+        case "ArrowDown":
+        case "ArrowLeft":
+          keysPressed.current[e.code] = true;
+          if (e.ctrlKey) break;
+          if (activeElement) {
+            const distance = e.shiftKey ? 8 : 2;
+            const k = keysPressed.current;
+            setActiveElement({
+              ...activeElement,
+              x: activeElement.x + (-+k.ArrowLeft + +k.ArrowRight) * distance,
+              y: activeElement.y + (-+k.ArrowUp + +k.ArrowDown) * distance
+            });
+          }
           return;
       }
       if (e.ctrlKey) {
@@ -84,6 +119,23 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
             e.preventDefault();
             if (activeElement) setActiveElement(null);
             dispatch(setIsOpenDownloadModal(true));
+            return;
+          case "ArrowRight":
+            if (activeElement) {
+              setActiveElement({
+                ...activeElement,
+                rotation: (activeElement.rotation || 0) + 360 / 8
+              });
+            }
+            return;
+          case "ArrowLeft":
+            if (activeElement) {
+              setActiveElement({
+                ...activeElement,
+                rotation: (activeElement.rotation || 0) - 360 / 8
+              });
+            }
+            return;
         }
       }
       if (isActiveText) pseudoInputRef?.current?.focus();
@@ -184,8 +236,10 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   useGlobalEventListener("window", "copy", clipboardCopy);
   useGlobalEventListener("document", "keydown", listener, {
     canvasWidth,
-    canvasHeight
+    canvasHeight,
+    activeElement
   });
+  useGlobalEventListener("document", "keyup", keyUp);
 
   useEffect(() => {
     if (isActiveText) {
