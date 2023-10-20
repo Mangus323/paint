@@ -1,16 +1,23 @@
+import { sp } from "@/globals/globals";
+import { BrowserState } from "@/redux/slices/browser/reducer";
+import { IScroll } from "@/types/canvas";
+
 const degreeToRadian = (deg: number) => (Math.PI * deg) / 180;
+
+// Finds the angle between 2 points with respect to the x-axis
 export const twoPointsToDegree = (points: number[]) => {
   let [x1, y1, x2, y2] = points;
   let result = (180 / Math.PI) * Math.atan2(y2 - y1, x2 - x1) + 90;
 
   return result < 0 ? result + 360 : result;
 };
-
+// Returns the closest angle of side
 export const getSmoothAngle = (angle: number, sides: number) => {
   const sideDegrees = 360 / sides;
   return (~~(angle / sideDegrees) * 360) / sides;
 };
 
+// Returns the closest angle between 2 points, which located on 1 side
 export const twoPointsToDegreeSmooth = (points: number[], sides: number) => {
   const originalAngle = twoPointsToDegree(points);
   const sideDegrees = 360 / sides;
@@ -23,6 +30,7 @@ export const twoPointsToDegreeSmooth = (points: number[], sides: number) => {
   return smoothAngle;
 };
 
+// Returns the point of a circle with center on a point, when rotated by an angle
 const getSecondPoint = (point: number[], angle: number, length: number) => {
   angle -= 90;
   const x = point[0] + length * Math.cos(degreeToRadian(angle));
@@ -30,6 +38,7 @@ const getSecondPoint = (point: number[], angle: number, length: number) => {
   return [x, y];
 };
 
+// Rotates the line to one side
 export const twoPointsToSmoothPoints = (points: number[], sides: number) => {
   const length = getTwoPointsLength(points);
   const angle = twoPointsToDegreeSmooth(points, sides);
@@ -37,11 +46,13 @@ export const twoPointsToSmoothPoints = (points: number[], sides: number) => {
   return [points[0], points[1], ...getSecondPoint(points, angle, length)];
 };
 
+// Return distance between two points;
 const getTwoPointsLength = (points: number[]) => {
   const p = points;
   return Math.sqrt((p[2] - p[0]) ** 2 + (p[3] - p[1]) ** 2);
 };
 
+// Creates an inscribed n-sided polygon
 export const calculatePolygonPoints = (
   width: number,
   height: number,
@@ -78,4 +89,53 @@ export const calculatePolygonPoints = (
     points[i] = ((points[i] + 1) * height) / 2;
 
   return points;
+};
+
+export const calculateZoom = (state: IScroll & BrowserState, delta: number) => {
+  const result = {
+    ...state
+  };
+  let nextZoom = state.zoom;
+  if (delta > 0) nextZoom *= 2;
+  else nextZoom /= 2;
+  result.zoom = nextZoom;
+
+  const {
+    canvasHeight,
+    canvasWidth,
+    layerHeight,
+    layerWidth,
+    layerX,
+    layerY,
+    verticalBar,
+    horizontalBar
+  } = state;
+
+  const innerWidth = layerWidth * nextZoom;
+  const availableWidth = canvasWidth - sp * 2 - 100;
+  const nextLayerX = Math.max(
+    layerX,
+    canvasWidth > innerWidth ? 0 : canvasWidth - innerWidth
+  );
+  if (nextLayerX !== layerX) {
+    result.layerX = nextLayerX;
+    result.horizontalBar.x = Math.min(horizontalBar.x, layerWidth * nextZoom);
+  }
+  result.horizontalBar.x =
+    (nextLayerX / (canvasWidth - innerWidth)) * availableWidth + sp;
+  // copy for Y
+  const innerHeight = layerHeight * nextZoom;
+  const availableHeight = canvasHeight - sp * 2 - 100;
+  const nextLayerY = Math.max(
+    layerY,
+    canvasHeight > innerHeight ? 0 : canvasHeight - innerHeight
+  );
+  if (nextLayerY !== layerY) {
+    result.layerY = nextLayerY;
+    result.verticalBar.y = Math.min(verticalBar.y, layerHeight * nextZoom);
+  }
+  result.verticalBar.y =
+    (nextLayerY / (canvasHeight - innerHeight)) * availableHeight + sp;
+
+  return result;
 };

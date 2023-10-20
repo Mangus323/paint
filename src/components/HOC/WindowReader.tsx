@@ -40,11 +40,11 @@ export const WindowReader = (props: WindowReaderProps): JSX.Element => {
 
     const availableHeight = canvasHeight - sp * 2 - 100;
     const vy =
-      (localLayerY / (-innerHeight + canvasHeight)) * availableHeight + sp;
+      (localLayerY / (-innerHeight + canvasHeight)) * availableHeight + sp || 0;
 
     const availableWidth = canvasWidth - sp * 2 - 100;
     const vx =
-      (localLayerX / (-innerWidth + canvasWidth)) * availableWidth + sp;
+      (localLayerX / (-innerWidth + canvasWidth)) * availableWidth + sp || 0;
 
     setScroll({
       layerX: localLayerX,

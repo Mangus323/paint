@@ -4,16 +4,18 @@ import React, {
   JSX,
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useState
 } from "react";
 import { ScrollContext } from "@/components/HOC/ScrollProvider";
-import { sp } from "@/globals/globals";
+import { sidebarDimension as sd } from "@/globals/globals";
+import { useActiveElement } from "@/hooks/useActiveElement";
 import { useGlobalEventListener } from "@/hooks/useGlobalEventListener";
-import { BrowserState, set } from "@/redux/slices/browser/reducer";
+import { set, setToast } from "@/redux/slices/browser/reducer";
 import { stopDraw } from "@/redux/slices/canvas/reducer";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { IScroll } from "@/types/canvas";
+import { calculateZoom } from "@/utils/math";
 import Konva from "konva";
 
 import Vector2d = Konva.Vector2d;
@@ -41,7 +43,14 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const { isDrawing } = useAppSelector(state => state.canvas);
   const browser = useAppSelector(state => state.browser);
+  const { zoom } = browser;
   const { scroll, setScroll } = useContext(ScrollContext);
+  const { setNewActiveElement } = useActiveElement();
+  const { layerX, layerY } = scroll;
+  const coordinate = {
+    x: (position.x - sd.width - layerX) / zoom,
+    y: (position.y - sd.height - layerY) / zoom
+  };
 
   const onMouseMove = (_, e: MouseEvent) => {
     setPosition({ x: e.clientX, y: e.clientY, shiftKey: e.shiftKey });
@@ -65,6 +74,36 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
     e.preventDefault();
   };
 
+  const onDrag = useCallback((_, e) => {
+    e.preventDefault();
+  }, []);
+
+  const onDrop = useCallback((_, e: DragEvent) => {
+    if (!e.dataTransfer) return;
+    const item = [...e.dataTransfer.items].find(item =>
+      item.type.match(/^image\//)
+    );
+    const file = item?.getAsFile();
+    if (!file) return;
+    e.preventDefault();
+    const reader = new FileReader();
+
+    let { x, y } = coordinate;
+    reader.onloadend = () => {
+      if (!reader.result) return;
+      setNewActiveElement({
+        tool: "image",
+        src: reader.result,
+        x,
+        y
+      });
+      dispatch(setToast("dropped image"));
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  useGlobalEventListener("window", "dragover", onDrag, {}, false);
+  useGlobalEventListener("window", "drop", onDrop, {}, false);
   useGlobalEventListener("document", "mousemove", onMouseMove);
   useGlobalEventListener("document", "mouseover", onMouseOver);
   useGlobalEventListener("document", "contextmenu", onContextMenu);
@@ -83,53 +122,4 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
       </MousePositionContext.Provider>
     </>
   );
-};
-
-const calculateZoom = (state: IScroll & BrowserState, delta: number) => {
-  const result = {
-    ...state
-  };
-  let nextZoom = state.zoom;
-  if (delta > 0) nextZoom *= 2;
-  else nextZoom /= 2;
-  result.zoom = nextZoom;
-
-  const {
-    canvasHeight,
-    canvasWidth,
-    layerHeight,
-    layerWidth,
-    layerX,
-    layerY,
-    verticalBar,
-    horizontalBar
-  } = state;
-
-  const innerWidth = layerWidth * nextZoom;
-  const availableWidth = canvasWidth - sp * 2 - 100;
-  const nextLayerX = Math.max(
-    layerX,
-    canvasWidth > innerWidth ? 0 : canvasWidth - innerWidth
-  );
-  if (nextLayerX !== layerX) {
-    result.layerX = nextLayerX;
-    result.horizontalBar.x = Math.min(horizontalBar.x, layerWidth * nextZoom);
-  }
-  result.horizontalBar.x =
-    (nextLayerX / (canvasWidth - innerWidth)) * availableWidth + sp;
-  // copy for Y
-  const innerHeight = layerHeight * nextZoom;
-  const availableHeight = canvasHeight - sp * 2 - 100;
-  const nextLayerY = Math.max(
-    layerY,
-    canvasHeight > innerHeight ? 0 : canvasHeight - innerHeight
-  );
-  if (nextLayerY !== layerY) {
-    result.layerY = nextLayerY;
-    result.verticalBar.y = Math.min(verticalBar.y, layerHeight * nextZoom);
-  }
-  result.verticalBar.y =
-    (nextLayerY / (canvasHeight - innerHeight)) * availableHeight + sp;
-
-  return result;
 };
