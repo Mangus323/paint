@@ -91,13 +91,21 @@ export const calculatePolygonPoints = (
   return points;
 };
 
+const zoomVariants = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4, 5];
+
 export const calculateZoom = (state: IScroll & BrowserState, delta: number) => {
   const result = {
     ...state
   };
   let nextZoom = state.zoom;
-  if (delta > 0) nextZoom *= 2;
-  else nextZoom /= 2;
+  const zoomVariantIndex = zoomVariants.findIndex(
+    variant => variant === state.zoom
+  );
+  if (delta > 0) {
+    if (zoomVariantIndex !== zoomVariants.length - 1)
+      nextZoom = zoomVariants[zoomVariantIndex + 1];
+  } else if (zoomVariantIndex !== 0)
+    nextZoom = zoomVariants[zoomVariantIndex - 1];
   result.zoom = nextZoom;
 
   const {
