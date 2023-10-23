@@ -58,6 +58,18 @@ export const getCanvasElementProps = (element: IElement) => {
           element.sides
         )
       };
+    case "table":
+      return {
+        fill: element.color,
+        fillEnabled: element.fillType === "fill",
+        stroke: element.color,
+        x: element.x + Math.abs(element.width / 2),
+        y: element.y + Math.abs(element.height / 2),
+        offset: {
+          x: Math.abs(element.width) / 2,
+          y: Math.abs(element.height) / 2
+        }
+      };
     case "pen":
       // offset calculates in onMouseUp
       return {

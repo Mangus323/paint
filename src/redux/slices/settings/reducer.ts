@@ -1,4 +1,12 @@
-import { IEllipse, ILine, IPen, IPolygon, IRect, IText } from "@/types/canvas";
+import {
+  IEllipse,
+  ILine,
+  IPen,
+  IPolygon,
+  IRect,
+  ITable,
+  IText
+} from "@/types/canvas";
 import { Font } from "@/utils/FontManager";
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
@@ -25,6 +33,7 @@ export interface IToolsKeys {
   line: Omit<ILine, DefaultOmit | "points" | "dashEnabled">;
   pen: Omit<IPen, DefaultOmit | "points">;
   rect: Omit<IRect, DefaultOmit>;
+  table: Omit<ITable, DefaultOmit | "dashEnabled">;
   selection: null;
 }
 
@@ -59,6 +68,12 @@ const initialState: SettingsState = {
       strokeWidth: 2,
       sides: 3,
       dashEnabled: false
+    },
+    table: {
+      fillType: "fill",
+      strokeWidth: 2,
+      rows: 2,
+      columns: 3
     },
     selection: null
   },

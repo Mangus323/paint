@@ -13,7 +13,8 @@ import { ActiveElementEdit } from "@/components/blocks/Canvas/ActiveElementEdit/
 import { Scrollbar } from "@/components/blocks/Canvas/Scrollbar/Scrollbar";
 import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
 import { CanvasImage } from "@/components/elements/Canvas/Image/CanvasImage";
-import { CustomLine } from "@/components/elements/Canvas/Line/CanvasLine";
+import { CanvasLine } from "@/components/elements/Canvas/Line/CanvasLine";
+import { CanvasTable } from "@/components/elements/Canvas/Table/CanvasTable";
 import { useMouseHandlers } from "@/hooks/mouseHandlers/useMouseHandlers";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
@@ -175,11 +176,13 @@ const CanvasComponent = (): JSX.Element => {
                 case "eraser":
                   return <Line key={index} {...props} />;
                 case "line":
-                  return <CustomLine key={index} {...props} />;
+                  return <CanvasLine key={index} {...props} />;
                 case "text":
                   return <Text key={index} {...props} />;
                 case "image":
                   return <MemoImage key={index} {...props} />;
+                case "table":
+                  return <CanvasTable key={index} {...props} />;
               }
             })}
             {activeElement && (

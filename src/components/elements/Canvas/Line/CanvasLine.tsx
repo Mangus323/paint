@@ -6,7 +6,7 @@ import { Circle, Group, Line, RegularPolygon } from "react-konva";
 
 import LineConfig = Konva.LineConfig;
 
-interface CustomLineProps extends LineConfig {
+interface CanvasLineProps extends LineConfig {
   arrowType: ILine["arrowType"];
   points: number[];
   strokeWidth: number;
@@ -16,8 +16,8 @@ interface CustomLineProps extends LineConfig {
   onTransformStart: () => void;
 }
 
-export const CustomLine = forwardRef<any, CustomLineProps>(
-  (props: CustomLineProps, ref): JSX.Element => {
+export const CanvasLine = forwardRef<any, CanvasLineProps>(
+  (props: CanvasLineProps, ref): JSX.Element => {
     const {
       rotation,
       arrowType,
@@ -97,4 +97,4 @@ export const CustomLine = forwardRef<any, CustomLineProps>(
   }
 );
 
-CustomLine.displayName = "CustomLine";
+CanvasLine.displayName = "CanvasLine";

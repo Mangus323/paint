@@ -12,6 +12,7 @@ import { Button } from "@/components/elements/Button/Button";
 import { PolygonIcon } from "@/components/elements/PolygonIcon/PolygonIcon";
 import { Popover } from "@/components/elements/Popover/Popover";
 import { Separator } from "@/components/elements/Separator/Separator";
+import { TableIcon } from "@/components/elements/TableIcon/TableIcon";
 import { TextIcon } from "@/components/elements/TextIcon/TextIcon";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import { changeTool } from "@/redux/slices/canvas/reducer";
@@ -28,6 +29,7 @@ import LineIcon from "~public/icons/Line.svg";
 import PencilIcon from "~public/icons/Pencil.svg";
 import SelectionIcon from "~public/icons/Selection.svg";
 import SquareIcon from "~public/icons/Square.svg";
+import { ToolSettingsTable } from "../ToolSettings/ToolSettingsTable";
 
 const toolListIcons: Record<
   ToolType,
@@ -41,7 +43,8 @@ const toolListIcons: Record<
   line: LineIcon,
   selection: SelectionIcon,
   polygon: PolygonIcon,
-  image: null
+  image: null,
+  table: TableIcon
 };
 
 export const ToolPicker = (): JSX.Element => {
@@ -141,6 +144,7 @@ export const ToolPicker = (): JSX.Element => {
         {activePopover === "ellipse" && <ToolSettingsEllipse />}
         {activePopover === "line" && <ToolSettingsLine />}
         {activePopover === "polygon" && <ToolSettingsPolygon />}
+        {activePopover === "table" && <ToolSettingsTable />}
       </Popover>
     </>
   );

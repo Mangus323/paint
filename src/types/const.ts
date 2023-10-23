@@ -6,6 +6,7 @@ export const ToolList = [
   "polygon",
   "ellipse",
   "line",
+  "table",
   "selection",
   "image"
 ] as const;

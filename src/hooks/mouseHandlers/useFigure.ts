@@ -17,12 +17,18 @@ export const useFigure = () => {
   const rectSettings = useSettings("rect");
   const ellipseSettings = useSettings("ellipse");
   const polygonSettings = useSettings("polygon");
+  const tableSettings = useSettings("table");
   const { activeElement, setActiveElement, setNewActiveElement } =
     useActiveElement();
   const isDrawingRef = useRef(false);
 
   const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
-    if (tool === "ellipse" || tool === "rect" || tool === "polygon") {
+    if (
+      tool === "ellipse" ||
+      tool === "rect" ||
+      tool === "polygon" ||
+      tool === "table"
+    ) {
       isDrawingRef.current = true;
       const { x, y } = getPoints(e, zoom, {
         x: layerX,
@@ -61,6 +67,13 @@ export const useFigure = () => {
             ...polygonSettings,
             ...defaultProps,
             tool: "polygon"
+          });
+          return;
+        case "table":
+          setNewActiveElement({
+            ...tableSettings,
+            ...defaultProps,
+            tool: "table"
           });
       }
     }

@@ -39,6 +39,12 @@ export interface IPolygon extends IFigure {
   sides: 3 | 5 | 6 | 8;
 }
 
+export interface ITable extends IFigure {
+  tool: "table";
+  rows: number;
+  columns: number;
+}
+
 export interface IPen extends IBaseElement, Vector2d {
   tool: "pen" | "eraser";
   points: number[];
@@ -82,7 +88,8 @@ export type IElement =
   | IImage
   | ISelection
   | IRect
-  | ILine;
+  | ILine
+  | ITable;
 
 export interface IElementMeta extends Vector2d {
   width: number;
