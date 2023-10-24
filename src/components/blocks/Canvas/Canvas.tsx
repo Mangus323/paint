@@ -15,6 +15,7 @@ import { StatusBar } from "@/components/blocks/Canvas/StatusBar/StatusBar";
 import { CanvasImage } from "@/components/elements/Canvas/Image/CanvasImage";
 import { CanvasLine } from "@/components/elements/Canvas/Line/CanvasLine";
 import { CanvasTable } from "@/components/elements/Canvas/Table/CanvasTable";
+import { tp } from "@/globals/globals";
 import { useMouseHandlers } from "@/hooks/mouseHandlers/useMouseHandlers";
 import { useCopySelection } from "@/hooks/ref/useCopySelection";
 import { useDownloadingImage } from "@/hooks/ref/useDownloadingImage";
@@ -83,7 +84,10 @@ const CanvasComponent = (): JSX.Element => {
       tool === "line" ||
       tool === "image"
     )
-      editObj = {};
+      editObj = {
+        scaleX,
+        scaleY
+      };
     else
       editObj = {
         x: x - current.offsetX(),
@@ -202,7 +206,7 @@ const CanvasComponent = (): JSX.Element => {
                 anchorSize={isDrawing ? 0 : 8}
                 anchorStrokeWidth={1}
                 anchorStroke={"#c4dfdf"}
-                padding={5}
+                padding={tp}
               />
             )}
           </Group>

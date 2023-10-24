@@ -35,51 +35,56 @@ const hoverEffectsStyle: SxProps<Theme> = {
   transform: "scale(1.2)"
 };
 
-export const SimpleButton = (props: ButtonProps): JSX.Element => {
-  const {
-    className,
-    children,
-    selected,
-    styleType = "icon",
-    sx,
-    ...buttonProps
-  } = props;
+export const SimpleButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, ref): JSX.Element => {
+    const {
+      className,
+      children,
+      selected,
+      styleType = "icon",
+      sx,
+      ...buttonProps
+    } = props;
 
-  return (
-    <Box
-      component={"button"}
-      sx={{
-        fontSize: 12,
-        position: "relative",
-        display: "flex",
-        height: "1.25rem",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 0.125,
-        border: "1px solid var(--teal-200)",
-        borderRadius: 0.5,
-        backgroundColor: "var(--teal-100)",
-        color: "var(--blue)",
-        gap: 1.25,
-        gridGap: 1.25,
-        outline: "none",
-        transition: "0.1s all",
-        userSelect: "none",
-        "&:hover": {
-          border: "1px solid var(--black)"
-        },
-        "&:active": {
-          border: "1px solid var(--black)",
-          backgroundColor: "var(--teal-300)"
-        },
-        width: "1.25rem",
-        ...sx
-      }}
-      {...buttonProps}>
-      {children}
-    </Box>
-  );
-};
+    return (
+      <Box
+        ref={ref}
+        component={"button"}
+        sx={{
+          fontSize: 12,
+          position: "relative",
+          display: "flex",
+          height: "1.25rem",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 0.125,
+          border: "1px solid var(--teal-200)",
+          borderRadius: 0.5,
+          backgroundColor: "var(--teal-100)",
+          color: "var(--blue)",
+          gap: 1.25,
+          gridGap: 1.25,
+          outline: "none",
+          transition: "0.1s all",
+          userSelect: "none",
+          "&:hover": {
+            border: "1px solid var(--black)"
+          },
+          "&:active": {
+            border: "1px solid var(--black)",
+            backgroundColor: "var(--teal-300)"
+          },
+          width: "1.25rem",
+          ...sx
+        }}
+        {...buttonProps}>
+        {children}
+      </Box>
+    );
+  }
+);
+
+SimpleButton.displayName = "SimpleButton";
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref): JSX.Element => {

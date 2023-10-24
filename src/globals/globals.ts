@@ -7,7 +7,9 @@ const sidebarDimension = {
 
 const scrollbarPadding = 4;
 
-export { sidebarDimension, scrollbarPadding as sp };
+const transformerPadding = 5;
+
+export { sidebarDimension, scrollbarPadding as sp, transformerPadding as tp };
 
 export const FontOptions: Options = {
   pickerId: "",

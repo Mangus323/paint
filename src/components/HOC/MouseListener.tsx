@@ -2,10 +2,12 @@
 
 import React, {
   JSX,
+  MouseEvent,
   ReactNode,
   createContext,
   useCallback,
   useContext,
+  useRef,
   useState
 } from "react";
 import { ScrollContext } from "@/components/HOC/ScrollProvider";
@@ -51,10 +53,24 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
     x: (position.x - sd.width - layerX) / zoom,
     y: (position.y - sd.height - layerY) / zoom
   };
+  const currentPointerRef = useRef<{ e: MouseEvent; timeStamp: number } | null>(
+    null
+  );
 
-  const onMouseMove = (_, e: MouseEvent) => {
-    setPosition({ x: e.clientX, y: e.clientY, shiftKey: e.shiftKey });
-  };
+  const onMouseMove = useCallback((_: never, e: MouseEvent) => {
+    if (!currentPointerRef.current) {
+      setPosition({ x: e.clientX, y: e.clientY, shiftKey: e.shiftKey });
+      currentPointerRef.current = { e, timeStamp: e.timeStamp };
+    }
+
+    let dif = e.timeStamp - currentPointerRef.current.timeStamp;
+    if (dif > 5) {
+      currentPointerRef.current = { e, timeStamp: e.timeStamp };
+      setPosition({ x: e.clientX, y: e.clientY, shiftKey: e.shiftKey });
+    } else {
+      currentPointerRef.current = { e, timeStamp: e.timeStamp - dif };
+    }
+  }, []);
 
   const onWheel = (state, e: WheelEvent) => {
     if (e.ctrlKey) {
@@ -104,7 +120,7 @@ export const MouseListener = (props: MouseListenerProps): JSX.Element => {
 
   useGlobalEventListener("window", "dragover", onDrag, {}, false);
   useGlobalEventListener("window", "drop", onDrop, {}, false);
-  useGlobalEventListener("document", "mousemove", onMouseMove);
+  useGlobalEventListener("document", "pointermove", onMouseMove);
   useGlobalEventListener("document", "mouseover", onMouseOver);
   useGlobalEventListener("document", "contextmenu", onContextMenu);
   useGlobalEventListener(

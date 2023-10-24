@@ -1,14 +1,15 @@
 import React, { JSX, useContext, useEffect, useState } from "react";
 import { MousePositionContext } from "@/components/HOC/MouseListener";
 import { ScrollContext } from "@/components/HOC/ScrollProvider";
+import { TableEdit } from "@/components/blocks/Canvas/ActiveElementEdit/TableEdit";
 import { SimpleButton } from "@/components/elements/Button/Button";
-import { sidebarDimension as sd } from "@/globals/globals";
+import { sidebarDimension as sd, tp } from "@/globals/globals";
 import { useActiveElement } from "@/hooks/useActiveElement";
 import usePrevious from "@/hooks/usePrevious";
 import { useAppSelector } from "@/redux/store";
 import { calculateMetaSelection } from "@/utils/calculateMeta";
 import { getSmoothAngle } from "@/utils/math";
-import { Box } from "@mui/material";
+import { Box, Tooltip } from "@mui/material";
 import DragIcon from "~public/icons/Drag.svg";
 import RotateIcon from "~public/icons/Rotate.svg";
 
@@ -95,25 +96,25 @@ export const ActiveElementEdit = (): JSX.Element => {
   ) {
     const x = Math.min(
       window.innerWidth - sd.width - 40,
-      activeElementMeta.x + 5 < 0 ? 0 : activeElementMeta.x + 5
+      activeElementMeta.x + tp < 0 ? 0 : activeElementMeta.x + 5
     );
     const y = Math.min(
       window.innerHeight - sd.height,
-      activeElementMeta.y + 4 < sd.height
-        ? sd.height - 6
-        : activeElementMeta.y - 6
+      activeElementMeta.y + tp - 1 < sd.height
+        ? sd.height - 10
+        : activeElementMeta.y - tp - 1
     );
     return (
       <Box
         sx={{
           position: "absolute",
           top: 0,
-          left: 0,
-          height: 2
+          left: 0
         }}
         style={{
           transform: `translate(${x}px, ${y}px)`
         }}>
+        <TableEdit visible={!action} />
         <Box
           sx={{
             position: "absolute",
@@ -121,22 +122,26 @@ export const ActiveElementEdit = (): JSX.Element => {
             left: 0,
             display: "flex"
           }}>
-          <SimpleButton
-            sx={{
-              cursor: "move !important",
-              fontSize: 14
-            }}
-            onMouseDown={onMouseDownDrag}>
-            <DragIcon />
-          </SimpleButton>
-          <SimpleButton
-            sx={{
-              cursor: "e-resize !important",
-              fontSize: 14
-            }}
-            onMouseDown={onMouseDownRotation}>
-            <RotateIcon />
-          </SimpleButton>
+          <Tooltip title={action ? "" : "Move"}>
+            <SimpleButton
+              sx={{
+                cursor: "move !important",
+                fontSize: 14
+              }}
+              onMouseDown={onMouseDownDrag}>
+              <DragIcon />
+            </SimpleButton>
+          </Tooltip>
+          <Tooltip title={action ? "" : "Rotate"}>
+            <SimpleButton
+              sx={{
+                cursor: "e-resize !important",
+                fontSize: 14
+              }}
+              onMouseDown={onMouseDownRotation}>
+              <RotateIcon />
+            </SimpleButton>
+          </Tooltip>
         </Box>
       </Box>
     );
