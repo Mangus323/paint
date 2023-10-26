@@ -1,7 +1,7 @@
 let path = require("path");
 
 module.exports = {
-  output: "standalone",
+  output: "export",
   webpack: config => {
     config.resolve.alias = {
       ...config.resolve.alias,
@@ -62,7 +62,6 @@ module.exports = {
     ignoreDuringBuilds: true
   },
   experimental: {
-    appDir: true,
-    serverActions: true
+    appDir: true
   }
 };
