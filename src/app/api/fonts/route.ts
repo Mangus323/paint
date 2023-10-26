@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 const LIST_BASE_URL = "https://www.googleapis.com/webfonts/v1/webfonts";
 const options = FontOptions;
+const apiKey = process.env.GOOGLE_KEY as string;
 
 interface FontResponse extends Font {
   subsets: Script[];
@@ -22,8 +23,6 @@ const isExclude = (fontFamily: string) => {
  * Fetch the list of all available fonts from the Google Fonts API
  */
 export async function GET(req, res) {
-  const apiKey = process.env.GOOGLE_KEY as string;
-
   try {
     const url = new URL(LIST_BASE_URL);
     url.searchParams.append("sort", "popularity");

@@ -36,7 +36,7 @@ export default class FontManager {
    * save them to the font map
    */
   public async init(): Promise<FontList> {
-    const response = await fetch(`${window.location.origin}/api/fonts`);
+    const response = await fetch(`${window.location.href}/api/fonts`);
     const fonts = await response.json();
 
     for (let i = 0; i < fonts.length; i += 1) {
