@@ -181,6 +181,7 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
         rotation: 0,
         x,
         y,
+        isClipboardPaste: true,
         ...settings
       });
       dispatch(setToast("paste text"));
@@ -220,11 +221,19 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
   }, []);
 
   const onPseudoInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    if (activeElement && "text" in activeElement)
+    if (!(activeElement && "text" in activeElement)) return;
+    if (activeElement.isClipboardPaste) {
       setActiveElement({
         ...activeElement,
-        text: e.target.value
+        isClipboardPaste: false
       });
+      return;
+    }
+
+    setActiveElement({
+      ...activeElement,
+      text: e.target.value
+    });
   };
 
   useGlobalEventListener("window", "paste", clipboardPaste, {
@@ -253,23 +262,21 @@ export const KeyboardListener = (props: KeyboardListenerProps): JSX.Element => {
 
   return (
     <>
-      {
-        <textarea
-          ref={pseudoInputRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            maxWidth: 0,
-            maxHeight: 0,
-            opacity: 0
-          }}
-          tabIndex={-1}
-          onChange={onPseudoInputChange}
-          value={(activeElement as IText)?.text || ""}
-          id={"pseudo"}
-        />
-      }
+      <textarea
+        ref={pseudoInputRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          maxWidth: 0,
+          maxHeight: 0,
+          opacity: 0
+        }}
+        tabIndex={-1}
+        onChange={onPseudoInputChange}
+        value={(activeElement as IText)?.text || ""}
+        id={"pseudo"}
+      />
       {props.children}
     </>
   );

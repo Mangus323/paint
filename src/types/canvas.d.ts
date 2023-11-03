@@ -64,6 +64,7 @@ export interface IText extends IBaseElement, Vector2d {
   fontFamily: string;
   fontStyle: string;
   textDecoration: string;
+  isClipboardPaste?: boolean;
 }
 
 export interface IArrow extends IBaseElement {
